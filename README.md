@@ -2,7 +2,7 @@
 
 [![build status](https://github.com/USGS-WiM/stnweb2/workflows/Build/badge.svg)](https://github.com/coryrylan/angular-github-actions/actions) [![GitHub Super-Linter](https://github.com/USGS-WiM/stnweb2/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
-![WiM](wimlogo.png)
+![WiM](wim.png)
 
 Nationwide StreamStats application using NLDI services
 
