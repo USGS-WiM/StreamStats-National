@@ -44,6 +44,12 @@ to build a distribution folder for production:
 ng build --prod --base-href "[relative path to web server root]"
 ```
 
+to execute the unit tests via [Karma](https://karma-runner.github.io):
+
+```bash
+ng test
+```
+
 ### Development Workflow
 
 **Instructions below are for developers actively working on the repo**

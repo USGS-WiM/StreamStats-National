@@ -1,24 +1,18 @@
-# Make sure your build/dist folder is included
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# Build/Dist
+# compiled output
 /dist
-/build
 /tmp
 /out-tsc
 # Only exists if Bazel was run
 /bazel-out
 
-# Don't commit local configs
-*.local
-
 # dependencies
 /node_modules
-bower_components
 
 # profiling files
-chrome-profiler-events.json
-speed-measure-plugin.json
+chrome-profiler-events*.json
+speed-measure-plugin*.json
 
 # IDEs and editors
 /.idea
@@ -46,8 +40,6 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-**/*npm-debug.log.*
-**/*yarn-error.log.*
 
 # System Files
 .DS_Store
