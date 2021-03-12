@@ -24,6 +24,9 @@ export class CenterTopContentComponent implements OnInit {
 
     // Add basemaps
     this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
+
+    // Add scale bar
+    this._mapService.scale.addTo(this._mapService.map);
   }
 
 }

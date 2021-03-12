@@ -11,6 +11,7 @@ export class MapService {
   public map?: Map;
   public chosenBaseLayer: string;
   public baseMaps: any;
+  public scale: any;
 
 
   constructor() {
@@ -58,6 +59,8 @@ export class MapService {
               }
           )
       };
+
+      this.scale = L.control.scale();
 
     }
 }
