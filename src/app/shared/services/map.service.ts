@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParameterCodec, HttpParams } from '@angular/common/http';
 import { Map } from 'leaflet';
 
-import * as L from 'leaflet';
+// import * as L from 'leaflet';
+declare const L: any;
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +13,14 @@ export class MapService {
   public chosenBaseLayer: string;
   public baseMaps: any;
   public scale: any;
-
+  public zoomHome: any;
+  public textBox: any;
 
   constructor() {
-      this.chosenBaseLayer = 'Topo';
 
+      // Basemaps
+      this.chosenBaseLayer = 'Topo';
       this.baseMaps = {
-          // {s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png
           OpenStreetMap: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               maxZoom: 20,
               zIndex: 1,
@@ -60,7 +62,101 @@ export class MapService {
           )
       };
 
+      // Scalebar
       this.scale = L.control.scale();
+
+      // Custom zoom bar control that includes a custom home button
+      L.Control.zoomHome = L.Control.extend({
+        options: {
+            position: 'topleft',
+            zoomInText: '<i style="line-height:1.5; font-size:20px;">+</i>', // Is there a better way to style the zoom in/out and home buttons?
+            zoomInTitle: 'Zoom in',
+            zoomOutText: '<i style="line-height:1; font-size:20px;">-</i>',
+            zoomOutTitle: 'Zoom out',
+            zoomHomeText: '<i class="fa fa-home" style="line-height:1.65; font-size:20px;"></i>',
+            zoomHomeTitle: 'Zoom home'
+        },
+
+        onAdd: function (map: Map) {
+            var controlName = 'gin-control-zoom',
+                container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
+                options = this.options;
+
+            this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
+            controlName + '-in', container, this._zoomIn);
+            this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
+            controlName + '-home', container, this._zoomHome);
+            this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
+            controlName + '-out', container, this._zoomOut);
+
+            this._updateDisabled();
+            map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+
+            return container;
+        },
+
+        onRemove: function (map: Map) {
+            map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+        },
+
+        _zoomIn: function (e: any) {
+            this._map.zoomIn(e.shiftKey ? 3 : 1);
+        },
+
+        _zoomOut: function (e: any) {
+            this._map.zoomOut(e.shiftKey ? 3 : 1);
+        },
+
+        _zoomHome: function (e: any) {
+            this._map.setView(this._map.options.center, this._map.options.zoom);
+        },
+
+        _createButton: function (html: any, title: any, className: any, container: any, fn: any) {
+            var link = L.DomUtil.create('a', className, container);
+            link.innerHTML = html;
+            link.href = '#';
+            link.title = title;
+
+            L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+                .on(link, 'click', L.DomEvent.stop)
+                .on(link, 'click', fn, this)
+                .on(link, 'click', this._refocusOnMap, this);
+
+            return link;
+        },
+
+        _updateDisabled: function () {
+            var map = this._map,
+                className = 'leaflet-disabled';
+
+            L.DomUtil.removeClass(this._zoomInButton, className);
+            L.DomUtil.removeClass(this._zoomOutButton, className);
+
+            if (map._zoom === map.getMinZoom()) {
+                L.DomUtil.addClass(this._zoomOutButton, className);
+            }
+            if (map._zoom === map.getMaxZoom()) {
+                L.DomUtil.addClass(this._zoomInButton, className);
+            }
+        }
+      });
+      this.zoomHome = new L.Control.zoomHome();
+
+      L.Control.textBox = L.Control.extend({
+        onAdd: function(map: Map) {
+          var text = L.DomUtil.create('div');
+          text.id = "info_text";
+          text.innerHTML = "<strong>text here</strong>"
+          return text;
+        },
+    
+        onRemove: function(map: Map) {
+          // Nothing to do here
+        }
+      });
+      L.control.textbox = function(opts: any) { return new L.Control.textbox(opts);}
+      this.textBox = new L.Control.textBox();
+      // L.control.textbox({ position: 'bottomleft' }).addTo(map);
 
     }
 }

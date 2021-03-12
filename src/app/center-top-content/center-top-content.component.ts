@@ -15,10 +15,11 @@ export class CenterTopContentComponent implements OnInit {
   ngOnInit() {
     // Initialize map
     this._mapService.map = L.map('map', {
-      center: L.latLng(40.9, -73.0),
-      zoom: 9,
-      minZoom: 4,
-      maxZoom: 19,
+      zoomControl: false,
+      center: L.latLng(39.83, -98.58),
+      zoom: 3,
+      minZoom: 3,
+      maxZoom: 16,
       renderer: L.canvas()
     });
 
@@ -27,6 +28,14 @@ export class CenterTopContentComponent implements OnInit {
 
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
+
+    // Add custom zoom/home buttons
+    this._mapService.zoomHome.addTo(this._mapService.map);
+
+    // Add textbox in bottom left with map scale information
+    this._mapService.textBox.addTo(this._mapService.map);
+
+    // L.control.textbox({ position: 'bottomleft' }).addTo(map);
   }
 
 }
