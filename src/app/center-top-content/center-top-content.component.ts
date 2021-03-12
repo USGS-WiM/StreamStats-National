@@ -19,7 +19,9 @@ export class CenterTopContentComponent implements OnInit {
       minZoom: 4,
       maxZoom: 19,
       renderer: L.canvas()
-  });
+    });
+
+    this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
   }
 
 }
