@@ -159,9 +159,9 @@ export class MapService {
       this.textBox = new L.Control.textBox();
 
       // Button that shows your location
-      this.locationButton = L.easyButton('<img src="../../../assets/crosshairs-gps.png" style="width:13px;">', function(btn: any, map: Map){ // Need to improve styling of button
-      var locationMarker = new L.CircleMarker([0,0]).addTo(map);
-        map.locate({watch: true, setView: true, maxZoom: 16,  enableHighAccuracy: true})
+      this.locationButton = L.easyButton('<i class="fa fa-crosshairs" style="line-height:1.65; font-size:16px;"></i>', function(btn: any, map: Map){ //Need to improve styling
+      var locationMarker = new L.CircleMarker([0,0]).addTo(map); 
+        map.locate({setView: true, maxZoom: 16,  enableHighAccuracy: true})
           .on('locationfound', function(e){
             locationMarker.setLatLng(e.latlng);
             locationMarker.redraw();
