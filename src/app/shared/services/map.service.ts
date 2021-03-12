@@ -8,13 +8,13 @@ import * as L from 'leaflet';
   providedIn: 'root'
 })
 export class MapService {
-  public map: Map;
+  public map?: Map;
   public chosenBaseLayer: string;
   public baseMaps: any;
 
 
   constructor() {
-      this.map = L.map('div');
+      // this.map = L.map('map');
       this.chosenBaseLayer = 'Topo';
 
       this.baseMaps = {
