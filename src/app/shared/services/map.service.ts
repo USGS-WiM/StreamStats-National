@@ -14,7 +14,6 @@ export class MapService {
 
 
   constructor() {
-      // this.map = L.map('map');
       this.chosenBaseLayer = 'Topo';
 
       this.baseMaps = {

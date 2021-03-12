@@ -13,6 +13,7 @@ export class CenterTopContentComponent implements OnInit {
   constructor(private _mapService: MapService) {}
 
   ngOnInit() {
+    // Initialize map
     this._mapService.map = L.map('map', {
       center: L.latLng(40.9, -73.0),
       zoom: 9,
@@ -21,6 +22,7 @@ export class CenterTopContentComponent implements OnInit {
       renderer: L.canvas()
     });
 
+    // Add basemaps
     this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
   }
 
