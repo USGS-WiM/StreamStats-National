@@ -35,7 +35,9 @@ export class CenterTopContentComponent implements OnInit {
     // Add textbox in bottom left with map scale information
     this._mapService.textBox.addTo(this._mapService.map);
 
-    // L.control.textbox({ position: 'bottomleft' }).addTo(map);
+    // this._mapService.map.locate({setView: true, maxZoom: 16});
+
+    this._mapService.locationButton.addTo(this._mapService.map);
   }
 
 }

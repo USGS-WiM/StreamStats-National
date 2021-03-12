@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParameterCodec, HttpParams } from '@angular/common/http';
 import { Map } from 'leaflet';
-
-// import * as L from 'leaflet';
+import 'leaflet-easybutton';
 declare const L: any;
 
 @Injectable({
@@ -15,6 +14,7 @@ export class MapService {
   public scale: any;
   public zoomHome: any;
   public textBox: any;
+  public locationButton: any;
 
   constructor() {
 
@@ -142,6 +142,7 @@ export class MapService {
       });
       this.zoomHome = new L.Control.zoomHome();
 
+      // Textbox that describes map scale (UNFINISHED- incorrect location and no content yet)
       L.Control.textBox = L.Control.extend({
         onAdd: function(map: Map) {
           var text = L.DomUtil.create('div');
@@ -156,7 +157,19 @@ export class MapService {
       });
       L.control.textbox = function(opts: any) { return new L.Control.textbox(opts);}
       this.textBox = new L.Control.textBox();
-      // L.control.textbox({ position: 'bottomleft' }).addTo(map);
+
+      // Button that shows your location
+      this.locationButton = L.easyButton('<img src="../../../assets/crosshairs-gps.png" style="width:13px;">', function(btn: any, map: Map){ // Need to improve styling of button
+      var locationMarker = new L.CircleMarker([0,0]).addTo(map);
+        map.locate({watch: true, setView: true, maxZoom: 16,  enableHighAccuracy: true})
+          .on('locationfound', function(e){
+            locationMarker.setLatLng(e.latlng);
+            locationMarker.redraw();
+          })
+          .on('locationerror', function(e) {
+            alert("Location error");
+          })
+      });
 
     }
 }
