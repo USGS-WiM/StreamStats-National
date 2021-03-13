@@ -8,7 +8,7 @@ declare const L: any;
   providedIn: 'root'
 })
 export class MapService {
-  public map?: Map;
+  public map!: Map;
   public chosenBaseLayer: string;
   public baseMaps: any;
   public scale: any;
@@ -142,12 +142,36 @@ export class MapService {
       });
       this.zoomHome = new L.Control.zoomHome();
 
-      // Textbox that describes map scale (UNFINISHED- incorrect location and no content yet)
+      // Textbox that describes map scale (UNFINISHED- incorrect location)
+
       L.Control.textBox = L.Control.extend({
         onAdd: function(map: Map) {
           var text = L.DomUtil.create('div');
           text.id = "info_text";
-          text.innerHTML = "<strong>text here</strong>"
+          var scaleNumber;
+          switch(map.getZoom()) {
+            case 19: scaleNumber = '1,128'; break;
+            case 18: scaleNumber = '2,256'; break;
+            case 17: scaleNumber = '4,513'; break;
+            case 16: scaleNumber = '9,027'; break;
+            case 15: scaleNumber = '18,055'; break;
+            case 14: scaleNumber = '36,111'; break;
+            case 13: scaleNumber = '72,223'; break;
+            case 12: scaleNumber = '144,447'; break;
+            case 11: scaleNumber = '288,895'; break;
+            case 10: scaleNumber = '577,790'; break;
+            case 9: scaleNumber = '1,155,581'; break;
+            case 8: scaleNumber = '2,311,162'; break;
+            case 7: scaleNumber = '4,622,324'; break;
+            case 6: scaleNumber = '9,244,649'; break;
+            case 5: scaleNumber = '18,489,298'; break;
+            case 4: scaleNumber = '36,978,596'; break;
+            case 3: scaleNumber = '73,957,193'; break;
+            case 2: scaleNumber = '147,914,387'; break;
+            case 1: scaleNumber = '295,828,775'; break;
+            case 0: scaleNumber = '591,657,550'; break;
+          }
+          text.innerHTML = "<span style='border-radius:3px; background-color: rgba(255,255,255,1); padding: 4px; margin-left: -5px;'>Map Scale: 1:" + scaleNumber + "</i>" // Can this styling be moved?
           return text;
         },
     
@@ -156,7 +180,7 @@ export class MapService {
         }
       });
       L.control.textbox = function(opts: any) { return new L.Control.textbox(opts);}
-      this.textBox = new L.Control.textBox();
+      this.textBox = new L.Control.textBox({position: 'bottomleft'});
 
       // Button that shows your location
       this.locationButton = L.easyButton('<i class="fa fa-crosshairs" style="line-height:1.65; font-size:16px;"></i>', function(btn: any, map: Map){ //Need to improve styling
@@ -170,6 +194,7 @@ export class MapService {
             alert("Location error");
           })
       });
-
     }
+
+    
 }

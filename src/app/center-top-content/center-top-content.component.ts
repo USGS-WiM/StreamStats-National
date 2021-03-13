@@ -34,10 +34,13 @@ export class CenterTopContentComponent implements OnInit {
 
     // Add textbox in bottom left with map scale information
     this._mapService.textBox.addTo(this._mapService.map);
+    this._mapService.map.on('zoomend', e => {
+      this._mapService.textBox.addTo(this._mapService.map); //Reload text box
+  });
 
-    // this._mapService.map.locate({setView: true, maxZoom: 16});
-
+    // Add button to show your location
     this._mapService.locationButton.addTo(this._mapService.map);
+    
   }
 
 }
