@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParameterCodec, HttpParams } from '@angular/common/http';
 import { Map } from 'leaflet';
 import 'leaflet-easybutton';
+// import 'leaflet-compass';
+
 declare const L: any;
 
 @Injectable({
@@ -15,6 +17,7 @@ export class MapService {
   public zoomHome: any;
   public textBox: any;
   public locationButton: any;
+  public compass: any;
 
   constructor() {
 
@@ -194,7 +197,12 @@ export class MapService {
             alert("Location error");
           })
       });
+
+      // Compass
+      // this.compass = new L.Control.Compass({autoActive: true, showDigit:true});
     }
 
     
 }
+
+// Issue: bottomleft elements (map scale and scale bar) are covered by Leaflet attribute text in mobile mode

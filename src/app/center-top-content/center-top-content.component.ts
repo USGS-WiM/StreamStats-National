@@ -40,6 +40,9 @@ export class CenterTopContentComponent implements OnInit {
 
     // Add button to show your location
     this._mapService.locationButton.addTo(this._mapService.map);
+
+    // Add compass
+    // this._mapService.map.addControl(this._mapService.compass);
     
   }
 
