@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
 import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
-import { CenterTopContentComponent } from './center-top-content/center-top-content.component';
+import { MapComponent } from './map/map.component';
 import { CenterBottomContentComponent } from './center-bottom-content/center-bottom-content.component';
 
 @NgModule({
@@ -15,7 +15,7 @@ import { CenterBottomContentComponent } from './center-bottom-content/center-bot
     TopBarComponent,
     SidebarLeftComponent,
     SidebarRightComponent,
-    CenterTopContentComponent,
+    MapComponent,
     CenterBottomContentComponent
   ],
   imports: [

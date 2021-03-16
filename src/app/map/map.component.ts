@@ -4,11 +4,11 @@ import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 
 @Component({
-  selector: 'app-center-top-content',
-  templateUrl: './center-top-content.component.html',
-  styleUrls: ['./center-top-content.component.scss']
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrls: ['./map.component.scss']
 })
-export class CenterTopContentComponent implements OnInit {
+export class MapComponent implements OnInit {
 
   constructor(private _mapService: MapService) {}
 
