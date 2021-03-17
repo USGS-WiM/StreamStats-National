@@ -15,8 +15,8 @@ export class MapComponent implements OnInit {
   ngOnInit() {
     // Initialize map
     this._mapService.map = L.map('map', {
-      center: L.latLng(40.9, -73.0),
-      zoom: 9,
+      center: L.latLng(41.1, -98.7),
+      zoom: 4,
       minZoom: 4,
       maxZoom: 19,
       renderer: L.canvas()
