@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Basic app structure: top bar, left sidebar, right sidebar, map area, bottom section
 -   Automated checks for pull requests
+-   Added leaflet map
 
 ### Changed
 

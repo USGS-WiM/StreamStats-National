@@ -4,22 +4,21 @@ import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 
 @Component({
-  selector: 'app-center-top-content',
-  templateUrl: './center-top-content.component.html',
-  styleUrls: ['./center-top-content.component.scss']
+  selector: 'app-map',
+  templateUrl: './map.component.html',
+  styleUrls: ['./map.component.scss']
 })
-export class CenterTopContentComponent implements OnInit {
+export class MapComponent implements OnInit {
 
   constructor(private _mapService: MapService) {}
 
   ngOnInit() {
     // Initialize map
     this._mapService.map = L.map('map', {
-      zoomControl: false,
-      center: L.latLng(39.83, -98.58),
-      zoom: 3,
-      minZoom: 3,
-      maxZoom: 16,
+      center: L.latLng(41.1, -98.7),
+      zoom: 4,
+      minZoom: 4,
+      maxZoom: 19,
       renderer: L.canvas()
     });
 

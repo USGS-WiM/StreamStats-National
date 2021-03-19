@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MapService } from './shared/services/map.service';
 
 @Component({
@@ -12,8 +12,5 @@ export class AppComponent{
   constructor(public mapService: MapService) {}
 
   ngOnInit() {
-    // this.mapService.ToasterSubject.subscribe(toastType => {
-    //     this.toastType = toastType;
-    // });
   }
 }
