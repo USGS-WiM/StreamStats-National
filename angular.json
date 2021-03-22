@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -28,13 +31,24 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+			  {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/fonts",
+                "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/img",
+                "output": "assets/img/"
+              }
             ],
             "styles": [
               "src/styles.scss",
+			  "node_modules/uswds/dist/css/uswds.min.css",
               "./node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/uswds/dist/js/uswds.min.js"]
           },
           "configurations": {
             "production": {
@@ -92,12 +106,23 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+			  {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/fonts",
+                "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/img",
+                "output": "assets/img/"
+              }
             ],
             "styles": [
+			"node_modules/uswds/dist/css/uswds.min.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": ["node_modules/uswds/dist/js/uswds.min.js"]
           }
         },
         "lint": {
