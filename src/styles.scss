@@ -7,3 +7,54 @@ html,body{
     padding: 0;
     font-family: sans-serif;
 }  
+
+
+
+.sidebar-inner{
+	display: flex;
+	flex-direction: column;
+
+	.sidebar-button{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		width: 60px;
+		height: 60px;
+		text-align: center;
+		font-size: 22px;
+		color: black;
+		border: none;
+		background-color: transparent;
+		margin: 0;
+		padding: 0;
+		border-top: 1px solid rgba(0,0,0,0.1);
+		position: relative;
+
+		i{
+			margin: 0 auto;
+		}
+
+		&:last-child{
+			border-bottom: 1px solid rgba(0,0,0,0.1);
+		}
+	}
+}
+
+// Sidebar popout
+.sidebar-popout{
+	display: block;
+	width: 80%;
+	max-width: 300px;
+	min-width: 300px;
+	position: absolute;
+	top: 0;
+	left: 103%;
+	background-color: white;
+	box-shadow: 0px 15px 25px -4px rgba(30,30,60,0.15);
+	border-radius: 4px;
+	box-sizing: border-box;
+	padding: 10px;
+	min-height: 120px;
+	font-size: 12px;
+	z-index: 1000;
+}
