@@ -33,29 +33,57 @@ html,body{
 			padding: 0;
 			border-top: 1px solid rgba(0,0,0,0.1);
 			position: relative;
-			transition: var(--transition);
+			transition: 0.22s ease-in;
 
 			i{
 				margin: 0 auto;
+				opacity: 1;
+				width: 100%;
+				text-align: center;
 			}
 
 			&:last-child{
 				border-bottom: 1px solid rgba(0,0,0,0.1);
+			}
+			&:after{
+				content: '\f00d';
+				font-family: var(--fontAwesome);
+				width: 100%;
+				text-align: center;
+				opacity: 0;
+				font-size: 30px;
+				padding-top: 2px;
+				box-sizing: border-box;
+			}
+			i,
+			&:after{
+				transform: rotate(0deg);
+				transition: var(--transition);
+				position: absolute;
 			}
 
 
 			&:hover{
 				cursor: pointer;
 				background-color: var(--greyLight);
-				transition: var(--transition);
+				transition: 0.22s ease-in;
 				color: var(--text);
 			}
 
 			&.active{
 				background-color: var(--primary);
+				color: var(--white);
+				i{
+					opacity: 0;
+				}
+				i,
+				&:after{
+					transform: rotate(180deg);
+					transition: var(--transition);
+				}
 
-				i:first-child{
-					color: var(--white);
+				&:after{
+					opacity: 1;
 				}
 
 				&:hover{
