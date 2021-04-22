@@ -7,9 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarRightComponent implements OnInit {
 
-  constructor() { }
+	popout = '';
 
-  ngOnInit(): void {
-  }
+  	constructor() { }
+
+  	ngOnInit(): void {
+  	}
 
 }

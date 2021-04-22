@@ -1,1 +1,75 @@
-<p>Right sidebar</p>
+<div class="sidebar-inner">
+	<!-- Home -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'info' ? popout = '' : popout = 'info'" [ngClass]="{'active': popout == 'info'}">
+			<i class="far fa-info-circle"></i>
+		</button>
+
+		<!-- Sidebar Popout window
+			- These could be moved to separate components,
+			It just needs to be a div with class sidebar-popout within the sidebar-group div
+	
+			Add class "wide" to make it wider,
+			Height will auto expand to fit content, and scroll if too tall
+		-->
+		<div class="sidebar-popout" *ngIf="popout == 'info'">
+			<h3 class="sidebar-popout-header">More Information</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+				This is the content of a button popout window.
+				<br/>
+				Show and hide it with a click on the button.sidebar-button
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Layers -->
+	<div class="sidebar-group">
+
+		<button class="sidebar-button" (click)="popout == 'help' ? popout = '' : popout = 'help'" [ngClass]="{'active': popout == 'help'}">
+			<i class="far fa-question-circle"></i>
+		</button>
+
+		<!-- Sidebar Popout window -->
+		<div class="sidebar-popout" *ngIf="popout == 'help'">
+			<h3 class="sidebar-popout-header">Help</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+				This is the content of a button popout window.
+				<br/>
+				Show and hide it with a click on the button.sidebar-button
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+			</div>
+		</div>
+
+	</div>
+	
+	<!-- Map -->
+	<div class="sidebar-group">
+		<button class="sidebar-button">
+			<i class="far fa-cat"></i>
+		</button>
+	</div>
+</div>
