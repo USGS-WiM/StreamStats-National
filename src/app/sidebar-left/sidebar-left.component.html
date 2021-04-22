@@ -1,18 +1,75 @@
 <div class="sidebar-inner">
 	<!-- Home -->
-	<button class="sidebar-button">
-		<i class="far fa-home"></i>
-	</button>
-	<!-- Layers -->
-	<button class="sidebar-button">
-		<i class="far fa-layer-group"></i>
-	</button>
-	<!-- Map -->
-	<button class="sidebar-button">
-		<i class="far fa-map"></i>
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}">
+			<i class="far fa-map"></i>
+		</button>
 
-		<div class="sidebar-popout">
-			This is the content of a button popout window.
+		<!-- Sidebar Popout window
+			- These could be moved to separate components,
+			It just needs to be a div with class sidebar-popout within the sidebar-group div
+	
+			Add class "wide" to make it wider,
+			Height will auto expand to fit content, and scroll if too tall
+		-->
+		<div class="sidebar-popout" *ngIf="popout == 'map'">
+			<h3 class="sidebar-popout-header">Map Stuff</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+				This is the content of a button popout window.
+				<br/>
+				Show and hide it with a click on the button.sidebar-button
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+			</div>
 		</div>
-	</button>
+
+	</div>
+
+	<!-- Layers -->
+	<div class="sidebar-group">
+
+		<button class="sidebar-button" (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}">
+			<i class="far fa-layer-group"></i>
+		</button>
+
+		<!-- Sidebar Popout window -->
+		<div class="sidebar-popout wide" *ngIf="popout == 'layers'">
+			<h3 class="sidebar-popout-header">Map Layers (Wide popout)</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+				This is the content of a button popout window.
+				<br/>
+				Show and hide it with a click on the button.sidebar-button
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.<br/>
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content, it'll scroll.
+			</div>
+		</div>
+
+	</div>
+	
+	<!-- Map -->
+	<div class="sidebar-group">
+		<button class="sidebar-button">
+			<i class="far fa-dog"></i>
+		</button>
+	</div>
 </div>

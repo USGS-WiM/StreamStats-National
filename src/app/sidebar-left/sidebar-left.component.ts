@@ -7,9 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarLeftComponent implements OnInit {
 
-  constructor() { }
+	popout = '';
 
-  ngOnInit(): void {
-  }
+	
+	title = 'StreamStats-National';
+
+  	constructor() { }
+
+	ngOnInit(): void {
+	}
 
 }
