@@ -4,12 +4,13 @@ import { BehaviorSubject } from 'rxjs';
 import { Map } from 'leaflet';
 import * as esri from 'esri-leaflet';
 import 'leaflet-easybutton';
+// import 'leaflet-compass';
 
 export interface layerControl {
     baseLayers: Array<any>;
 }
 
-// import 'leaflet-compass';
+
 
 declare const L: any;
 
@@ -232,7 +233,7 @@ export class MapService {
         });
 
         // Compass
-        // this.compass = new L.Control.Compass({autoActive: true, showDigit:true});
+        // this.compass = new L.Control.Compass();
     }
 
     private loadLayer(ml: any): any {
