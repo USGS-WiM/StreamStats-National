@@ -208,7 +208,7 @@ export class MapService {
                     case 1: scaleNumber = '295,828,775'; break;
                     case 0: scaleNumber = '591,657,550'; break;
                 }
-                text.innerHTML = "<span style='border-radius:3px; background-color: rgba(255,255,255,1); padding: 4px; margin-left: -5px;'>Map Scale: 1:" + scaleNumber + "</i>" // Can this styling be moved?
+                text.innerHTML = "<span style='border-radius:3px; background-color: rgba(255,255,255,.7); padding: 4px; margin-left: -5px;'>Map Scale: 1:" + scaleNumber + "</i>" // Can this styling be moved?
                 return text;
             },
 
