@@ -19,7 +19,8 @@ export class MapComponent implements OnInit {
       zoom: 4,
       minZoom: 4,
       maxZoom: 19,
-      renderer: L.canvas()
+      renderer: L.canvas(),
+      zoomControl: false
     });
 
     // Add basemaps
