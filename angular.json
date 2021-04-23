@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -20,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/StreamStats-National",
+            "outputPath": "dist/",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -28,14 +31,26 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+			  {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/fonts",
+                "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/img",
+                "output": "assets/img/"
+              }
             ],
             "styles": [
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
-              "./node_modules/font-awesome/css/font-awesome.css"
+              "./node_modules/font-awesome/css/font-awesome.css",
+			        "node_modules/uswds/dist/css/uswds.min.css",
+              "./node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/uswds/dist/js/uswds.min.js"]
           },
           "configurations": {
             "production": {
@@ -93,12 +108,23 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+			  {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/fonts",
+                "output": "assets/fonts/"
+              },
+              {
+                "glob": "*",
+                "input": "node_modules/uswds/dist/img",
+                "output": "assets/img/"
+              }
             ],
             "styles": [
+			"node_modules/uswds/dist/css/uswds.min.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": ["node_modules/uswds/dist/js/uswds.min.js"]
           }
         },
         "lint": {

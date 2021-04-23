@@ -1,6 +1,161 @@
+// Import SCSS partials
+@import 'variables.scss';
+
+
 /* You can add global styles to this file, and also import other style files */
 html,body{
     margin: 0;
     padding: 0;
     font-family: sans-serif;
 }  
+
+
+
+.sidebar-inner{
+	display: flex;
+	flex-direction: column;
+
+	.sidebar-group{
+		position: relative;
+
+		.sidebar-button{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 60px;
+			height: 60px;
+			text-align: center;
+			font-size: 22px;
+			color: var(--textLight);
+			border: none;
+			background-color: transparent;
+			margin: 0;
+			padding: 0;
+			border-top: 1px solid rgba(0,0,0,0.1);
+			position: relative;
+			transition: 0.22s ease-in;
+
+			i{
+				margin: 0 auto;
+				opacity: 1;
+				width: 100%;
+				text-align: center;
+			}
+
+			&:last-child{
+				border-bottom: 1px solid rgba(0,0,0,0.1);
+			}
+			&:after{
+				content: '\f00d';
+				font-family: var(--fontAwesome);
+				width: 100%;
+				text-align: center;
+				opacity: 0;
+				font-size: 30px;
+				padding-top: 2px;
+				box-sizing: border-box;
+			}
+			i,
+			&:after{
+				transform: rotate(0deg);
+				transition: var(--transition);
+				position: absolute;
+			}
+
+
+			&:hover{
+				cursor: pointer;
+				background-color: var(--greyLight);
+				transition: 0.22s ease-in;
+				color: var(--text);
+			}
+
+			&.active{
+				background-color: var(--primary);
+				color: var(--white);
+				i{
+					opacity: 0;
+				}
+				i,
+				&:after{
+					transform: rotate(180deg);
+					transition: var(--transition);
+				}
+
+				&:after{
+					opacity: 1;
+				}
+
+				&:hover{
+					background-color: var(--primaryDark);
+				}
+			}
+
+		}
+	}
+}
+
+// Sidebar popout
+.sidebar-popout{
+	display: block;
+	width: 80%;
+	max-width: 300px;
+	min-width: 300px;
+	position: absolute;
+	top: 0;
+	left: 103%;
+	box-shadow: var(--shadow);
+	border-radius: 4px;
+	margin-left: 5px;
+	box-sizing: border-box;
+	min-height: 120px;
+	font-size: 12px;
+	z-index: 2000;
+	max-height: 50vh;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	color: var(--text);
+	background-color: var(--background);
+	border: 1px solid var(--borderLight);
+
+	&.wide{
+		max-width: 600px;
+		min-width: 600px;
+	}
+
+
+	.sidebar-popout-header{
+		padding: 15px 10px;
+		margin: 0;
+		box-shadow: var(--shadowLight);
+	}
+
+	// Content, scrollable
+	.sidebar-popout-content{
+		box-sizing: border-box;
+		padding: 15px;
+		flex-grow: 3;
+		overflow: auto;
+
+	}
+}
+
+// Right sidebar popout on left
+app-sidebar-right{
+
+	.sidebar-popout{
+		position: absolute;
+		top: 0;
+		right: 103%;
+		left: unset;
+		margin-right: 5px;
+		margin-left: 0;
+	}
+
+}
+
+// Moves top popover down a bit so it doesn't align with top bar
+.sidebar-inner .sidebar-group:first-child .sidebar-popout{
+	margin-top: 10px;
+}

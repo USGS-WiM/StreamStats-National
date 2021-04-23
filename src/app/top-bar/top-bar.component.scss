@@ -1,7 +1,34 @@
-:host {
-    display: flex;
-    height: 60px;
-    background-color: #142234;
-    width: 100%;
-    color: white;
+// :host {
+//     display: flex;
+//     height: 60px;
+//     background-color: #142234;
+//     width: 100%;
+//     color: white;
+// }
+
+// Center USA banner
+.usa-banner__inner{
+	display: flex;
+	justify-content: center;
+}
+
+
+// Overwrite USWDS max width
+.usa-nav-container{
+	max-width: none;
+
+	// Set padding on sides to match width of left/right sidebars
+	padding-left: 60px;
+	padding-right: 60px;
+}
+
+.usa-navbar{
+	height: 49px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.usa-logo{
+	margin: 0;
 }
