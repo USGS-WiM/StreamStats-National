@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 
 import * as L from 'leaflet';
+import { AppService } from '../shared/services/app.service';
 
 @Component({
   selector: 'app-map',
@@ -10,7 +11,9 @@ import * as L from 'leaflet';
 })
 export class MapComponent implements OnInit {
 
-  constructor(private _mapService: MapService) {}
+  private clickPoint = {};
+
+  constructor(private _mapService: MapService, private _appService: AppService) { }
 
   ngOnInit() {
     // Initialize map
@@ -24,6 +27,23 @@ export class MapComponent implements OnInit {
 
     // Add basemaps
     this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
+
+    this._appService.showWorkflowComponent.subscribe((resp: boolean) => {
+      if (resp) {
+        this.onMouseClick();
+      }
+    })
+    this._mapService.clickPoint.subscribe((point: {}) => {
+      this.clickPoint = point;
+    })
+    //this._mapService.postLatLng();
   }
+
+  public onMouseClick() {
+    this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
+      this._mapService.setClickPoint(evt.latlng)
+    }) 
+  
+  };
 
 }

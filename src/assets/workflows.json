@@ -1,0 +1,53 @@
+
+[
+    {
+        "title": "Delineation",
+        "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
+        "icon": "fa fa-draw-polygon",
+        "steps":
+        [
+            {
+                "title": "Select Delineation Process",
+                "valueType": "option",
+                "options":
+                [
+                    "NLDI Delineation",
+                    "State-Based Delineation",
+                    "Open-Source Delineation"
+                ],
+                "value":"test"
+            },
+            {
+                "title":"Select Delineation Point"
+            }
+        ],
+        "output": 
+        {
+            "value": "",
+            "valueType": "geojson",
+            "reportDisplayType": "map"
+        }
+    },
+    {
+        "title": "Flowtrace",
+        "description": "Description Here."
+    },
+    {
+        "title": "Basin Characteristics",
+        "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area."
+    },
+    {
+        "title": "Flow Statistics",
+        "description": "Description Here."
+    },
+    {
+        "title": "Wateruse",
+        "description": "Description Here"
+    },
+    {
+        "title": "Regulation",
+        "description": "Description Here."
+    }
+
+]
+ 

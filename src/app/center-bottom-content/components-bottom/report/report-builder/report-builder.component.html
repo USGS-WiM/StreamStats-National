@@ -1,0 +1,8 @@
+<p>report-builder works!</p>
+
+<h3>Choose Workflows:</h3>
+
+<div *ngFor="let workflow of workflows, let i = index">
+    <button (click)="addRemoveWorkflow(workflow)">{{ workflow.title }}</button>
+</div>
+<button (click)="showHideWorkflows()">Continue</button>

@@ -72,4 +72,23 @@
 			<i class="far fa-cat"></i>
 		</button>
 	</div>
+
+	<!-- Report -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'report' ? popout = '' : popout = 'report'" [ngClass]="{'active': popout == 'report'}">
+			<i class="far fa-file-chart-line"></i>
+		</button>
+
+		<div class="sidebar-popout" *ngIf="popout == 'report'">
+			<h3 class="sidebar-popout-header">Report Overview</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+
+				<app-report [clickPoint]="currentClick"></app-report>
+
+			</div>
+		</div>
+	</div>
+
 </div>
