@@ -23,10 +23,6 @@ export class WorkflowService {
     this.configSettings = this._configService.getConfiguration();
   }
 
-  // public getWorkflows(): Observable<any> {
-  //   return this._http.get('./assets/workflows.json')
-  // }
-
   // Get all of the workflows from external json file
   private _workflowSubject: Subject<Array<Workflow>> = new Subject<Array<Workflow>>();
   public get workflows(): Observable<Array<Workflow>> {
@@ -36,15 +32,6 @@ export class WorkflowService {
     return this._http.get(this.configSettings.workflowsURL, { headers: this.jsonHeader })
   }
 
-  // Show/Hide Workflow Component - Currently in AppService, should be here??
-  // private _showHideWorkflowComponent: Subject<boolean> = new Subject<boolean>();
-  // public setWorkflowComponent(val: any) {
-  //   this._showHideWorkflowComponent.next(val);
-  // }
-  // public get showWorkflowComponent(): any {
-  //   return this._showHideWorkflowComponent.asObservable();
-  // }
-
   //get all selected workflows
   private _selectedWorkflow: BehaviorSubject<Array<Workflow>> = new BehaviorSubject<Array<Workflow>>([]);
   public setSelectedWorkflows(w: Array<Workflow>) {
@@ -53,9 +40,5 @@ export class WorkflowService {
   public get selectedWorkflow(): Observable<Array<Workflow>> {
     return this._selectedWorkflow.asObservable();
   }
-
-
-  //subscribe to selected workflow data??
-
   
 }

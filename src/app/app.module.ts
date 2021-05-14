@@ -12,7 +12,6 @@ import { MapComponent } from './map/map.component';
 import { CenterBottomContentComponent } from './center-bottom-content/center-bottom-content.component';
 
 import { AppService } from './shared/services/app.service';
-import { ComponentService } from './shared/services/component.service';
 import { ConfigService } from './shared/config/config.service';
 import { WorkflowService } from './shared/services/workflow.service';
 import { environment } from 'src/environments/environment';
@@ -57,8 +56,7 @@ export function ConfigLoader(configService: ConfigService) {
   ],
   providers: [
     AppService,
-    ConfigService, 
-    ComponentService,
+    ConfigService,
     WorkflowService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
   ],

@@ -6,7 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
-
+  // component communication between sidebar right and report component
   @Input() clickPoint!: object;
 
   constructor() { }

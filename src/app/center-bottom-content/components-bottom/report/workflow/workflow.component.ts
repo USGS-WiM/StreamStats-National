@@ -7,13 +7,13 @@ import { Workflow } from 'src/app/shared/interfaces/workflow';
   styleUrls: ['./workflow.component.scss']
 })
 export class WorkflowComponent implements OnInit {
-
+  // component communication between center bottom and workflow component 
   @Input() selectedWorkflows: Array<Workflow> = [];
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.selectedWorkflows)
+
   }
 
 }

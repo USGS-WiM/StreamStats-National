@@ -72,39 +72,8 @@ export class MapService {
         this.configSettings = this._configService.getConfiguration();
     }
 
-    postLatLng() {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response' };
-        
-        return this._http
-         .post(this.configSettings.nldiBaseURL + this.configSettings.nldiSplitCatchmentURL, {
-           "inputs": [
-             {
-               "id": "lat",
-               "type": "text/plain",
-               "value": "45"
-             },
-             {
-               "id": "lng",
-               "type": "text/plain",
-               "value": "-93"
-             },
-             {
-               "id": "upstream",
-               "type": "text/plain",
-               "value": "False"
-             }
-           ]
-         }, options)
-         .subscribe(
-           res => {
-            //console.log(res.body)
-             return res.body;
-             
-           }
-         )
-      }
-
-    // Get user click
+    // Get user map click, used in delineation 
+    // TODO: add additional functionality to be able to allow user to click multiple delineation points, future functionality
     private _clickPointSubject: Subject<any> = new Subject<any>();
     public setClickPoint(obj: { lat: number; lng: number; }) {
         this._clickPointSubject.next(obj);

@@ -27,18 +27,18 @@ export class MapComponent implements OnInit {
 
     // Add basemaps
     this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
-
+    // If workflow component is showing, then allow for setting and communicating click point
     this._appService.showWorkflowComponent.subscribe((resp: boolean) => {
       if (resp) {
         this.onMouseClick();
       }
     })
+    // setting local click point variable
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickPoint = point;
     })
-    //this._mapService.postLatLng();
   }
-
+  // On map click, set click point value, for delineation
   public onMouseClick() {
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng)
