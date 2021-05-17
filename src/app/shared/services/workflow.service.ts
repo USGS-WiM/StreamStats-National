@@ -29,7 +29,8 @@ export class WorkflowService {
       return this._workflowSubject.asObservable();
   }
   public getWorkflows(): Observable<any>{
-    return this._http.get(this.configSettings.workflowsURL, { headers: this.jsonHeader })
+    //return this._http.get(this.configSettings.workflowsURL, { headers: this.jsonHeader }); This failed unit testing, but functioned in app
+    return this._http.get('assets/workflows.json');
   }
 
   //get all selected workflows

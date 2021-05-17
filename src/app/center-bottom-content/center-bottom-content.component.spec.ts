@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CenterBottomContentComponent } from './center-bottom-content.component';
@@ -8,6 +9,9 @@ describe('CenterBottomContentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        HttpClientModule
+      ],
       declarations: [ CenterBottomContentComponent ]
     })
     .compileComponents();
@@ -22,4 +26,7 @@ describe('CenterBottomContentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  afterEach(() => {
+    fixture.destroy();
+  })
 });
