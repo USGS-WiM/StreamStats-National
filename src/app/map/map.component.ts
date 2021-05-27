@@ -11,7 +11,7 @@ import { AppService } from '../shared/services/app.service';
 })
 export class MapComponent implements OnInit {
 
-  private clickPoint = {};
+  public clickPoint = {};
 
   constructor(private _mapService: MapService, private _appService: AppService) { }
 

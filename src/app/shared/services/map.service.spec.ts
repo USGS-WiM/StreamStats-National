@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { MapService } from './map.service';
@@ -8,8 +8,11 @@ describe('MapService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      providers: [
+        MapService
+      ],
       imports: [
-        HttpClientModule
+        HttpClientTestingModule
       ]
     });
     service = TestBed.inject(MapService);

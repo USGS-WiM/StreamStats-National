@@ -6,6 +6,6 @@ export interface Workflow {
     description: string;
     icon: string;
     steps: Array<Step>;
-    Output: Array<Output>;
-    isSelected: boolean
+    output: Array<Output>;
+    isSelected?: boolean
 }

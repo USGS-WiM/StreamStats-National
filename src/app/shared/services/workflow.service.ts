@@ -1,7 +1,7 @@
 // Workflow-related: selecting workflows, carrying out workflows, adding report items, etc. 
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, Input } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config';

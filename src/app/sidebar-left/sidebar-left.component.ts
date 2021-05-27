@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../shared/services/app.service';
-import { WorkflowService } from '../shared/services/workflow.service';
 
 @Component({
   selector: 'app-sidebar-left',
@@ -14,7 +13,7 @@ export class SidebarLeftComponent implements OnInit {
 
 	title = 'StreamStats-National';
 
-  	constructor(private _workflowService: WorkflowService, private _appService: AppService) { }
+  	constructor(private _appService: AppService) { }
 
 	ngOnInit(): void {
 	}

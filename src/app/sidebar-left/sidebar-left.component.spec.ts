@@ -1,5 +1,6 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AppService } from '../shared/services/app.service';
 
 import { SidebarLeftComponent } from './sidebar-left.component';
 
@@ -10,9 +11,13 @@ describe('SidebarLeftComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        HttpClientModule
+        HttpClientTestingModule
       ],
-      declarations: [ SidebarLeftComponent ]
+      declarations: [ SidebarLeftComponent ],
+      providers: [
+        SidebarLeftComponent,
+        { provide: AppService }
+      ]
     })
     .compileComponents();
   });
@@ -26,4 +31,12 @@ describe('SidebarLeftComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('#showHideReportBuilder() should toggle #showHideReport', () => {
+    expect(component.showHideReport).toBeFalsy();
+    component.showHideReportBuilder();
+    expect(component.showHideReport).toBe(true);
+    component.showHideReportBuilder();
+    expect(component.showHideReport).toBe(false);
+  })
 });

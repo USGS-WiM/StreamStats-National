@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReportComponent } from './report.component';
@@ -10,7 +10,7 @@ describe('ReportComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        HttpClientModule
+        HttpClientTestingModule
       ],
       declarations: [ ReportComponent ]
     })
@@ -26,4 +26,13 @@ describe('ReportComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should listen for #clickPoint from parent component', () => {
+    const clickPoint: object = {
+      lat: 45,
+      lng: -93
+    };
+    component.clickPoint = clickPoint;
+    expect(component.clickPoint).toBe(clickPoint);
+  })
 });
