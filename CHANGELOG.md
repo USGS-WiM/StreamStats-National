@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Automated checks for pull requests
 -   Added leaflet map
 -   Updated site icon to WIM favicon
+-   Added template components and initial hookups into basic app structure
 
 ### Changed
 
