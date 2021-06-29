@@ -8,6 +8,7 @@ import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
 import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
 import { MapComponent } from './map/map.component';
 import { CenterBottomContentComponent } from './center-bottom-content/center-bottom-content.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { CenterBottomContentComponent } from './center-bottom-content/center-bot
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

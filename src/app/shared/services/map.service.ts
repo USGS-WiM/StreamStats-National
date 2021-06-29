@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParameterCodec, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParameterCodec, HttpParams } from '@angular/common/http';
 import { Map } from 'leaflet';
 
 import * as L from 'leaflet';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,15 @@ export class MapService {
   public map?: Map;
   public chosenBaseLayer: string;
   public baseMaps: any;
+  public clickLatLng!: object;
+
+  private jsonHeader: HttpHeaders = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+  })
 
 
-  constructor() {
+  constructor(private _http: HttpClient) {
       this.chosenBaseLayer = 'Topo';
 
       this.baseMaps = {
@@ -59,5 +66,45 @@ export class MapService {
           )
       };
 
+    }
+    
+    private _clickPointSubject: Subject<any> = new Subject<any>();
+    public setClickPoint(obj: { lat: number; lng: number; }) {
+        this._clickPointSubject.next(obj);
+    }
+    public get clickPoint(): any {
+        return this._clickPointSubject.asObservable();
+    }
+
+    //POST - to add later in settings service to be used thorough other services/app
+    // public postEntity(entity: object, url: string) {
+    //     return this._http
+    //     .post(url, entity, { headers: this.jsonHeader, observe: 'response' })
+    //     .subscribe(res => {
+    //         return res.body;
+    //     })
+    // }
+
+    private _delineationSubject: Subject<any> = new Subject<any>();
+    public getDelineation(entity: object) {
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response'}
+
+        // to be added to config file once other issues are finished
+        const nldiURL = "https://nhgf.wim.usgs.gov/processes/nldi-splitcatchment/jobs?response=document";
+
+        // return this._http.post(nldiURL, entity, options).subscribe(resp => {
+        //     console.log(resp.body)
+        //     //this._delineationSubject.next(entity);
+        // })
+        return this._http
+        .post(nldiURL, entity, options)
+        .subscribe(resp => {
+            //console.log(resp.body)
+            this._delineationSubject.next(resp.body);
+            return resp.body;
+        })
+    }
+    public get delineationPolygon(): any {
+        return this._delineationSubject.asObservable();
     }
 }
