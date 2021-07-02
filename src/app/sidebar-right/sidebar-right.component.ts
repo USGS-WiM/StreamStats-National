@@ -10,15 +10,9 @@ export class SidebarRightComponent implements OnInit {
 	
 	popout = '';
 
-	currentClick!: object;
-
   	constructor(private _mapService: MapService) { }
 
   	ngOnInit(): void {  
-		// Getting current click point from map service to communicate to report component
-		this._mapService.clickPoint.subscribe((point: object) => {
-			this.currentClick = point; 
-		});
   	}
 
 }

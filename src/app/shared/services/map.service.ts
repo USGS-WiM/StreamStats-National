@@ -6,7 +6,7 @@ import { Map } from 'leaflet';
 import * as L from 'leaflet';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from '../config/config.service';
-import { Config } from '../interfaces/config';
+import { Config } from '../interfaces/config/config';
 import { Subject } from 'rxjs';
 
 @Injectable({

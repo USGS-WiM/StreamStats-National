@@ -14,6 +14,7 @@ html,body{
 .sidebar-inner{
 	display: flex;
 	flex-direction: column;
+	flex-grow: 3;
 
 	.sidebar-group{
 		position: relative;
@@ -40,6 +41,15 @@ html,body{
 				opacity: 1;
 				width: 100%;
 				text-align: center;
+			}
+
+			.sb-text{
+				font-size: 12px;
+				text-align: center;
+				font-weight: 600;
+				display: block;
+				margin: 0 auto;
+				letter-spacing: -0.3px;
 			}
 
 			&:last-child{
@@ -82,6 +92,10 @@ html,body{
 					transition: var(--transition);
 				}
 
+				.sb-text{
+					display: none;
+				}
+
 				&:after{
 					opacity: 1;
 				}
@@ -93,6 +107,12 @@ html,body{
 
 		}
 	}
+}
+
+// Spacer
+.sidebar-spacer{
+	flex-grow: 3;
+	display: block;
 }
 
 // Sidebar popout
@@ -124,6 +144,14 @@ html,body{
 		min-width: 600px;
 	}
 
+	&.full{
+		max-width: 90vw;
+		min-width: 90vw;
+	}
+	&.at-bottom{
+		top: unset;
+		bottom: 0;
+	}
 
 	.sidebar-popout-header{
 		padding: 15px 10px;
@@ -158,4 +186,63 @@ app-sidebar-right{
 // Moves top popover down a bit so it doesn't align with top bar
 .sidebar-inner .sidebar-group:first-child .sidebar-popout{
 	margin-top: 10px;
+}
+
+// Vertical tab display
+.vertical-tabs{
+	display: flex;
+
+	.v-tabs{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		box-sizing: border-box;
+		padding: 10px 5px 10px 15px;
+
+		button{
+			background-color: transparent;
+			border: none;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			font-size: 22px;
+			margin: 3px auto;
+			padding: 0 0;
+			height: 40px;
+			width: 40px;
+			background-color: var(--greyLight);
+			border-radius: 50%;
+
+			i{
+				display: block;
+				text-align: center;
+				width: 100%;
+			}
+
+			&:hover{
+				background-color: var(--grey);
+				transition: var(--transition);
+				cursor: pointer;
+
+				i{
+					color: var(--primary);
+				}
+			}
+
+			&.active{
+				border-bottom-right-radius: 0;
+				background-color: var(--primary);
+
+				i{
+					color: var(--white);
+				}
+			}
+		}
+	}
+
+	.v-tab-body{
+		flex-grow: 3;
+		box-sizing: border-box;
+		padding: 15px;
+	}
 }

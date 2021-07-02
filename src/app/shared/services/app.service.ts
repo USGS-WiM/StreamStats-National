@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
-import { Config } from '../interfaces/config';
+import { Config } from '../interfaces/config/config';
 
 @Injectable({
   providedIn: 'root'

@@ -4,8 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
-import { Config } from '../interfaces/config';
-import { Workflow } from '../interfaces/workflow';
+import { Config } from '../interfaces/config/config';
+import { Workflow } from '../interfaces/workflow/workflow';
 
 @Injectable({
   providedIn: 'root'
@@ -29,8 +29,8 @@ export class WorkflowService {
       return this._workflowSubject.asObservable();
   }
   public getWorkflows(): Observable<any>{
-    //return this._http.get(this.configSettings.workflowsURL, { headers: this.jsonHeader }); This failed unit testing, but functioned in app
-    return this._http.get('assets/workflows.json');
+    return this._http.get(this.configSettings.workflowsURL, { headers: this.jsonHeader }); //This failed unit testing, but functioned in app
+    //return this._http.get('assets/workflows.json');
   }
 
   //get all selected workflows

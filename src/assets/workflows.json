@@ -1,8 +1,8 @@
-
 [
     {
         "title": "Delineation",
         "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
+        "functionality": "Core",
         "icon": "fa fa-draw-polygon",
         "steps":
         [
@@ -30,24 +30,33 @@
     },
     {
         "title": "Flowtrace",
-        "description": "Description Here."
+        "description": "Description Here.",
+        "functionality": "Core"
     },
     {
         "title": "Basin Characteristics",
-        "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area."
+        "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area.",
+        "functionality": "Core"
     },
     {
         "title": "Flow Statistics",
-        "description": "Description Here."
+        "description": "Description Here.",
+        "functionality": "Core"
     },
     {
         "title": "Wateruse",
-        "description": "Description Here"
+        "description": "Description Here",
+        "functionality": "State"
     },
     {
         "title": "Regulation",
-        "description": "Description Here."
+        "description": "Description Here.",
+        "functionality": "State"
+    },
+    {
+        "title": "Other",
+        "description": "Description Here.",
+        "functionality": "Additional"
     }
 
 ]
- 

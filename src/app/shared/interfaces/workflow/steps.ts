@@ -1,6 +1,6 @@
 import { Option } from './option';
 
-export interface Step {
+export interface Steps {
     title: string;
     valueType: string;
     options: Array<Option>;

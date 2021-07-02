@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Workflow } from 'src/app/shared/interfaces/workflow';
+import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 
 @Component({
   selector: 'app-workflow',
@@ -8,12 +8,11 @@ import { Workflow } from 'src/app/shared/interfaces/workflow';
 })
 export class WorkflowComponent implements OnInit {
   // component communication between center bottom and workflow component 
-  @Input() selectedWorkflows: Array<Workflow> = [];
+  @Input() workflow!: Workflow;
 
   constructor() { }
 
   ngOnInit(): void {
-
   }
 
 }
