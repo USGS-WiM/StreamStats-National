@@ -27,12 +27,12 @@ describe('ReportComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should listen for #clickPoint from parent component', () => {
-    const clickPoint: object = {
-      lat: 45,
-      lng: -93
-    };
-    component.clickPoint = clickPoint;
-    expect(component.clickPoint).toBe(clickPoint);
-  })
+  // it('should listen for #clickPoint from parent component', () => {
+  //   const clickPoint: object = {
+  //     lat: 45,
+  //     lng: -93
+  //   };
+    //component.clickPoint = clickPoint;
+    //expect(component.clickPoint).toBe(clickPoint);
+  //})
 });

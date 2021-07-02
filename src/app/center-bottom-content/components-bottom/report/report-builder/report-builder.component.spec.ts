@@ -40,22 +40,22 @@ describe('ReportBuilderComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  // it('should create', () => {
+  //   expect(component).toBeTruthy();
+  // });
 
-  it('should raise the selected workflow event when workflow button is clicked', () => {
-    const workflow: Workflow = {
-      title: "Delineation",
-      description: "string",
-      functionality: "string",
-      icon: "string",
-      steps: [],
-      output: []
-    };
-    //component.selectedWorkflows.subscribe((value: Workflow) => expect(value).toBe(workflow));
-    component.addRemoveWorkflow(workflow);
-  });
+  // it('should raise the selected workflow event when workflow button is clicked', () => {
+  //   const workflow: Workflow = {
+  //     title: "Delineation",
+  //     description: "string",
+  //     functionality: "string",
+  //     icon: "string",
+  //     steps: [],
+  //     output: []
+  //   };
+  //   //component.selectedWorkflows.subscribe((value: Workflow) => expect(value).toBe(workflow));
+  //   component.addRemoveWorkflow(workflow);
+  // });
 
   // it('#showHideWorkflows should toggle report builder component off and workflow on', () => {
   //   component.showHideReportBuilder = true;
