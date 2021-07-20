@@ -13,7 +13,7 @@ export class MapComponent implements OnInit {
 
   public clickPoint = {};
 
-  constructor(private _mapService: MapService, private _appService: AppService) { }
+  constructor(private _mapService: MapService) { }
 
   ngOnInit() {
     // Initialize map
@@ -27,12 +27,7 @@ export class MapComponent implements OnInit {
 
     // Add basemaps
     this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
-    // If workflow component is showing, then allow for setting and communicating click point
-    this._appService.showWorkflowComponent.subscribe((resp: boolean) => {
-      if (resp) {
-        this.onMouseClick();
-      }
-    })
+
     // setting local click point variable
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickPoint = point;

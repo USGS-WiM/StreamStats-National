@@ -21,9 +21,4 @@ describe('AppService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-
-  it('#setReportBuilder should return false when boolean value is false', () => {
-    const falseResp = false;
-    expect(service.setReportBuilder(falseResp)).toBeFalsy();
-  });
 });

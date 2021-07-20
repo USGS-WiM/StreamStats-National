@@ -28,15 +28,7 @@ describe('SidebarLeftComponent', () => {
     fixture.detectChanges();
   });
 
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
-
-  // it('#showHideReportBuilder() should toggle #showHideReport', () => {
-  //   expect(component.showHideReport).toBeFalsy();
-  //   component.showHideReportBuilder();
-  //   expect(component.showHideReport).toBe(true);
-  //   component.showHideReportBuilder();
-  //   expect(component.showHideReport).toBe(false);
-  // })
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

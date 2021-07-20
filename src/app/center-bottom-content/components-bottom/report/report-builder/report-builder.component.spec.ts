@@ -40,31 +40,9 @@ describe('ReportBuilderComponent', () => {
     fixture.detectChanges();
   });
 
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
-
-  // it('should raise the selected workflow event when workflow button is clicked', () => {
-  //   const workflow: Workflow = {
-  //     title: "Delineation",
-  //     description: "string",
-  //     functionality: "string",
-  //     icon: "string",
-  //     steps: [],
-  //     output: []
-  //   };
-  //   //component.selectedWorkflows.subscribe((value: Workflow) => expect(value).toBe(workflow));
-  //   component.addRemoveWorkflow(workflow);
-  // });
-
-  // it('#showHideWorkflows should toggle report builder component off and workflow on', () => {
-  //   component.showHideReportBuilder = true;
-  //   component.isReportBuilder.subscribe(boolean => expect(boolean).toBe(true));
-  //   component.showHideWorkflows();
-  //   component.isReportBuilder.subscribe(boolean => expect(boolean).toBe(false));
-  //   component.isWorkflow.subscribe(boolean => expect(boolean).toBe(true));
-    
-  // });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
   
   // TODO: update to make sure certain elements are loading in the DOM once more finalized. 
   // it('should have <h3> with "Choose Workflows:"', () => {

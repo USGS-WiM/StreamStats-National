@@ -113,9 +113,15 @@
 
 	<!-- Report Builder -->
 	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="showHideReportBuilder()">
+		<button class="sidebar-button" (click)="popout == 'reportBuilder' ? popout = '' : popout = 'reportBuilder'" [ngClass]="{'active': popout == 'reportBuilder'}">
 			<span class="sb-text">Report Builder</span>
 		</button>
+		
+		<!-- Report Builder window -->
+		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'reportBuilder'">
+			<h3 class="sidebar-popout-header">Choose your Workflows</h3>
+			<app-center-bottom-content></app-center-bottom-content>
+		</div>
 	</div>
 
 	<!-- Map Options -->

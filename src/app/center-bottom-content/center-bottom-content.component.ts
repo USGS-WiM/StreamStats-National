@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { ConfigService } from '../shared/config/config.service';
-import { AppService } from '../shared/services/app.service';
+import { Component, Input } from '@angular/core';
 
 // interfaces
-import { Config } from '../shared/interfaces/config/config';
+import { Workflow } from '../shared/interfaces/workflow/workflow';
+import { WorkflowService } from '../shared/services/workflow.service';
 
 @Component({
   selector: 'app-center-bottom-content',
@@ -11,21 +10,16 @@ import { Config } from '../shared/interfaces/config/config';
   styleUrls: ['./center-bottom-content.component.scss']
 })
 export class CenterBottomContentComponent {
-  public showHideReportBuilder!: boolean;
-  public showHideWorkflow!: boolean;
-  private configSettings: Config;
+  public selectedWorkflows: Array<Workflow> = [];
+  reportBuilderTab ='selection';
 
-  constructor(private _appService: AppService, private _configService: ConfigService) { 
-    this.configSettings = this._configService.getConfiguration();
+  constructor(private _workflowService: WorkflowService) { 
   }
 
   ngOnInit(): void {
-    this._appService.showReportBuilder.subscribe((resp: boolean) => {
-      this.showHideReportBuilder = resp // show/hide report builder from click on Sidebar Left
-    });
-    this._appService.showWorkflowComponent.subscribe((resp: boolean) => {
-      this.showHideWorkflow = resp // show/hide workflow component
+    this._workflowService.selectedWorkflow.subscribe((res) => {
+      this.selectedWorkflows = res;
+      console.log(res)
     });
   }
-
 }
