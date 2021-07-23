@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { WorkflowService } from './workflow.service';
 
 describe('WorkflowService', () => {
-  let service: WorkflowService;
+  let workflowService: WorkflowService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -12,10 +12,17 @@ describe('WorkflowService', () => {
         HttpClientTestingModule
       ]
     });
-    service = TestBed.inject(WorkflowService);
+    workflowService = TestBed.inject(WorkflowService);
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(workflowService).toBeTruthy();
   });
+
+  it('#getObservableValue should return value from observable', () => {
+    workflowService.getWorkflows().subscribe(value => {
+      expect(value).toBe('observable value');
+    });
+  });
+
 });

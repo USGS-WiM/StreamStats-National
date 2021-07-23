@@ -4,11 +4,11 @@ import { AppService } from 'src/app/shared/services/app.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
 
 @Component({
-  selector: 'app-report-builder',
-  templateUrl: './report-builder.component.html',
-  styleUrls: ['./report-builder.component.scss']
+  selector: 'app-workflow-selection',
+  templateUrl: './workflow-selection.component.html',
+  styleUrls: ['./workflow-selection.component.scss']
 })
-export class ReportBuilderComponent implements OnInit {
+export class WorkflowSelectionComponent implements OnInit {
 
   public workflows: Array<Workflow> = [];
   public selectedWorkflows: Array<Workflow> = [];
@@ -24,7 +24,7 @@ export class ReportBuilderComponent implements OnInit {
   // Gets all workflows that user has selected/deselected and sets selected workflow
   addRemoveWorkflow(selectedWorkflow: Workflow) {
     const index = this.selectedWorkflows.indexOf(selectedWorkflow);
-    if(index === -1) {
+    if (index === -1) {
       this.selectedWorkflows.push(selectedWorkflow);
     } else {
       this.selectedWorkflows.splice(index, 1)

@@ -23,7 +23,7 @@ import { WorkflowComponent } from './center-bottom-content/components-bottom/rep
 import { MapOptionsComponent } from './center-bottom-content/components-bottom/map-options/map-options.component';
 import { DiscoverComponent } from './center-bottom-content/components-bottom/discover/discover.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
-import { ReportBuilderComponent } from './center-bottom-content/components-bottom/report/report-builder/report-builder.component';
+import { WorkflowSelectionComponent } from './center-bottom-content/components-bottom/report/workflow-selection/workflow-selection.component';
 
 
 
@@ -46,7 +46,7 @@ export function ConfigLoader(configService: ConfigService) {
     MapOptionsComponent,
     DiscoverComponent,
     LoaderComponent,
-    ReportBuilderComponent
+    WorkflowSelectionComponent
   ],
   imports: [
     BrowserModule,
