@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { AppService } from 'src/app/shared/services/app.service';
 
-import { ReportBuilderComponent } from './report-builder.component';
+import { ReportBuilderComponent } from './workflow-selection.component';
 
 class MockAppService {
   setReportBuilder(val: any) {

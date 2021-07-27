@@ -1,0 +1,3 @@
+<div *ngFor="let workflow of workflows; let i = index">
+    <button (click)="addRemoveWorkflow(workflow)">{{ workflow.title }}</button>
+</div>
