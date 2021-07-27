@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { AppService } from 'src/app/shared/services/app.service';
 
-import { ReportBuilderComponent } from './workflow-selection.component';
+import { WorkflowSelectionComponent } from './workflow-selection.component';
 
 class MockAppService {
   setReportBuilder(val: any) {
@@ -14,27 +14,27 @@ class MockAppService {
   }
 }
 
-describe('ReportBuilderComponent', () => {
-  let component: ReportBuilderComponent;
-  let fixture: ComponentFixture<ReportBuilderComponent>;
+describe('WorkflowSelectionComponent', () => {
+  let component: WorkflowSelectionComponent;
+  let fixture: ComponentFixture<WorkflowSelectionComponent>;
   let appService: AppService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
-        ReportBuilderComponent,
+        WorkflowSelectionComponent,
         { provide: AppService, useClass: MockAppService} 
       ],
       imports: [
         HttpClientTestingModule
       ],
-      declarations: [ ReportBuilderComponent ]
+      declarations: [ WorkflowSelectionComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ReportBuilderComponent);
+    fixture = TestBed.createComponent(WorkflowSelectionComponent);
     appService = TestBed.inject(AppService)
     component = fixture.componentInstance;
     fixture.detectChanges();
