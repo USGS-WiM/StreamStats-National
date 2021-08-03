@@ -1,4 +1,6 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AppService } from '../shared/services/app.service';
 
 import { SidebarLeftComponent } from './sidebar-left.component';
 
@@ -8,7 +10,14 @@ describe('SidebarLeftComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SidebarLeftComponent ]
+      imports: [
+        HttpClientTestingModule
+      ],
+      declarations: [ SidebarLeftComponent ],
+      providers: [
+        SidebarLeftComponent,
+        { provide: AppService }
+      ]
     })
     .compileComponents();
   });
