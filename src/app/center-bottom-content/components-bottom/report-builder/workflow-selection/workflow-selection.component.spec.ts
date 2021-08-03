@@ -1,23 +1,29 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Observable } from 'rxjs';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
-import { WorkflowService } from 'src/app/shared/services/workflow.service';
+import { AppService } from 'src/app/shared/services/app.service';
 
 import { WorkflowSelectionComponent } from './workflow-selection.component';
 
-let mockWorkflowService: Partial<WorkflowService>;
+class MockAppService {
+  setReportBuilder(val: any) {
+    return val;
+  }
+  setWorkflowComponent(val: any) {
+    return val;
+  }
+}
 
 describe('WorkflowSelectionComponent', () => {
   let component: WorkflowSelectionComponent;
   let fixture: ComponentFixture<WorkflowSelectionComponent>;
-  let workflowService: WorkflowService;
+  let appService: AppService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
         WorkflowSelectionComponent,
-        { provide: WorkflowService, useClass: mockWorkflowService } 
+        { provide: AppService, useClass: MockAppService} 
       ],
       imports: [
         HttpClientTestingModule
@@ -28,33 +34,16 @@ describe('WorkflowSelectionComponent', () => {
   });
 
   beforeEach(() => {
-    mockWorkflowService = {
-      selectedWorkflow: new Observable<Workflow[]>()
-    };
     fixture = TestBed.createComponent(WorkflowSelectionComponent);
-    workflowService = TestBed.inject(WorkflowService);
+    appService = TestBed.inject(AppService)
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('#addRemoveWorkflow should be called and add/remove a workflow', () => {
-    const workflow: Workflow = {
-      title: "Delineation",
-      description: "string",
-      functionality: "string",
-      icon: "string",
-      steps: [],
-      output: []
-    };
-    //add workflow
-    const spy = spyOn(workflowService, 'setSelectedWorkflows').and.callThrough();
-    component.addRemoveWorkflow(workflow);
-    expect(spy).toHaveBeenCalled();
-    //remove workflow
-    component.addRemoveWorkflow(workflow);
-    expect(spy).toHaveBeenCalled();
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
-
+  
   // TODO: update to make sure certain elements are loading in the DOM once more finalized. 
   // it('should have <h3> with "Choose Workflows:"', () => {
   //   const reportBuilderElement: HTMLElement = fixture.nativeElement;

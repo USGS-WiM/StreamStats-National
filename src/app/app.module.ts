@@ -19,11 +19,11 @@ import { ActiveComponentDirective } from './shared/directives/active-component.d
 
 import { ReportComponent } from './sidebar-right/components-right/report/report.component';
 import { AboutComponent } from './sidebar-right/components-right/about/about.component';
-import { WorkflowComponent } from './center-bottom-content/components-bottom/report/workflow/workflow.component';
+import { WorkflowComponent } from './center-bottom-content/components-bottom/report-builder/workflow/workflow.component';
 import { MapOptionsComponent } from './center-bottom-content/components-bottom/map-options/map-options.component';
 import { DiscoverComponent } from './center-bottom-content/components-bottom/discover/discover.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
-import { WorkflowSelectionComponent } from './center-bottom-content/components-bottom/report/workflow-selection/workflow-selection.component';
+import { WorkflowSelectionComponent } from './center-bottom-content/components-bottom/report-builder/workflow-selection/workflow-selection.component';
 
 
 

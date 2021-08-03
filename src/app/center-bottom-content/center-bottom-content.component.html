@@ -1,5 +1,4 @@
 <!-- Workflow Selection Component-->
-<app-workflow-selection #workflowSelection></app-workflow-selection>
 
 <div class="vertical-tabs">
     <!-- Icon tabs -->
@@ -7,31 +6,19 @@
         <button (click)="reportBuilderTab == 'selection' ? reportBuilderTab = '' : reportBuilderTab = 'selection'" [ngClass]="{'active': reportBuilderTab == 'selection'}">
             <i class="far fa-ellipsis-h"></i>
         </button>
-    </div>
-    <!--  -->
-    <div class="v-tab-body">
-        <div *ngIf="reportBuilderTab == 'selection'">
-            <div *ngFor="let workflow of workflowSelection.workflows; let i = index">
-                <button (click)="workflowSelection.addRemoveWorkflow(workflow)">{{ workflow.title }}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Workflow Component-->
-<div *ngFor="let workflow of selectedWorkflows; let i = index">
-    <div class="vertical-tabs">
-        <!-- Icon tabs -->
-        <div class="v-tabs">
+        <div *ngFor="let workflow of selectedWorkflows; let i = index">
             <button (click)="reportBuilderTab == workflow.title ? reportBuilderTab = '' : reportBuilderTab = workflow.title" [ngClass]="{'active': reportBuilderTab == workflow.title}">
                 <i class={{workflow.icon}}></i>
             </button>
         </div>
-        <!--  -->
-        <div class="v-tab-body">
+    </div>
+    <!--  -->
+    <div class="v-tab-body">
+        <app-workflow-selection *ngIf="reportBuilderTab == 'selection'"></app-workflow-selection>
+        <div *ngFor="let workflow of selectedWorkflows; let i = index">
             <div *ngIf="reportBuilderTab == workflow.title">
                 <app-workflow [workflow]="workflow"></app-workflow>
-            </div>           
+            </div> 
         </div>
     </div>
 </div>
