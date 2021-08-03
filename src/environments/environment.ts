@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  configFile: '../assets/config.json',
+  configFile: 'assets/config.json',
   version: require('package.json').version
 };
 
