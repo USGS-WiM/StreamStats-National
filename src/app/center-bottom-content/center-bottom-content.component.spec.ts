@@ -1,5 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { WorkflowService } from '../shared/services/workflow.service';

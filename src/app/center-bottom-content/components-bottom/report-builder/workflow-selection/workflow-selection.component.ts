@@ -24,6 +24,7 @@ export class WorkflowSelectionComponent implements OnInit {
   // Gets all workflows that user has selected/deselected and sets selected workflow
   addRemoveWorkflow(selectedWorkflow: Workflow) {
     const index = this.selectedWorkflows.indexOf(selectedWorkflow);
+    console.log(index)
     if (index === -1) {
       this.selectedWorkflows.push(selectedWorkflow);
     } else {

@@ -8,6 +8,9 @@ describe('WorkflowService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      providers: [
+        WorkflowService
+      ],
       imports: [
         HttpClientTestingModule
       ]
@@ -19,10 +22,20 @@ describe('WorkflowService', () => {
     expect(workflowService).toBeTruthy();
   });
 
-  it('#getObservableValue should return value from observable', () => {
-    workflowService.getWorkflows().subscribe(value => {
-      expect(value).toBe('observable value');
+  it('get #selectedWorkflow should return value', () => {
+    workflowService.selectedWorkflow.subscribe(value => {
+      expect(value).toBeTruthy();
     });
+  });
+
+  it('#getWorkflows should be called', () => {
+    let response: any;
+    spyOn(workflowService, 'getWorkflows').and.callThrough();
+    workflowService.selectedWorkflow.subscribe(value => {
+      response = value;
+    });
+    workflowService.getWorkflows();
+    expect(workflowService.getWorkflows).toHaveBeenCalled();
   });
 
 });
