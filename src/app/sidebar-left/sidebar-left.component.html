@@ -17,19 +17,11 @@
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
-				This is the content of a button popout window.
+				This is the content of the map button popout window.
 				<br/>
-				Show and hide it with a click on the button.sidebar-button
-				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
+				Show and hide the map content with a click on the button.sidebar-button
 				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
+				If you have too much content in the map popout, <br> It'll scroll.
 			</div>
 		</div>
 
@@ -48,28 +40,97 @@
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
-				This is the content of a button popout window.
+				This is the content of the map layers button popout window.
 				<br/>
-				Show and hide it with a click on the button.sidebar-button
+				Show and hide the map layers button with a click on the button.sidebar-button
 				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
+				If you have too much content in the map layers, it'll scroll.
 			</div>
 		</div>
 
 	</div>
 	
-	<!-- Map -->
+	<!-- Dog -->
 	<div class="sidebar-group">
 		<button class="sidebar-button">
 			<i class="far fa-dog"></i>
 		</button>
 	</div>
+
+	<!-- Spacer - stretches to fill gap -->
+	<div class="sidebar-spacer"></div>
+
+	<!-- Discover -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'discover' ? popout = '' : popout = 'discover'" [ngClass]="{'active': popout == 'discover'}">
+			<span class="sb-text">Discover</span>
+		</button>
+		
+		<!-- Discover window -->
+		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'discover'">
+			<h3 class="sidebar-popout-header">Choose your Workflows</h3>
+
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="vertical-tabs">
+				<!-- Icon tabs -->
+				<div class="v-tabs">
+					<button (click)="discoverTab == 'one' ? discoverTab = '' : discoverTab = 'one'" [ngClass]="{'active': discoverTab == 'one'}">
+						<i class="far fa-ellipsis-h"></i>
+					</button>
+					<button (click)="discoverTab == 'two' ? discoverTab = '' : discoverTab = 'two'" [ngClass]="{'active': discoverTab == 'two'}">
+						<i class="far fa-chart-area"></i>
+					</button>
+					<button (click)="discoverTab == 'three' ? discoverTab = '' : discoverTab = 'three'" [ngClass]="{'active': discoverTab == 'three'}">
+						<i class="far fa-chart-bar"></i>
+					</button>
+					<button (click)="discoverTab == 'four' ? discoverTab = '' : discoverTab = 'four'" [ngClass]="{'active': discoverTab == 'four'}">
+						<i class="far fa-map-marker"></i>
+					</button>
+				</div>
+				<!--  -->
+				<div class="v-tab-body">
+
+					<div *ngIf="discoverTab == 'one'">
+						<div>Testing</div>
+						<h3>testing</h3>
+						<p>Testing even more! I'm testing so much I can't believe it! lakjdkljfkljdflkjd ljskdfjskdfjlsjflkjdkfj </p>
+					</div>
+
+					<div *ngIf="discoverTab == 'two'">
+						Tab Two
+					</div>
+
+					<div *ngIf="discoverTab == 'three'">
+						Tab Three
+					</div>
+
+					<div *ngIf="discoverTab == 'four'">
+						Tab Four
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Report Builder -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'reportBuilder' ? popout = '' : popout = 'reportBuilder'" [ngClass]="{'active': popout == 'reportBuilder'}">
+			<span class="sb-text">Report Builder</span>
+		</button>
+		
+		<!-- Report Builder window -->
+		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'reportBuilder'">
+			<h3 class="sidebar-popout-header">Choose your Workflows</h3>
+			<app-center-bottom-content></app-center-bottom-content>
+		</div>
+	</div>
+
+	<!-- Map Options -->
+	<div class="sidebar-group">
+		<button class="sidebar-button">
+			<span class="sb-text">Map Options</span>
+		</button>
+	</div>
+
 </div>

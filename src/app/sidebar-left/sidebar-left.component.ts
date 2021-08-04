@@ -8,13 +8,12 @@ import { Component, OnInit } from '@angular/core';
 export class SidebarLeftComponent implements OnInit {
 
 	popout = '';
+	discoverTab = '';
 
-	
 	title = 'StreamStats-National';
 
   	constructor() { }
 
 	ngOnInit(): void {
 	}
-
 }
