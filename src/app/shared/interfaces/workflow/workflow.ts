@@ -1,4 +1,3 @@
-import { Options } from './options';
 import { Output } from './output';
 import { Steps } from './steps';
 
@@ -7,7 +6,6 @@ export interface Workflow {
     description: string;
     functionality: string;
     icon: string;
-    steps: Steps[];
-    output: Array<Output>;
-    isSelected?: boolean
+    steps: Array<Steps>;
+    output: Array<Output>
 }

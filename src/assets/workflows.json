@@ -7,23 +7,39 @@
         "steps":
         [
             {
-                "title": "Select Delineation Process",
+                "stepId": 1,
+                "title": "Select Delineation Method(s)",
                 "valueType": "option",
                 "options":
                 [
-                    "NLDI Delineation",
-                    "State-Based Delineation",
-                    "Open-Source Delineation"
+                    {
+                        "title": "NLDI Delineation",
+                        "description": "This is a placeholder"
+                    },
+                    {
+                        "title": "State-Based Delineation",
+                        "description": "Example: user will need to be beyond zoom level 15 and click along a stream grid"
+                    },
+                    {
+                        "title": "Open-Source Delineation",
+                        "description": "This is a placeholder"
+                    }
                 ],
-                "value":"test"
+                "value":"getSelectedDelineationProcess",
+                "required": true
             },
             {
-                "title":"Select Delineation Point"
+                "stepId": 2,
+                "title":"Select Delineation Point",
+                "valueType": "subscription",
+                "description": "Use the map to select a delineation point along a stream.",
+                "value": "geojson point geometry",
+                "required": true
             }
         ],
         "output": 
         {
-            "value": "",
+            "value": "delineationPolygon",
             "valueType": "geojson",
             "reportDisplayType": "map"
         }
