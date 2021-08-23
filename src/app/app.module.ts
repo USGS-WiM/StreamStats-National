@@ -14,6 +14,7 @@ import { CenterBottomContentComponent } from './center-bottom-content/center-bot
 import { AppService } from './shared/services/app.service';
 import { ConfigService } from './shared/config/config.service';
 import { WorkflowService } from './shared/services/workflow.service';
+import { SettingService } from './shared/services/setting.service';
 import { environment } from 'src/environments/environment';
 import { ActiveComponentDirective } from './shared/directives/active-component.directive';
 
@@ -52,12 +53,13 @@ export function ConfigLoader(configService: ConfigService) {
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     AppService,
     ConfigService,
     WorkflowService,
+    SettingService,
     { provide: APP_INITIALIZER, useFactory: ConfigLoader, deps: [ConfigService], multi: true },
   ],
   bootstrap: [AppComponent],
