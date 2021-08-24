@@ -4,5 +4,5 @@
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
     "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true"
-
 }
+
