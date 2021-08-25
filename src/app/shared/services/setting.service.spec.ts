@@ -18,4 +18,11 @@ describe('SettingService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('getEntities() should http GET', () => { //Could most likely make this better in the future
+    service.getEntities('https://streamstats.usgs.gov/gagestatsservices/apiconfig').subscribe((res) => {
+      console.log(res)
+      expect(res).toBeDefined();
+    });
+  });
 });

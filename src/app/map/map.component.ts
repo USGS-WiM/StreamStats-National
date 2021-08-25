@@ -52,14 +52,12 @@ export class MapComponent implements OnInit {
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
+      if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer);
       if (this.currentZoom >= 8) {
         var bBox = this._mapService.map.getBounds();
         var ne = bBox.getNorthEast(); // LatLng of the north-east corner
         var sw = bBox.getSouthWest(); // LatLng of the south-west corder
         this.getStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
-      } else { 
-        if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer); // Remove old layer
-        
       }
     }) 
     // On map drag, display gages
