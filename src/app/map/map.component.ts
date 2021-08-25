@@ -96,18 +96,13 @@ export class MapComponent implements OnInit {
       this.streamgageLayer = L.geoJSON(feature, {
         onEachFeature: async function (feature, layer) {
           var siteNo = feature.properties['Code'];
-          var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + siteNo + '.htm';
-          var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + siteNo;
-          layer.on('click',() => {
-            self.getWaterServiceData(siteNo);
-            var innerHTML =  feature.properties['Name'] + ' (' + siteNo + ')' + '<hr><strong>Station Type</strong>: ' + 
-            feature.properties.StationType.name + '</br><strong>Discharge, cfs: </strong>' +
-            self.latestDischarge + 
-            '<br><strong>NWIS page: </strong><a href="' + 
-            NWISpage + ' "target="_blank">link</a></br><strong>StreamStats Gage page: </strong><a href="' + 
-            SSgagepage + '" target="_blank">link</a></br>';
-            layer.bindPopup(innerHTML);
-          })
+          var loadingHTML =  'Loading';
+          layer.bindPopup(loadingHTML);
+          layer.on('click', onMarkerClick );
+          function onMarkerClick(e: any) {
+            var popup = e.target.getPopup();
+            self.getWaterServiceData(siteNo, popup, feature);
+          }
         },
         pointToLayer: function(feature, latlng) {
           return L.marker(latlng,{icon: MyIcon});
@@ -116,7 +111,7 @@ export class MapComponent implements OnInit {
     }
   }
 
-  public getWaterServiceData(site: number){
+  public getWaterServiceData(site: number, popup:any, feature:any){
     var url = 'https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=' + site + '&parameterCd=00060&siteStatus=all'
     this._http.get(url, {responseType: 'text'}).subscribe(res => {
       res = res.split('\n').filter(function(line){ 
@@ -125,8 +120,16 @@ export class MapComponent implements OnInit {
       const parsedString = res.split('\n').map((line) => line.split('\t'));
       if (parsedString[2][4]) {
         this.latestDischarge = parsedString[2][4] + " @ " + parsedString[2][2];
-      } else this.latestDischarge = "";
-      console.log(this.latestDischarge)
+      } else this.latestDischarge = "No Data";
+      // Set dynamic content for popup
+      var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + site + '.htm';
+      var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + site;
+      var innerHTML =  feature.properties['Name'] + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
+      feature.properties.StationType.name + '</br><strong>Discharge, cfs: </strong>' +
+      this.latestDischarge + '<br><strong>NWIS page: </strong><a href="' + 
+      NWISpage +' "target="_blank">link</a></br><strong>StreamStats Gage page: </strong><a href="' + 
+      SSgagepage + '" target="_blank">link</a></br>';
+      popup.setContent( innerHTML );
     }, error => {
      console.log(error);
    })
