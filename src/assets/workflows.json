@@ -45,40 +45,45 @@
         }
     },
     {
-        "title": "Flowtrace",
+        "title": "FireHydro",
         "description": "Description Here.",
         "functionality": "Core",
-        "icon": "far fa-chart-area"
-    },
-    {
-        "title": "Basin Characteristics",
-        "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area.",
-        "functionality": "Core",
-        "icon": "far fa-chart-bar"
-    },
-    {
-        "title": "Flow Statistics",
-        "description": "Description Here.",
-        "functionality": "Core",
-        "icon": "far fa-map-marker"
-    },
-    {
-        "title": "Wateruse",
-        "description": "Description Here",
-        "functionality": "State",
-        "icon": "far fa-map-marker"
-    },
-    {
-        "title": "Regulation",
-        "description": "Description Here.",
-        "functionality": "State",
-        "icon": "far fa-map-marker"
-    },
-    {
-        "title": "Other",
-        "description": "Description Here.",
-        "functionality": "Additional",
-        "icon": "far fa-map-marker"
+        "icon": "fa fa-fire"
     }
-
+    // {
+    //     "title": "Flowtrace",
+    //     "description": "Description Here.",
+    //     "functionality": "Core",
+    //     "icon": "far fa-chart-area"
+    // },
+    // {
+    //     "title": "Basin Characteristics",
+    //     "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area.",
+    //     "functionality": "Core",
+    //     "icon": "far fa-chart-bar"
+    // },
+    // {
+    //     "title": "Flow Statistics",
+    //     "description": "Description Here.",
+    //     "functionality": "Core",
+    //     "icon": "far fa-map-marker"
+    // },
+    // {
+    //     "title": "Wateruse",
+    //     "description": "Description Here",
+    //     "functionality": "State",
+    //     "icon": "far fa-map-marker"
+    // },
+    // {
+    //     "title": "Regulation",
+    //     "description": "Description Here.",
+    //     "functionality": "State",
+    //     "icon": "far fa-map-marker"
+    // },
+    // {
+    //     "title": "Other",
+    //     "description": "Description Here.",
+    //     "functionality": "Additional",
+    //     "icon": "far fa-map-marker"
+    // }
 ]

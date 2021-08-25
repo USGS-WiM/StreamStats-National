@@ -22,7 +22,7 @@ export class NLDIService {
   // NLDI Delineation
   private _delineationSubject: Subject<any> = new Subject<any>();
 
-  public getSplitCatchment(lat: any, lng: any, merged: any) {
+  public getUpstream(lat: any, lng: any, upstream: any) {
     const options = { headers: this.jsonHeader, observe: 'response' as 'response'};
     let url = this.configSettings.nldiBaseURL + this.configSettings.nldiSplitCatchmentURL;
     let post = {
@@ -39,11 +39,12 @@ export class NLDIService {
         },
         {
           "id": "upstream",
-          "value": merged,
+          "value": upstream,
           "type": "text/plain"
         }
       ]
     }
+    console.log(post)
     return this._http.post(url, post, options).subscribe(resp => {
       this._delineationSubject.next(resp.body);
       return resp.body;

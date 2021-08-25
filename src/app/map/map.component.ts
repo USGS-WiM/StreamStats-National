@@ -3,6 +3,7 @@ import { MapService } from '../shared/services/map.service';
 
 import * as L from 'leaflet';
 import { NLDIService } from '../shared/services/nldi.service';
+import { WorkflowService } from '../shared/services/workflow.service';
 
 @Component({
   selector: 'app-map',
@@ -17,8 +18,9 @@ export class MapComponent implements OnInit {
   public catchmentLayer!: any;
   public splitCatchmentLayer!: any;
   public fitBounds!: L.LatLngBounds;
+  public selectedWorkflows: any;
 
-  constructor(private _mapService: MapService, private _nldiService: NLDIService) {}
+  constructor(private _mapService: MapService, private _nldiService: NLDIService, private _workflowService: WorkflowService) {}
 
   ngOnInit() {
     // Initialize map
@@ -38,11 +40,21 @@ export class MapComponent implements OnInit {
       this.clickPoint = point;
     });
     
-    this.onMouseClick();
+    this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
+      this._mapService.setClickPoint(evt.latlng);
+      this.onMouseClick();
+    }) 
+
+    this._workflowService.selectedWorkflow.subscribe((res) => {
+      this.selectedWorkflows = res;
+    });
   }
 
   // On map click, set click point value, for delineation
    public onMouseClick() {
+    if (this.selectedWorkflows=[]){
+      console.log('select a workflow')
+    } else {
       this._mapService.map?.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
         if (this._mapService.map?.hasLayer(this.catchmentLayer)) {
           this._mapService.map?.removeLayer(this.catchmentLayer)
@@ -54,7 +66,7 @@ export class MapComponent implements OnInit {
         this.addPoint(evt.latlng);
         this.marker.openPopup();
         //TODO: option to user to select True/False??
-        this._nldiService.getSplitCatchment(evt.latlng.lat, evt.latlng.lng, "False");
+        this._nldiService.getUpstream(evt.latlng.lat, evt.latlng.lng, "True");
       });
 
       this._nldiService.delineationPolygon.subscribe((poly: any) => {
@@ -67,6 +79,7 @@ export class MapComponent implements OnInit {
           this._mapService.map?.fitBounds(this.catchmentLayer.getBounds(), { padding: [75,75] });
         }
       });
+    }
 
     };
 

@@ -1,5 +1,14 @@
 <!-- Workflow Steps/Walkthru -->
 <div>
     <p>{{workflow.title}}</p>
-    <p>Workflow steps and workflow to come.</p>
+    <div *ngFor="let step of workflow.steps; let i = index"> 
+        Step {{i+1}}: {{step.title}}
+        <div *ngIf ="step.valueType==='option'" >
+            <div *ngFor="let option of step.options"> 
+                {{option.title}}
+            </div>
+        </div>
+        <div *ngIf="step.valueType==='subscription'" >
+        </div>
+    </div>
 </div>

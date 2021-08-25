@@ -2,6 +2,7 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import {ToastrModule, ToastNoAnimation, ToastNoAnimationModule} from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -51,6 +52,13 @@ export function ConfigLoader(configService: ConfigService) {
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    ToastNoAnimationModule.forRoot({
+      timeOut: 5000,
+      positionClass: 'toast-bottom-right',
+      progressAnimation:'decreasing',
+      preventDuplicates: true,
+      countDuplicates:true
+    }),
   ],
   providers: [
     AppService,

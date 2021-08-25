@@ -1,5 +1,7 @@
 <!-- Placeholder html -->
-
-<p>report works!</p>
+<div> Selected workflows: </div>
+<div *ngFor="let workflow of selectedWorkflows"> 
+    <div>{{workflow.title}}</div>
+</div>
 
 <!-- <p>User map click: {{ clickPoint }}</p> -->
