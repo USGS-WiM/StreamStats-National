@@ -1,5 +1,44 @@
 [
     {
+        "title": "Example Workflow",
+        "description": "This is an example workflow.",
+        "functionality": "Core",
+        "icon": "fa fa-sitemap",
+        "steps":
+        [
+            {
+                "label": "Select Delineation Process",
+                "name": "selectDelineation",
+                "value":"",
+                "type": "checkbox",
+                "validotors": {
+                    "required": true
+                },
+                "options":
+                [
+                    "NLDI Delineation",
+                    "State-Based Delineation",
+                    "Open-Source Delineation"
+                ]
+            },
+            {
+                "label":"Select Delineation Point",
+                "name": "delineationClickPoint",
+                "value":"",
+                "type": "subscription",
+                "validotors": {
+                    "required": true
+                }
+            }
+        ],
+        "output": 
+        {
+            "value": "",
+            "valueType": "geojson",
+            "reportDisplayType": "map"
+        }
+    },
+    {
         "title": "Delineation",
         "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
         "functionality": "Core",

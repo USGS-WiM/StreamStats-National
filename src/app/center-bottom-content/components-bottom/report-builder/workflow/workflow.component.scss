@@ -1,0 +1,25 @@
+
+//////////////////////
+//   Validation     //
+////////////////////
+.form-invalid{
+
+	input,select,textarea,button{
+		border-color: var(--red) !important;
+	}
+
+	label{
+		color: var(--red);
+	}
+}
+.form-error{
+	color: var(--red);
+	font-size: 13px;
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+
+.input-invalid-warning {
+    color: var(--red);
+}
