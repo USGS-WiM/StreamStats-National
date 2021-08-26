@@ -20,7 +20,7 @@ export class MapComponent implements OnInit {
   public currentZoom: number = 4;
   public latestDischarge: string = "";
 
-  constructor(private _mapService: MapService, private _configService: ConfigService, private _settingService: SettingService, private _http: HttpClient,
+  constructor(public _mapService: MapService, private _configService: ConfigService, private _settingService: SettingService, private _http: HttpClient,
     ) { 
     this.configSettings = this._configService.getConfiguration();
   }
@@ -51,6 +51,7 @@ export class MapComponent implements OnInit {
     }) 
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
+      console.log(this.currentZoom)
       this.currentZoom = evt.target._zoom;
       if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer);
       if (this.currentZoom >= 8) {
