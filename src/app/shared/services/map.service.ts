@@ -2,12 +2,12 @@
 
 import { Injectable } from '@angular/core';
 import { Map } from 'leaflet';
-
 import * as L from 'leaflet';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
-import { Subject } from 'rxjs';
+import {  Subject } from 'rxjs';
+import { AppService } from './app.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -16,14 +16,14 @@ export class MapService {
     public map!: Map;
     public chosenBaseLayer: string;
     public baseMaps: any;
-
     private configSettings!: Config;
-    private jsonHeader: HttpHeaders = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    });
-
-    constructor(private _http: HttpClient, private _configService: ConfigService) {
+    public authHeader: HttpHeaders = new HttpHeaders({
+        'Content-Type': 'application/json',
+         Authorization: localStorage.getItem('auth') || '',
+         'Access-Control-Allow-Origin': "*"
+      });
+    
+    constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
         this.chosenBaseLayer = 'Topo';
         this.baseMaps = {
             // {s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png
@@ -80,4 +80,39 @@ export class MapService {
     public get clickPoint(): any {
         return this._clickPointSubject.asObservable();
     }
-}
+
+    // Get Streamgages
+    private _streamgages: Subject<any> = new Subject<any>();
+    public setStreamgages(xmin: number, xmax: number, ymin: number, ymax: number) {
+        var url = this.configSettings.GageStatsServices + "/stations/Bounds?xmin="+xmin+"&xmax="+xmax+"&ymin="+ymin+"&ymax="+ymax+"&geojson=true";
+        this._http.get(url, {headers: this.authHeader}).subscribe(res => {
+            var streamgageLayer = res;
+             this._streamgages.next(streamgageLayer);
+        }, error => {
+         console.log(error);
+       })
+    }
+    public get streamgages(): any {
+        return this._streamgages.asObservable();
+    }
+
+    //Get water service data - current discharge
+    private _waterServiceData: Subject<any> = new Subject<any>();
+    public setWaterServiceData(site: number){
+        var url = 'https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=' + site + '&parameterCd=00060&siteStatus=all'
+        this._http.get(url, {responseType: 'text'}).subscribe(res => {
+            res = res.split('\n').filter(function(line) { 
+                return line.indexOf( "#" ) == -1;
+            }).join('\n');
+            const parsedString = res.split('\n').map((line) => line.split('\t'));
+            if (parsedString[2][4]) { this._waterServiceData.next(parsedString[2][4] + " @ " + parsedString[2][2]);
+            } else this._waterServiceData.next("No Data");
+        }, error => {
+         console.log(error);
+       })
+    }
+    public get waterData(): any {
+        return this._waterServiceData.asObservable();
+    }
+
+ }

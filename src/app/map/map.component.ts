@@ -3,7 +3,6 @@ import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
-import { SettingService } from '../shared/services/setting.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -18,9 +17,11 @@ export class MapComponent implements OnInit {
   public currentLat: number = 41.1;
   public currentLng: number = -98.7;
   public currentZoom: number = 4;
-  public latestDischarge: string = "";
-
-  constructor(public _mapService: MapService, private _configService: ConfigService, private _settingService: SettingService, private _http: HttpClient,
+  public latestDischarge: any;
+  public selectedSite: any
+  public selectedPopup: any;
+  public selectedFeature: any;
+  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient,
     ) { 
     this.configSettings = this._configService.getConfiguration();
   }
@@ -36,7 +37,21 @@ export class MapComponent implements OnInit {
       layers: [this._mapService.baseMaps[this._mapService.chosenBaseLayer]]
     });
 
-    // setting local click point variable
+    // Get streamgages
+    this._mapService.waterData.subscribe((wd: {}) => {
+      this.latestDischarge = wd;
+      if (this.latestDischarge){
+        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature);
+      }
+    })
+    // Get current discharge
+    this._mapService.streamgages.subscribe((sg: {}) => {
+      this.streamgageLayer = sg;
+      if (this.streamgageLayer) {
+        this.addGeoJSON("streamgages", this.streamgageLayer);
+      }
+    })
+    // Setting local click point variable
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickPoint = point;
     })
@@ -51,14 +66,13 @@ export class MapComponent implements OnInit {
     }) 
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
-      console.log(this.currentZoom)
       this.currentZoom = evt.target._zoom;
       if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer);
       if (this.currentZoom >= 8) {
         var bBox = this._mapService.map.getBounds();
         var ne = bBox.getNorthEast(); // LatLng of the north-east corner
         var sw = bBox.getSouthWest(); // LatLng of the south-west corder
-        this.getStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
+        this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
       }
     }) 
     // On map drag, display gages
@@ -68,22 +82,12 @@ export class MapComponent implements OnInit {
         var bBox = this._mapService.map.getBounds();
         var ne = bBox.getNorthEast(); // LatLng of the north-east corner
         var sw = bBox.getSouthWest(); // LatLng of the south-west corder
-        this.getStreamgages(sw.lng, ne.lng, sw.lat, ne.lat);
+        this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
       } 
     });
   }
 
-  public getStreamgages(xmin: number, xmax: number, ymin: number, ymax: number) {
-    var url = this.configSettings.GageStatsServices + "/stations/Bounds?xmin="+xmin+"&xmax="+xmax+"&ymin="+ymin+"&ymax="+ymax+"&geojson=true";
-    this._settingService.getEntities(url).subscribe(sg => {
-      this.streamgageLayer = sg;
-      this.addGeoJSON("streamgages", this.streamgageLayer);
-    }, error => {
-      console.log(error);
-    });
-  }
-
-  private addGeoJSON(LayerName: string, feature: any) {
+  public addGeoJSON(LayerName: string, feature: any) {
     if (LayerName == 'streamgages') {
       var self = this;
       var MyIcon = L.icon({
@@ -100,7 +104,10 @@ export class MapComponent implements OnInit {
           layer.on('click', onMarkerClick );
           function onMarkerClick(e: any) {
             var popup = e.target.getPopup();
-            self.getWaterServiceData(siteNo, popup, feature);
+            self.selectedSite = siteNo;
+            self.selectedPopup = popup;
+            self.selectedFeature = feature;
+            self._mapService.setWaterServiceData(siteNo);
           }
         },
         pointToLayer: function(feature, latlng) {
@@ -110,27 +117,16 @@ export class MapComponent implements OnInit {
     }
   }
 
-  public getWaterServiceData(site: number, popup:any, feature:any){
-    var url = 'https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=' + site + '&parameterCd=00060&siteStatus=all'
-    this._http.get(url, {responseType: 'text'}).subscribe(res => {
-      res = res.split('\n').filter(function(line){ 
-        return line.indexOf( "#" ) == -1;
-      }).join('\n');
-      const parsedString = res.split('\n').map((line) => line.split('\t'));
-      if (parsedString[2][4]) {
-        this.latestDischarge = parsedString[2][4] + " @ " + parsedString[2][2];
-      } else this.latestDischarge = "No Data";
-      // Set dynamic content for popup
-      var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + site + '.htm';
-      var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + site;
-      var innerHTML =  feature.properties['Name'] + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
-      feature.properties.StationType.name + '</br><strong>Discharge, cfs: </strong>' +
-      this.latestDischarge + '<br><strong>NWIS page: </strong><a href="' + 
-      NWISpage +' "target="_blank">link</a></br><strong>StreamStats Gage page: </strong><a href="' + 
-      SSgagepage + '" target="_blank">link</a></br>';
-      popup.setContent( innerHTML );
-    }, error => {
-     console.log(error);
-   })
+  public updatePopup(site:any, popup:any, feature:any){
+    //Set dynamic content for popup
+    var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + site + '.htm';
+    var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + site;
+    var innerHTML =  feature.properties['Name'] + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
+    feature.properties.StationType.name + '</br><strong>Discharge, cfs: </strong>' +
+    this.latestDischarge + '<br><strong>NWIS page: </strong><a href="' + 
+    NWISpage +' "target="_blank">link</a></br><strong>StreamStats Gage page: </strong><a href="' + 
+    SSgagepage + '" target="_blank">link</a></br>';
+    popup.setContent( innerHTML );
   }
+
 }
