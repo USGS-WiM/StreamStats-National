@@ -19,7 +19,6 @@ export class CenterBottomContentComponent {
   ngOnInit(): void {
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflows = res;
-      console.log(res)
     });
   }
 }
