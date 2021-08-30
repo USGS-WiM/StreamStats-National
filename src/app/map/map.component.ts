@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 
 import * as L from 'leaflet';
+import { AppService } from '../shared/services/app.service';
 
 @Component({
   selector: 'app-map',
@@ -10,7 +11,9 @@ import * as L from 'leaflet';
 })
 export class MapComponent implements OnInit {
 
-  constructor(private _mapService: MapService) {}
+  public clickPoint = {};
+
+  constructor(private _mapService: MapService) { }
 
   ngOnInit() {
     // Initialize map
@@ -22,6 +25,7 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       zoomControl: false
     });
+
 
     // Add basemaps
     this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
@@ -44,6 +48,17 @@ export class MapComponent implements OnInit {
     // Add compass
     // this._mapService.map.addControl(this._mapService.compass);
     
+    // setting local click point variable
+    this._mapService.clickPoint.subscribe((point: {}) => {
+      this.clickPoint = point;
+    })
   }
+  // On map click, set click point value, for delineation
+  public onMouseClick() {
+    this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
+      this._mapService.setClickPoint(evt.latlng)
+    }) 
+  
+  };
 
 }

@@ -1,8 +1,24 @@
-<p>Bottom section</p>
+<!-- Workflow Selection Component-->
 
-<div class="usa-alert" >
-	<div class="usa-alert__body">
-	  <h3 class="usa-alert__heading">USWDS Alert</h3>
-	  <p class="usa-alert__text">Just testing if it works.</p>
-	</div>
-  </div>
+<div class="vertical-tabs">
+    <!-- Icon tabs -->
+    <div class="v-tabs">
+        <button (click)="reportBuilderTab == 'selection' ? reportBuilderTab = '' : reportBuilderTab = 'selection'" [ngClass]="{'active': reportBuilderTab == 'selection'}">
+            <i class="far fa-ellipsis-h"></i>
+        </button>
+        <div *ngFor="let workflow of selectedWorkflows; let i = index">
+            <button (click)="reportBuilderTab == workflow.title ? reportBuilderTab = '' : reportBuilderTab = workflow.title" [ngClass]="{'active': reportBuilderTab == workflow.title}">
+                <i class={{workflow.icon}}></i>
+            </button>
+        </div>
+    </div>
+    <!--  -->
+    <div class="v-tab-body">
+        <app-workflow-selection *ngIf="reportBuilderTab == 'selection'"></app-workflow-selection>
+        <div *ngFor="let workflow of selectedWorkflows; let i = index">
+            <div *ngIf="reportBuilderTab == workflow.title">
+                <app-workflow [workflow]="workflow"></app-workflow>
+            </div> 
+        </div>
+    </div>
+</div>

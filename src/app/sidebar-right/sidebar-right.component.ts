@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MapService } from '../shared/services/map.service';
 
 @Component({
   selector: 'app-sidebar-right',
@@ -6,12 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sidebar-right.component.scss']
 })
 export class SidebarRightComponent implements OnInit {
-
+	
 	popout = '';
 
-  	constructor() { }
+  	constructor(private _mapService: MapService) { }
 
-  	ngOnInit(): void {
+  	ngOnInit(): void {  
   	}
 
 }

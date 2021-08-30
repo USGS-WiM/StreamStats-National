@@ -1,24 +1,30 @@
+// Map-specific items: click points, adding layers, etc.
+
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
+import { ConfigService } from '../config/config.service';
+import { Config } from '../interfaces/config/config';
+import { Subject } from 'rxjs';
+declare const L: any;
 import { Map } from 'leaflet';
 import * as esri from 'esri-leaflet';
+import 'leaflet-draw';
 import 'leaflet-easybutton';
 // import 'leaflet-compass';
+
 
 export interface layerControl {
     baseLayers: Array<any>;
 }
 
 
-
-declare const L: any;
-
+// import * as L from 'leaflet';
 @Injectable({
     providedIn: 'root'
 })
 export class MapService {
-    public http: HttpClient;
+    private configSettings!: Config;
     public map!: Map;
     public chosenBaseLayer: string;
     public baseMaps: any;
@@ -27,61 +33,46 @@ export class MapService {
     public textBox: any;
     public locationButton: any;
     public compass: any;
-    public CurrentLayer: String;
     public LayersControl: BehaviorSubject<layerControl> = new BehaviorSubject<any>({ baseLayers: [] });
 
     public _layersControl: layerControl = {
         baseLayers: []
     };
+        
+    private jsonHeader: HttpHeaders = new HttpHeaders({
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    });
 
-    constructor(http: HttpClient) {
-
-        this.http = http;
-        this.CurrentLayer = "Topographic";
-
-        http.get("assets/data/config.json").subscribe(data => {
-            //load baselayers
-            var conf: any = data;
-
-            conf.mapLayers.baseLayers.forEach((ml: any) => {
-                if (ml.visible) {
-                    this.CurrentLayer = ml.name;
-                }
-                ml.layer = this.loadLayer(ml);
-                if (ml.layer != null) {
-                    this._layersControl.baseLayers.push(ml);
-                }
-                    
-            });
-        });
-
-        // Basemaps
+    constructor(private _http: HttpClient, private _configService: ConfigService) {
         this.chosenBaseLayer = 'Topo';
+      
         this.baseMaps = {
+            // {s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png
             OpenStreetMap: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 20,
                 zIndex: 1,
-                attribution: 
-                    'Imagery from <a href="https://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a>' +
-                    '&mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                attribution:
+                'Imagery from <a href="https://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a>' +
+                '&mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }),
             Topo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
-                attribution: ''
-                    // 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL,' +
-                    // 'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+                attribution:
+                    'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL,' +
+                        'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
             }),
             CartoDB: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
                 zIndex: 1,
                 attribution:
                     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; ' +
-                    '<a href="https://cartodb.com/attributions">CartoDB</a>'
+                        '<a href="https://cartodb.com/attributions">CartoDB</a>'
             }),
             Satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
                 attribution:
                     'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, ' +
-                    'and the GIS User Community'
+                        'and the GIS User Community'
                 // maxZoom: 10
             }),
             Terrain: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}', {
@@ -259,8 +250,18 @@ export class MapService {
         //     console.error(ml.name + " failed to load map layer", error)
         //     return null;
         // }
+        this.configSettings = this._configService.getConfiguration();
     }
 
+    // Get user map click, used in delineation 
+    // TODO: add additional functionality to be able to allow user to click multiple delineation points, future functionality
+    private _clickPointSubject: Subject<any> = new Subject<any>();
+    public setClickPoint(obj: { lat: number; lng: number; }) {
+        this._clickPointSubject.next(obj);
+    }
+    public get clickPoint(): any {
+        return this._clickPointSubject.asObservable();
+    }
 
 }
 

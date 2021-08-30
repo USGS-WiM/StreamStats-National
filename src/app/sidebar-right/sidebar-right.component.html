@@ -17,25 +17,17 @@
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
-				This is the content of a button popout window.
+				This is the content of the more information button popout window.
 				<br/>
-				Show and hide it with a click on the button.sidebar-button
+				Show and hide the more info with a click on the button.sidebar-button
 				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
+				If you have too much content in the more info, it'll scroll.
 			</div>
 		</div>
 
 	</div>
 
-	<!-- Layers -->
+	<!-- Help -->
 	<div class="sidebar-group">
 
 		<button class="sidebar-button" (click)="popout == 'help' ? popout = '' : popout = 'help'" [ngClass]="{'active': popout == 'help'}">
@@ -48,28 +40,39 @@
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
-				This is the content of a button popout window.
+				This is the content of the help button popout window.
 				<br/>
-				Show and hide it with a click on the button.sidebar-button
+				Show and hide the help with a click on the button.sidebar-button
 				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.<br/>
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
-				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content, it'll scroll.
+				If you have too much content in the help, it'll scroll.
 			</div>
 		</div>
 
 	</div>
 	
-	<!-- Map -->
+	<!-- Cat -->
 	<div class="sidebar-group">
 		<button class="sidebar-button">
 			<i class="far fa-cat"></i>
 		</button>
 	</div>
+
+	<!-- Report -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'report' ? popout = '' : popout = 'report'" [ngClass]="{'active': popout == 'report'}">
+			<i class="far fa-file-chart-line"></i>
+		</button>
+
+		<div class="sidebar-popout" *ngIf="popout == 'report'">
+			<h3 class="sidebar-popout-header">Report Overview</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+
+				<app-report></app-report>
+
+			</div>
+		</div>
+	</div>
+
 </div>
