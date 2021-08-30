@@ -87,7 +87,7 @@ export class MapService {
         var url = this.configSettings.GageStatsServices + "/stations/Bounds?xmin="+xmin+"&xmax="+xmax+"&ymin="+ymin+"&ymax="+ymax+"&geojson=true";
         this._http.get(url, {headers: this.authHeader}).subscribe(res => {
             var streamgageLayer = res;
-             this._streamgages.next(streamgageLayer);
+            this._streamgages.next(streamgageLayer);
         }, error => {
          console.log(error);
        })
