@@ -67,26 +67,24 @@ export class MapComponent implements OnInit {
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
-      if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer);
-      if (this.currentZoom >= 8) {
-        var bBox = this._mapService.map.getBounds();
-        var ne = bBox.getNorthEast(); // LatLng of the north-east corner
-        var sw = bBox.getSouthWest(); // LatLng of the south-west corder
-        this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
-      }
+      this.setBbox();
     }) 
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
-      if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer); // Remove old layer
-      if (this.currentZoom >= 8) {
-        var bBox = this._mapService.map.getBounds();
-        var ne = bBox.getNorthEast(); // LatLng of the north-east corner
-        var sw = bBox.getSouthWest(); // LatLng of the south-west corder
-        this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
-      } 
-    });
+      this.setBbox();
+    })
   }
 
+  public setBbox(){
+    if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer);
+    if (this.currentZoom >= 8) {
+      var bBox = this._mapService.map.getBounds();
+      var ne = bBox.getNorthEast(); // LatLng of the north-east corner
+      var sw = bBox.getSouthWest(); // LatLng of the south-west corder
+      this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
+    }
+  }
+  
   public addGeoJSON(LayerName: string, feature: any) {
     if (LayerName == 'streamgages') {
       var self = this;
