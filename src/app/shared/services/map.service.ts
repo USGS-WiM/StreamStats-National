@@ -9,7 +9,6 @@ import { Subject } from 'rxjs';
 declare const L: any;
 import { Map } from 'leaflet';
 import * as esri from 'esri-leaflet';
-import 'leaflet-draw';
 import 'leaflet-easybutton';
 // import 'leaflet-compass';
 
