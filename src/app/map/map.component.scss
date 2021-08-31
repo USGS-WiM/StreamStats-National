@@ -10,7 +10,7 @@
     #geolocateButton {
         position: absolute;
         padding-top: 4px;
-        padding-left: 6px;
+        padding-left: 2px;
         top: 185px; /* 330px if header is expanded */
         left: 70px;
         z-index: 1000;
@@ -21,6 +21,7 @@
         width: 34px;
         height: 34px;
         cursor: pointer;
+        text-align: center;
     }
     
 }
