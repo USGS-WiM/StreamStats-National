@@ -2,4 +2,5 @@
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://nhgf.wim.usgs.gov/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document"
+
 }

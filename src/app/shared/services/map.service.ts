@@ -6,10 +6,11 @@ import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
 import { Subject } from 'rxjs';
+
+import { Map,  Control } from 'leaflet';
 declare const L: any;
-import { Map } from 'leaflet';
-import * as esri from 'esri-leaflet';
-import 'leaflet-easybutton';
+// import * as L from 'leaflet';
+// import 'leaflet-easybutton';
 // import 'leaflet-compass';
 
 
@@ -18,7 +19,6 @@ export interface layerControl {
 }
 
 
-// import * as L from 'leaflet';
 @Injectable({
     providedIn: 'root'
 })
@@ -30,6 +30,7 @@ export class MapService {
     public scale: any;
     public zoomHome: any;
     public textBox: any;
+    public textbox2: any;
     public locationButton: any;
     public compass: any;
     public LayersControl: BehaviorSubject<layerControl> = new BehaviorSubject<any>({ baseLayers: [] });
@@ -39,33 +40,38 @@ export class MapService {
     };
         
     private jsonHeader: HttpHeaders = new HttpHeaders({
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
     });
 
     constructor(private _http: HttpClient, private _configService: ConfigService) {
-        this.chosenBaseLayer = 'Topo';
-      
+        this.chosenBaseLayer = 'WorldTopographic';
+    
         this.baseMaps = {
-            // {s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png
-            OpenStreetMap: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 20,
-                zIndex: 1,
-                attribution:
-                'Imagery from <a href="https://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a>' +
-                '&mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }),
-            Topo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            
+            WorldTopographic: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
                 attribution:
                     'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL,' +
                         'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
             }),
-            CartoDB: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            NationalGeographic: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+                maxZoom: 16
+            }),
+            NationalMap: L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a>',
+                maxZoom: 20,
+            }),
+            Streets: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+            }),
+            Gray: L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
-                attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; ' +
-                        '<a href="https://cartodb.com/attributions">CartoDB</a>'
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                maxZoom: 16
+                
             }),
             Satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
@@ -74,19 +80,10 @@ export class MapService {
                         'and the GIS User Community'
                 // maxZoom: 10
             }),
-            Terrain: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}', {
-                zIndex: 1,
-                attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS',
+            ShadedRelief: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri',
                 maxZoom: 13
-            }),
-            Gray: L.tileLayer(
-                'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-                {
-                    zIndex: 1,
-                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-                    maxZoom: 16
-                }
-            )
+            })
         };
 
         // Scalebar
@@ -208,48 +205,35 @@ export class MapService {
         });
         L.control.textbox = function (opts: any) { return new L.Control.textbox(opts); }
         this.textBox = new L.Control.textBox({ position: 'bottomleft' });
-
+        
         // Button that shows your location
-        this.locationButton = L.easyButton('<i class="fa fa-crosshairs" style="line-height:1.65; font-size:16px;"></i>', function (btn: any, map: Map) { //Need to improve styling
-            var locationMarker = new L.CircleMarker([0, 0]).addTo(map);
-            map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
-                .on('locationfound', function (e) {
-                    locationMarker.setLatLng(e.latlng);
-                    locationMarker.redraw();
-                })
-                .on('locationerror', function (e) {
-                    alert("Location error");
-                })
-        });
+        // this.locationButton = L.easyButton('<i class="fa fa-crosshairs" style="line-height:1.65; font-size:16px;"></i>', function (btn: any, map: Map) { //Need to improve styling
+        //     var locationMarker = new L.CircleMarker([0, 0]).addTo(map);
+        //     map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
+        //         .on('locationfound', function (e) {
+        //             locationMarker.setLatLng(e.latlng);
+        //             locationMarker.redraw();
+        //         })
+        //         .on('locationerror', function (e) {
+        //             alert("Location error");
+        //         })
+        // });
 
         // Compass
         // this.compass = new L.Control.Compass();
+
     }
 
-    private loadLayer(ml: any): any {
-        // try {
-            switch (ml.type) {
-                case 'agsbase':
-                    return esri.basemapLayer(ml.layer);
-                case 'group':
-                    return;
-                case 'agsDynamic':
-                    //https://esri.github.io/esri-leaflet/api-reference/layers/dynamic-map-layer.html
-                    var options = ml.layerOptions;
-                    options.url = ml.url;
-                    return esri.dynamicMapLayer(options);
-                case 'agsTiled':
-                    var options = ml.layerOptions;
-                    options.url = ml.url;
-                    return esri.tiledMapLayer(options);
-                default:
-                    console.warn("No condition exists for maplayers of type ", ml.type, "see config maplayer for: " + ml.name)
-            }//end switch
-        // } catch (error) {
-        //     console.error(ml.name + " failed to load map layer", error)
-        //     return null;
-        // }
-        this.configSettings = this._configService.getConfiguration();
+    public zoomLocation(): void {
+        var locationMarker = new L.CircleMarker([0, 0]).addTo(this.map);
+        this.map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
+            .on('locationfound', function (e) {
+                locationMarker.setLatLng(e.latlng);
+                locationMarker.redraw();
+            })
+            .on('locationerror', function (e) {
+                alert("Location error");
+            })
     }
 
     // Get user map click, used in delineation 

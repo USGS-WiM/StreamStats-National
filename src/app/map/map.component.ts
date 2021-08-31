@@ -2,7 +2,6 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 
 import * as L from 'leaflet';
-import { AppService } from '../shared/services/app.service';
 
 @Component({
   selector: 'app-map',
@@ -17,7 +16,7 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // Initialize map
-    this._mapService.map = L.map('map', {
+    this._mapService.map =  L.map('map', {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
@@ -43,7 +42,7 @@ export class MapComponent implements OnInit {
   });
 
     // Add button to show your location
-    this._mapService.locationButton.addTo(this._mapService.map);
+    // this._mapService.locationButton.addTo(this._mapService.map);
 
     // Add compass
     // this._mapService.map.addControl(this._mapService.compass);
@@ -60,5 +59,9 @@ export class MapComponent implements OnInit {
     }) 
   
   };
+
+  zoomLocation() {
+    this._mapService.zoomLocation();
+  }
 
 }
