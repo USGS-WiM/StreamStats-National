@@ -32,8 +32,6 @@
     "font-awesome": "^4.7.0",
     "leaflet": "^1.7.1",
     "leaflet-compass": "^1.5.5",
-    "leaflet-draw": "^1.0.4",
-    "leaflet-easybutton": "^2.4.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "uswds": "^2.11.1",
