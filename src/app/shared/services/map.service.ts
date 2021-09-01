@@ -1,19 +1,20 @@
 // Map-specific items: click points, adding layers, etc.
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
-import { Subject } from 'rxjs';
+import {  Subject } from 'rxjs';
+import { AppService } from './app.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Map,  Control } from 'leaflet';
 declare const L: any;
 // import * as L from 'leaflet';
 // import 'leaflet-easybutton';
 // import 'leaflet-compass';
-import * as search_api from 'usgs-search-api';
-declare const search_api: search_api;
+// import * as search_api from 'usgs-search-api';
+// declare const search_api: search_api;
 
 export interface layerControl {
     baseLayers: Array<any>;
@@ -35,6 +36,7 @@ export class MapService {
     public locationButton: any;
     public compass: any;
     public LayersControl: BehaviorSubject<layerControl> = new BehaviorSubject<any>({ baseLayers: [] });
+    public authHeader: HttpHeaders;
 
     public _layersControl: layerControl = {
         baseLayers: []
@@ -45,16 +47,24 @@ export class MapService {
         'Content-Type': 'application/json'
     });
 
-    constructor(private _http: HttpClient, private _configService: ConfigService) {
-        this.chosenBaseLayer = 'WorldTopographic';
     
+    
+    constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
+        
+        this.authHeader = new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization: localStorage.getItem('auth') || '',
+            'Access-Control-Allow-Origin': "*"
+        });
+
+        this.chosenBaseLayer = 'WorldTopographic';
         this.baseMaps = {
             
             WorldTopographic: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
                 attribution:
                     'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL,' +
-                        'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+                    'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
             }),
             NationalGeographic: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
@@ -72,13 +82,12 @@ export class MapService {
                 zIndex: 1,
                 attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
                 maxZoom: 16
-                
             }),
             Satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
                 attribution:
                     'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, ' +
-                        'and the GIS User Community'
+                    'and the GIS User Community'
                 // maxZoom: 10
             }),
             ShadedRelief: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}', {
@@ -247,6 +256,38 @@ export class MapService {
         return this._clickPointSubject.asObservable();
     }
 
-}
+    // Get Streamgages
+    private _streamgages: Subject<any> = new Subject<any>();
+    public setStreamgages(xmin: number, xmax: number, ymin: number, ymax: number) {
+        var url = this.configSettings.GageStatsServices + "/stations/Bounds?xmin="+xmin+"&xmax="+xmax+"&ymin="+ymin+"&ymax="+ymax+"&geojson=true";
+        this._http.get(url, {headers: this.authHeader}).subscribe(res => {
+            var streamgageLayer = res;
+            this._streamgages.next(streamgageLayer);
+        }, error => {
+         console.log(error);
+       })
+    }
+    public get streamgages(): any {
+        return this._streamgages.asObservable();
+    }
 
-// Issue: bottomleft elements (map scale and scale bar) are covered by Leaflet attribute text in mobile mode
+    //Get water service data - current discharge
+    private _waterServiceData: Subject<any> = new Subject<any>();
+    public setWaterServiceData(site: number){
+        var url = 'https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=' + site + '&parameterCd=00060&siteStatus=all'
+        this._http.get(url, {responseType: 'text'}).subscribe(res => {
+            res = res.split('\n').filter(function(line) { 
+                return line.indexOf( "#" ) == -1;
+            }).join('\n');
+            const parsedString = res.split('\n').map((line) => line.split('\t'));
+            if (parsedString[2][4]) { this._waterServiceData.next(parsedString[2][4] + " @ " + parsedString[2][2]);
+            } else this._waterServiceData.next("No Data");
+        }, error => {
+         console.log(error);
+       })
+    }
+    public get waterData(): any {
+        return this._waterServiceData.asObservable();
+    }
+
+ }
