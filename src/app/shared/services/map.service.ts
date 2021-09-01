@@ -57,6 +57,8 @@ export class MapService {
             'Access-Control-Allow-Origin': "*"
         });
 
+        this.configSettings = this._configService.getConfiguration();
+
         this.chosenBaseLayer = 'WorldTopographic';
         this.baseMaps = {
             
