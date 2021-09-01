@@ -14,8 +14,6 @@ export class MapComponent implements OnInit {
   private configSettings: Config;
   public clickPoint = {};
   public streamgageLayer: any;
-  public currentLat: number = 41.1;
-  public currentLng: number = -98.7;
   public currentZoom: number = 4;
   public latestDischarge: any;
   public selectedSite: any
@@ -58,11 +56,6 @@ export class MapComponent implements OnInit {
     // On map click, set click point value, for delineation
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
-    }) 
-    // On map move, set currnt lat and long
-    this._mapService.map.on("mousemove",(evt: { latlng: { lat: number; lng: number; }; }) => {
-      this.currentLat = evt.latlng.lat;
-      this.currentLng = evt.latlng.lng;
     }) 
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
