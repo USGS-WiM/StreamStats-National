@@ -12,7 +12,8 @@ declare const L: any;
 // import * as L from 'leaflet';
 // import 'leaflet-easybutton';
 // import 'leaflet-compass';
-
+import * as search_api from 'usgs-search-api';
+declare const search_api: search_api;
 
 export interface layerControl {
     baseLayers: Array<any>;

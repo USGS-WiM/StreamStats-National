@@ -34,6 +34,7 @@
     "leaflet-compass": "^1.5.5",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
+    "usgs-search-api": "git+https://github.com/usgs/search_api.git",
     "uswds": "^2.11.1",
     "zone.js": "~0.11.3"
   },
