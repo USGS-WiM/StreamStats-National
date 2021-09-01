@@ -51,9 +51,6 @@ export class MapComponent implements OnInit {
       this._mapService.textBox.addTo(this._mapService.map); //Reload text box
   });
 
-    // Add button to show your location
-    // this._mapService.locationButton.addTo(this._mapService.map);
-
     // Add compass
     // this._mapService.map.addControl(this._mapService.compass);
     
@@ -146,12 +143,8 @@ export class MapComponent implements OnInit {
     popup.setContent( innerHTML );
   }
 
-  zoomLocation() {
-    this._mapService.zoomLocation();
-  }
 
-  geosearch() {
-    this._mapService.zoomLocation();
-  }
+
+  
 
 }

@@ -30,6 +30,13 @@
     #geosearchButton {
         top: 150px;
     }
+
+    #searchBox {
+        // position : absolute;
+        top      : 150px;
+        // right    : 10px;
+        z-index  : 1000;
+    }
     
 }
 

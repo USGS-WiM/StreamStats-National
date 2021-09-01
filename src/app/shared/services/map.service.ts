@@ -1,5 +1,3 @@
-// Map-specific items: click points, adding layers, etc.
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
@@ -7,8 +5,7 @@ import { Config } from '../interfaces/config/config';
 import {  Subject } from 'rxjs';
 import { AppService } from './app.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { Map,  Control } from 'leaflet';
+import { Map } from 'leaflet';
 declare const L: any;
 // import * as L from 'leaflet';
 // import 'leaflet-easybutton';
@@ -47,7 +44,6 @@ export class MapService {
         'Content-Type': 'application/json'
     });
 
-    
     
     constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
         
