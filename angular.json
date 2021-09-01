@@ -44,13 +44,17 @@
               }
             ],
             "styles": [
+              "./node_modules/usgs-search-api/dist/search_api.css",
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
               "./node_modules/font-awesome/css/font-awesome.css",
 			        "./node_modules/uswds/dist/css/uswds.min.css",
               "./node_modules/leaflet/dist/leaflet.css"
             ],
-            "scripts": ["node_modules/uswds/dist/js/uswds.min.js"]
+            "scripts": [
+              "node_modules/uswds/dist/js/uswds.min.js",
+              "./node_modules/jquery/dist/jquery.min.js",
+				      "./node_modules/usgs-search-api/dist/search_api.js"]
           },
           "configurations": {
             "production": {
@@ -121,10 +125,15 @@
               }
             ],
             "styles": [
-			"node_modules/uswds/dist/css/uswds.min.css",
+              "./node_modules/usgs-search-api/dist/search_api.css",
+			        "node_modules/uswds/dist/css/uswds.min.css",
               "src/styles.scss"
             ],
-            "scripts": ["node_modules/uswds/dist/js/uswds.min.js"]
+            "scripts": [
+              "node_modules/uswds/dist/js/uswds.min.js",
+              "./node_modules/jquery/dist/jquery.min.js",
+				      "./node_modules/usgs-search-api/dist/search_api.js"
+            ]
           }
         },
         "lint": {
