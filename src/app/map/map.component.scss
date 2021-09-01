@@ -7,11 +7,10 @@
         height: 100%;
     }
 
-    #geolocateButton {
+    .mapButton {
         position: absolute;
         padding-top: 4px;
         padding-left: 2px;
-        top: 115px; /* 330px if header is expanded */
         left: 10px;
         z-index: 1000;
         background-color: white;
@@ -22,6 +21,14 @@
         height: 34px;
         cursor: pointer;
         text-align: center;
+    }
+
+    #geolocateButton {
+        top: 110px;
+    }
+
+    #geosearchButton {
+        top: 150px;
     }
     
 }

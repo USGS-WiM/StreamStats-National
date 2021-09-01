@@ -150,4 +150,8 @@ export class MapComponent implements OnInit {
     this._mapService.zoomLocation();
   }
 
+  geosearch() {
+    this._mapService.zoomLocation();
+  }
+
 }
