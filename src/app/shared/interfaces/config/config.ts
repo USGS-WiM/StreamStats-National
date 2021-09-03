@@ -6,4 +6,5 @@ export interface Config {
     nldiSplitCatchmentURL: string;
     GageStatsServices: string;
     GageStatsServicesBounds: string;
+    baseLayers: [];
 }

@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
-import {  Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AppService } from './app.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Map } from 'leaflet';
+import { MapLayer } from '../interfaces/maplayer';
+
 declare const L: any;
 // import * as L from 'leaflet';
 // import 'leaflet-easybutton';
@@ -15,6 +17,7 @@ declare const L: any;
 
 export interface layerControl {
     baseLayers: Array<any>;
+    overlays: Array<any>
 }
 
 
@@ -24,7 +27,7 @@ export interface layerControl {
 export class MapService {
     private configSettings!: Config;
     public map!: Map;
-    public chosenBaseLayer: string;
+    public chosenBaseLayer!: string;
     public baseMaps: any;
     public scale: any;
     public zoomHome: any;
@@ -32,11 +35,12 @@ export class MapService {
     public textbox2: any;
     public locationButton: any;
     public compass: any;
-    public LayersControl: BehaviorSubject<layerControl> = new BehaviorSubject<any>({ baseLayers: [] });
+    public LayersControl: BehaviorSubject<layerControl> = new BehaviorSubject<any>({ baseLayers: [], overlays: [] });
     public authHeader: HttpHeaders;
 
     public _layersControl: layerControl = {
-        baseLayers: []
+        baseLayers: [],
+        overlays: []
     };
         
     private jsonHeader: HttpHeaders = new HttpHeaders({
@@ -55,14 +59,31 @@ export class MapService {
 
         this.configSettings = this._configService.getConfiguration();
 
-        this.chosenBaseLayer = 'WorldTopographic';
+        // this.chosenBaseLayer = 'WorldTopographic';
+
+        this.configSettings.baseLayers.forEach(ml => {
+            if (ml["visible"]) {
+                this.chosenBaseLayer = ml["name"];
+            }
+            var layer = this.loadLayer(ml);
+            if (layer != null) {
+                this._layersControl.baseLayers.push(ml);
+            }
+            // console.log(this._layersControl);
+            this.LayersControl.next(this._layersControl);
+            // console.log(ml);
+
+            // Then load the overlay layers
+        })
+
         this.baseMaps = {
             
             WorldTopographic: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 zIndex: 1,
                 attribution:
                     'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL,' +
-                    'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+                    'Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+                    maxZoom: 16
             }),
             NationalGeographic: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
@@ -70,7 +91,7 @@ export class MapService {
             }),
             NationalMap: L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
                 attribution: '<a href="https://www.doi.gov">U.S. Department of the Interior</a> | <a href="https://www.usgs.gov">U.S. Geological Survey</a>',
-                maxZoom: 20,
+                maxZoom: 16,
             }),
             Streets: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
@@ -85,12 +106,12 @@ export class MapService {
                 zIndex: 1,
                 attribution:
                     'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, ' +
-                    'and the GIS User Community'
-                // maxZoom: 10
+                    'and the GIS User Community',
+                maxZoom: 16
             }),
             ShadedRelief: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; Source: Esri',
-                maxZoom: 13
+                maxZoom: 16
             })
         };
 
@@ -232,6 +253,17 @@ export class MapService {
 
     }
 
+    public AddMapLayer(mlayer: MapLayer) {
+        var ml = this._layersControl.overlays.find((l: any) => (l.name === mlayer.name));
+    
+        if (ml != null) ml.layer = mlayer.layer;
+    
+        else this._layersControl.overlays.push(mlayer);
+    
+        //Notify subscribers
+        this.LayersControl.next(this._layersControl);
+    }
+
     public zoomLocation(): void {
         var locationMarker = new L.CircleMarker([0, 0]).addTo(this.map);
         this.map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true })
@@ -281,11 +313,37 @@ export class MapService {
             if (parsedString[2][4]) { this._waterServiceData.next(parsedString[2][4] + " @ " + parsedString[2][2]);
             } else this._waterServiceData.next("No Data");
         }, error => {
-         console.log(error);
-       })
+            console.log(error);
+        })
     }
     public get waterData(): any {
         return this._waterServiceData.asObservable();
     }
 
- }
+    private loadLayer(ml: any): L.Layer {
+        return L.tileLayer(
+            ml["url"],
+            {attribution: ml["attribution"],
+            maxZoom: 16
+        });
+    }
+
+    public SetBaselayer(layername: string) {
+        if (this.chosenBaseLayer != layername) {
+            var ml = this._layersControl.baseLayers.find((l: any) => (l.name === this.chosenBaseLayer))
+            if (!ml) return; 
+            ml.visible = false;
+        }
+    
+        var ml = this._layersControl.baseLayers.find((l: any) => (l.name === layername))
+    
+        if (ml.visible) { 
+            ml.visible = false; 
+        } else {
+            ml.visible = true;
+        }
+        this.chosenBaseLayer = ml.name;
+        this.LayersControl.next(this._layersControl);
+    }
+
+}

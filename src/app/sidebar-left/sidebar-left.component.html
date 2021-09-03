@@ -25,31 +25,31 @@
 
 				<div class="basemap-selector"> 
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="WorldTopographic" (click)="toggleBasemap('WorldTopographic')" checked>
+						<input type="radio" name="basemap" value="WorldTopographic" (click)="SetBaselayer('WorldTopographic');" checked>
 						<img src="../assets/images/topo.jpg"> World Topographic
 					</label>
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="NationalGeographic" (click)="toggleBasemap('NationalGeographic')">
+						<input type="radio" name="basemap" value="NationalGeographic" (click)="SetBaselayer('NationalGeographic')">
 						<img src="../assets/images/natgeo.jpg"> National Geographic
 					</label>
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="NationalMap" (click)="toggleBasemap('NationalMap')">
+						<input type="radio" name="basemap" value="NationalMap" (click)="SetBaselayer('NationalMap')">
 						<img src="../assets/images/tnm.JPG"> National Map
 					</label>
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="Streets" (click)="toggleBasemap('Streets')">
+						<input type="radio" name="basemap" value="Streets" (click)="SetBaselayer('Streets')">
 						<img src="../assets/images/streets.JPG"> Streets
 					</label>
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="Gray" (click)="toggleBasemap('Gray')">
+						<input type="radio" name="basemap" value="Gray" (click)="SetBaselayer('Gray')">
 						<img src="../assets/images/gray.jpg"> Gray
 					</label>
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="Satellite" (click)="toggleBasemap('Satellite')">
+						<input type="radio" name="basemap" value="Satellite" (click)="SetBaselayer('Satellite')">
 						<img src="../assets/images/satellite.jpg"> Satellite Imagery
 					</label>
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="ShadedRelief" (click)="toggleBasemap('ShadedRelief')">
+						<input type="radio" name="basemap" value="ShadedRelief" (click)="SetBaselayer('ShadedRelief')">
 						<img src="../assets/images/relief.JPG"> Shaded Relief
 					</label>
 				</div>
@@ -111,7 +111,7 @@
 			Add class "wide" to make it wider,
 			Height will auto expand to fit content, and scroll if too tall
 		-->
-		<div class="sidebar-popout" *ngIf="popout == 'geosearch'">
+		<div class="sidebar-popout medium" *ngIf="popout == 'geosearch'">
 			<h3 class="sidebar-popout-header">Geosearch</h3>
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->

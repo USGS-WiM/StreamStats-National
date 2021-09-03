@@ -19,6 +19,16 @@ export class MapComponent implements OnInit {
   public selectedSite: any
   public selectedPopup: any;
   public selectedFeature: any;
+	public baselayers = [] as any;
+	public overlays = [] as any;
+  
+  private _layers = [] as any;
+  private _layersControl: any;
+
+  public get LayersControl() {
+    return this._layersControl;
+  }
+
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient,
     ) { 
     this.configSettings = this._configService.getConfiguration();
@@ -30,10 +40,33 @@ export class MapComponent implements OnInit {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
-      maxZoom: 19,
+      maxZoom: 16,
       renderer: L.canvas(),
       zoomControl: false
     });
+
+        //#region "Base layer and overlay subscribers"
+    // method to subscribe to the layers
+    this._mapService.LayersControl.subscribe(data => {
+      this._layersControl = {
+        baseLayers: data.baseLayers.reduce((acc, ml) => {
+          acc[ml.name] = ml.layer;
+          return acc;
+        }, {}),
+        overlays: data.overlays.reduce((acc, ml) => { acc[ml.name] = ml.layer; return acc; }, {})
+      };
+
+      // method to filter out layers by visibility
+      if (data.overlays.length > 0) {
+        const activelayers = data.overlays
+          .filter((l: any) => l.visible)
+          .map((l: any) => l.layer);
+        activelayers.unshift(data.baseLayers.find((l: any) => (l.visible)).layer);
+        this._layers = activelayers;
+      }
+    });
+
+    
 
 
     // Add basemaps
