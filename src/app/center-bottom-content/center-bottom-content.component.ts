@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 // interfaces
 import { Workflow } from '../shared/interfaces/workflow/workflow';
