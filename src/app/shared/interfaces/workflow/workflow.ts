@@ -1,4 +1,3 @@
-import { Options } from './options';
 import { Output } from './output';
 import { Steps } from './steps';
 

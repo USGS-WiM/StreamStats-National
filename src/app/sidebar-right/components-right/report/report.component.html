@@ -1,5 +1,16 @@
 <!-- Placeholder html -->
-
-<p>report works!</p>
+<h4>Completed workflows:</h4>
+<div *ngFor="let data of workflowData; let i = index"> 
+    <p>{{data.title}}</p>
+    <div *ngFor="let step of data.steps; let j = index">
+        <ul>
+            <li>{{step.label}}
+                <ul *ngFor="let option of step.options; let k = index">
+                    <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
 
 <!-- <p>User map click: {{ clickPoint }}</p> -->

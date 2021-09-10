@@ -1,4 +1,4 @@
-import { Option } from './option';
+import { Options } from './options';
 
 export interface Steps {
     label: string;
@@ -6,6 +6,6 @@ export interface Steps {
     value: string;
     type: string;
     validators?: any;
-    options: Array<Option>;
+    options?: Array<Options>;
     //required?: boolean;
 }

@@ -7,35 +7,50 @@
         "steps":
         [
             {
-                "label": "Select Delineation Process",
-                "name": "selectDelineation",
-                "value":"",
+                "label": "Select Your Favorite Color",
+                "name": "selectColor",
                 "type": "checkbox",
-                "validotors": {
+                "validotors": 
+                {
                     "required": true
                 },
                 "options":
                 [
-                    "NLDI Delineation",
-                    "State-Based Delineation",
-                    "Open-Source Delineation"
+                    {
+                        "text":"Red",
+                        "selected": false
+                    },
+                    {
+                        "text":"Yellow",
+                        "selected": false
+                    },
+                    {
+                        "text":"Blue",
+                        "selected": false
+                    }
                 ]
             },
             {
-                "label":"Select Delineation Point",
-                "name": "delineationClickPoint",
-                "value":"",
-                "type": "subscription",
-                "validotors": {
+                "label":"Type Something",
+                "name": "selectPoints",
+                "type": "text",
+                "validotors": 
+                {
                     "required": true
-                }
+                },
+                "options":
+                [
+                    {
+                        "text":"Placeholder text"
+                    }
+                ]
             }
         ],
         "output": 
         {
             "value": "",
             "valueType": "geojson",
-            "reportDisplayType": "map"
+            "displayType": "map"
         }
     },
     {
@@ -46,62 +61,174 @@
         "steps":
         [
             {
-                "title": "Select Delineation Process",
-                "valueType": "option",
+                "label": "Select Delineation Process",
+                "name": "selectDelineationProcess",
+                "type": "checkbox",
                 "options":
                 [
-                    "NLDI Delineation",
-                    "State-Based Delineation",
-                    "Open-Source Delineation"
-                ],
-                "value":"test"
+                    {
+                        "text": "NLDI Delineation",
+                        "selected": false
+                    },
+                    {
+                        "text": "State-Based Delineation",
+                        "selected": false
+                    },
+                    {
+                        "text": "Open-Source Delineation",
+                        "selected": false
+                    }
+                ]
             },
             {
-                "title":"Select Delineation Point"
+                "label":"Select Delineation Point",
+                "name": "selectDelineationPoint",
+                "type": "subscription",
+                "validotors": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Click on the map",
+                        "selected": false
+                    }
+                ]
             }
         ],
         "output": 
         {
             "value": "",
             "valueType": "geojson",
-            "reportDisplayType": "map"
+            "displayType": "map"
         }
     },
     {
         "title": "Flowtrace",
         "description": "Description Here.",
         "functionality": "Core",
-        "icon": "far fa-chart-area"
+        "icon": "far fa-chart-area",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     },
     {
         "title": "Basin Characteristics",
         "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area.",
         "functionality": "Core",
-        "icon": "far fa-chart-bar"
+        "icon": "far fa-chart-bar",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     },
     {
         "title": "Flow Statistics",
         "description": "Description Here.",
         "functionality": "Core",
-        "icon": "far fa-map-marker"
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     },
     {
         "title": "Wateruse",
         "description": "Description Here",
         "functionality": "State",
-        "icon": "far fa-map-marker"
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     },
     {
         "title": "Regulation",
         "description": "Description Here.",
         "functionality": "State",
-        "icon": "far fa-map-marker"
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     },
     {
         "title": "Other",
         "description": "Description Here.",
         "functionality": "Additional",
-        "icon": "far fa-map-marker"
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     }
 
 ]

@@ -1,110 +1,35 @@
 <!-- Workflow Steps/Walkthru -->
-<div>
+<div class="app-wrapper">
     <p>{{workflow.title}}</p>
-    <p>Workflow steps and workflow to come.</p>
-    <!-- <div *ngFor="let step of workflow.steps; let i = index"> 
-        Step {{i+1}}: {{step.title}}
-        <div *ngIf ="step.valueType==='option'" >
-            <div *ngFor="let option of step.options"> 
-                {{option.title}}
+
+    <form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
+      <div formArrayName="steps">
+        <div *ngFor="let step of getSteps(workflowForm); let i = index">
+          <div formGroupName="{{i}}">
+            <h4> Step {{i+1}}: {{ step.value.label}} </h4>
+            <div formArrayName="options">
+
+              <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+
+                <div *ngIf="step.value.type === 'checkbox'">
+                  <input type="checkbox" formControlName="selected"> {{option.value.text}}
+                </div>
+
+                <div *ngIf="step.value.type === 'subscription'">
+                  <input type="hidden" formControlName="selected"> {{option.value.text}}
+                </div>
+
+                <div *ngIf="step.value.type === 'text'">
+                  <input type="text" formControlName="text">
+                </div>
+                
+              </div>
+
             </div>
+          </div>  
         </div>
-        <div *ngIf="step.valueType==='subscription'" >
-        </div>
-    </div> -->
+      </div>
+      <button type="submit">Continue</button>
+    </form>
 
 </div>
-
-<div>
-    <form [formGroup]="workflowForm">
-        {{workflowForm.value | json}}
-        <div *ngFor="let step of workflow.steps; let s = index">
-            <label formControlName="s">{{step.label}}</label>
-
-        </div>
-
-    </form>
-</div>
-
-<div>
-    <form [formGroup]="testForm">
-        <div formArrayName="steps">
-            <div *ngFor="let step of steps.controls; let s = index">
-                <label for="step-{{s}}">Step:</label>
-                <input type="checkbox" [formControlName]="s"> {{step.value}}
-            </div>
-            <!-- <label formControlName="selectDelineation">Step 1: {{workflow.steps}}</label> -->
-        </div>
-    </form>
-</div>
-
-<!-- <div>
-    <form [formGroup]="registrationForm">
-        {{registrationForm.value | json}}
-        <div>
-            <label>Username</label>
-            <input formControlName="userName" type="text">
-            <div class="input-invalid-warning" *ngIf="registrationForm.get('userName')?.invalid && registrationForm.get('userName')?.touched">
-                Username is required
-            </div>
-            <div class="input-invalid-warning" *ngIf="registrationForm.get('userName')?.errors?.forbiddenText">
-                Username is forbidden: {{registrationForm.get('userName')?.errors?.forbiddenText.value}}
-            </div>
-        </div>
-
-        <div>
-            <label>email</label>
-            <button (click)="addAlternateEmail()">add email</button>
-            <input formControlName="email" type="text">
-            <div class="input-invalid-warning" *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
-                Email is required
-            </div>
-            <div formArrayName="alternateEmails" *ngFor="let email of alternateEmails.controls; let i = index">
-                <input [formControlName]="i" type="text">
-
-            </div>
-        </div>
-        <div>
-            <label>send offers</label>
-            <input formControlName="subscribe" type="checkbox">
-        </div>
-
-        <div>
-            <label>Password</label>
-            <input formControlName="password" type="password">
-            <div class="input-invalid-warning" *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched">
-                Password is required and must be at least three (3) characters
-            </div>
-        </div>
-
-        <div>
-            <label>confirm</label>
-            <input formControlName="confirmPassword" type="password">
-            <div class="input-invalid-warning" *ngIf="registrationForm.errors?.misMatch">
-                Passwords do not match
-            </div>
-        </div>
-
-        <div formGroupName="address">
-            <div>
-                <label>city</label>
-                <input formControlName="city" type="text">
-            </div>
-    
-            <div>
-                <label>state</label>
-                <input formControlName="state" type="password">
-            </div>
-    
-            <div>
-                <label>zip</label>
-                <input formControlName="zip" type="password">
-            </div>
-        </div>
-
-
-
-        <button>register</button>
-        <button (click)="loadData()">api data</button>
-    </form>
-</div> -->
