@@ -54,7 +54,7 @@ export function ConfigLoader(configService: ConfigService) {
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     AppService,

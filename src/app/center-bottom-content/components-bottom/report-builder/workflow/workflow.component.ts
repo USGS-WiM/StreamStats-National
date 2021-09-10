@@ -8,7 +8,7 @@ import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
   styleUrls: ['./workflow.component.scss']
 })
 export class WorkflowComponent implements OnInit {
-  // component communication between center bottom and workflow component 
+
   @Input() workflow!: Workflow;
   @Output() onFormCompletion: EventEmitter<any> = new EventEmitter();
 

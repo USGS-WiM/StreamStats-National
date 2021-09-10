@@ -4,4 +4,6 @@ export interface Config {
     workflowsURL: string;
     nldiBaseURL: string;
     nldiSplitCatchmentURL: string;
+    GageStatsServices: string;
+    GageStatsServicesBounds: string;
 }
