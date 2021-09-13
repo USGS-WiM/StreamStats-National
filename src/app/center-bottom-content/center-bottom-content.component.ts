@@ -32,7 +32,7 @@ export class CenterBottomContentComponent {
       if (!this.formDataOutputs.includes(findDuplicate)) {
         this.formDataOutputs.push(formData);
       } else {
-        const index = this.formDataOutputs.indexOf(formData);
+        const index = this.formDataOutputs.indexOf(findDuplicate);
         this.formDataOutputs.splice(index, 1, formData)
       }
     }
