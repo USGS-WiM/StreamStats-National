@@ -44,9 +44,9 @@ export class NLDIService {
         }
       ]
     }
-    console.log(post)
     return this._http.post(url, post, options).subscribe(resp => {
       this._delineationSubject.next(resp.body);
+      console.log(resp.body)
       return resp.body;
     });
   };

@@ -19,10 +19,13 @@ export class MapService {
     private configSettings!: Config;
     public authHeader: HttpHeaders = new HttpHeaders({
         'Content-Type': 'application/json',
-         Authorization: localStorage.getItem('auth') || '',
-         'Access-Control-Allow-Origin': "*"
-      });
-    
+        Authorization: localStorage.getItem('auth') || '',
+        'Access-Control-Allow-Origin': "*"
+    });
+    private jsonHeader: HttpHeaders = new HttpHeaders({
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
+    });
     constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
         this.chosenBaseLayer = 'Topo';
         this.baseMaps = {
@@ -115,4 +118,27 @@ export class MapService {
         return this._waterServiceData.asObservable();
     }
 
+    // Delineation
+    private _delineationSubject: Subject<any> = new Subject<any>();
+    public getDelineation(entity: object) {
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response'}
+
+        // to be added to config file once other issues are finished
+        const nldiURL = "https://nhgf.wim.usgs.gov/processes/nldi-splitcatchment/jobs?response=document";
+
+        // return this._http.post(nldiURL, entity, options).subscribe(resp => {
+        //     console.log(resp.body)
+        //     //this._delineationSubject.next(entity);
+        // })
+        return this._http
+        .post(nldiURL, entity, options)
+        .subscribe(resp => {
+            //console.log(resp.body)
+            this._delineationSubject.next(resp.body);
+            return resp.body;
+        })
+    }
+    public get delineationPolygon(): any {
+        return this._delineationSubject.asObservable();
+    }
  }

@@ -4,6 +4,8 @@ import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
 import { HttpClient } from '@angular/common/http';
+import { NLDIService } from '../shared/services/nldi.service';
+import { WorkflowService } from '../shared/services/workflow.service';
 
 @Component({
   selector: 'app-map',
@@ -19,8 +21,13 @@ export class MapComponent implements OnInit {
   public selectedSite: any
   public selectedPopup: any;
   public selectedFeature: any;
-  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient,
-    ) { 
+  public marker!: L.Marker;
+  public basin!: any;
+  public catchmentLayer!: any;
+  public splitCatchmentLayer!: any;
+  public fitBounds!: L.LatLngBounds;
+  public selectedWorkflows: any;
+  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -56,6 +63,7 @@ export class MapComponent implements OnInit {
     // On map click, set click point value, for delineation
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
+      this.onMouseClick();
     }) 
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
@@ -66,6 +74,11 @@ export class MapComponent implements OnInit {
     this._mapService.map.on('dragend',() => {
       this.setBbox();
     })
+
+    // Subsribe to workflow
+    this._workflowService.selectedWorkflow.subscribe((res) => {
+      this.selectedWorkflows = res;
+    });
   }
 
   public setBbox(){
@@ -120,4 +133,48 @@ export class MapComponent implements OnInit {
     popup.setContent( innerHTML );
   }
 
+  // On map click, set click point value, for delineation
+  public onMouseClick() {
+    if (this.selectedWorkflows.length==0){
+      console.log('select a workflow')
+    } else {
+      this._mapService.map?.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
+        if (this._mapService.map?.hasLayer(this.catchmentLayer)) {
+          this._mapService.map?.removeLayer(this.catchmentLayer)
+        }
+        if (this._mapService.map?.hasLayer(this.splitCatchmentLayer)) {
+          this._mapService.map?.removeLayer(this.splitCatchmentLayer)
+        }
+        this._mapService.setClickPoint(evt.latlng)
+        this.addPoint(evt.latlng);
+        this.marker.openPopup();
+        //TODO: option to user to select True/False??
+        this._nldiService.getUpstream(evt.latlng.lat, evt.latlng.lng, "True");
+      });
+
+      this._nldiService.delineationPolygon.subscribe((poly: any) => {
+        this.basin = poly.outputs;
+        console.log(this.basin)
+        if (this.basin) {
+          //this.catchmentLayer = L.geoJSON(this.basin.features[0]);
+          this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
+          //this._mapService.map?.addLayer(this.catchmentLayer);
+          this._mapService.map?.addLayer(this.splitCatchmentLayer);
+          //this._mapService.map?.fitBounds(this.catchmentLayer.getBounds(), { padding: [75,75] });
+        }
+      });
+    }
+
+    };
+
+    public addPoint(latlng: any) {
+      if (this._mapService.map?.hasLayer(this.marker)) {
+        this._mapService.map?.removeLayer(this.marker)
+      }
+      const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
+      this.marker = L.marker(latlng).bindPopup(content).openPopup();
+      //this.marker = L.marker(latlng).addTo(this._mapService.map);
+      //this.marker.addTo(this._mapService.map?);
+      this._mapService.map?.addLayer(this.marker)
+    }
 }

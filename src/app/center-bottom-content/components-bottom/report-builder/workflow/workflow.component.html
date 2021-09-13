@@ -12,7 +12,7 @@
               <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
 
                 <div *ngIf="step.value.type === 'checkbox'">
-                  <input type="checkbox" formControlName="selected"> {{option.value.text}}
+                  <input type="checkbox" formControlName="selected" (change)="selectedCheckbox(option.value.text)"> {{option.value.text}}
                 </div>
 
                 <div *ngIf="step.value.type === 'subscription'">

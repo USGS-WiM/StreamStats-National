@@ -68,4 +68,8 @@ export class WorkflowComponent implements OnInit {
     this.onFormCompletion.emit(formValue)
   }
 
+  public selectedCheckbox(event: any){
+    console.log(event)
+  }
+
 }
