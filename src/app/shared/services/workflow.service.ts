@@ -41,5 +41,14 @@ export class WorkflowService {
   public get selectedWorkflow(): Observable<Array<Workflow>> {
     return this._selectedWorkflow.asObservable();
   }
+
+  //get all completed workflow form data
+  private _formData: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
+  public setFormData(obj: Array<any>) {
+    this._formData.next(obj);
+  }
+  public get formData(): Observable<Array<any>>{
+    return this._formData.asObservable();
+  }
   
 }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MapService } from 'src/app/shared/services/map.service';
+import { WorkflowService } from 'src/app/shared/services/workflow.service';
 
 @Component({
   selector: 'app-report',
@@ -8,13 +9,17 @@ import { MapService } from 'src/app/shared/services/map.service';
 })
 export class ReportComponent implements OnInit {
   currentClick!: object;
+  workflowData: any;
 
-  constructor(private _mapService: MapService) { }
+  constructor(private _mapService: MapService, private _workflowService: WorkflowService) { }
 
   ngOnInit(): void {
     this._mapService.clickPoint.subscribe((point: object) => {
 			this.currentClick = point; 
 		});
+    this._workflowService.formData.subscribe(data => {
+      this.workflowData = data;
+    });
   }
 
 }

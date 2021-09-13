@@ -17,7 +17,7 @@
         <app-workflow-selection *ngIf="reportBuilderTab == 'selection'"></app-workflow-selection>
         <div *ngFor="let workflow of selectedWorkflows; let i = index">
             <div *ngIf="reportBuilderTab == workflow.title">
-                <app-workflow [workflow]="workflow"></app-workflow>
+                <app-workflow [workflow]="workflow" (onFormCompletion)="addFormData($event)"></app-workflow>
             </div> 
         </div>
     </div>
