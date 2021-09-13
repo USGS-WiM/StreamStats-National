@@ -23,34 +23,10 @@
 				<br/><br/><br/><br/><br/><br/><br/><br/>
 				If you have too much content in the map popout, <br> It'll scroll. -->
 
-				<div class="basemap-selector"> 
+				<div *ngFor="let item of baselayers" class="basemap-selector"> 
 					<label class="basemap-option">
-						<input type="radio" name="basemap" value="WorldTopographic" (click)="SetBaselayer('WorldTopographic');" checked>
-						<img src="../assets/images/topo.jpg"> World Topographic
-					</label>
-					<label class="basemap-option">
-						<input type="radio" name="basemap" value="NationalGeographic" (click)="SetBaselayer('NationalGeographic')">
-						<img src="../assets/images/natgeo.jpg"> National Geographic
-					</label>
-					<label class="basemap-option">
-						<input type="radio" name="basemap" value="NationalMap" (click)="SetBaselayer('NationalMap')">
-						<img src="../assets/images/tnm.JPG"> National Map
-					</label>
-					<label class="basemap-option">
-						<input type="radio" name="basemap" value="Streets" (click)="SetBaselayer('Streets')">
-						<img src="../assets/images/streets.JPG"> Streets
-					</label>
-					<label class="basemap-option">
-						<input type="radio" name="basemap" value="Gray" (click)="SetBaselayer('Gray')">
-						<img src="../assets/images/gray.jpg"> Gray
-					</label>
-					<label class="basemap-option">
-						<input type="radio" name="basemap" value="Satellite" (click)="SetBaselayer('Satellite')">
-						<img src="../assets/images/satellite.jpg"> Satellite Imagery
-					</label>
-					<label class="basemap-option">
-						<input type="radio" name="basemap" value="ShadedRelief" (click)="SetBaselayer('ShadedRelief')">
-						<img src="../assets/images/relief.JPG"> Shaded Relief
+						<input type="radio" name="basemap" value="item.name" (click)="SetBaselayer(item.name)">
+						<img src="../assets/images/{{item.img}}"> {{item.name}}
 					</label>
 				</div>
 			</div>
