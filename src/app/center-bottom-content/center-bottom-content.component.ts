@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 // interfaces
 import { Workflow } from '../shared/interfaces/workflow/workflow';
@@ -12,6 +12,7 @@ import { WorkflowService } from '../shared/services/workflow.service';
 export class CenterBottomContentComponent {
   public selectedWorkflows: Array<Workflow> = [];
   reportBuilderTab ='selection';
+  public formDataOutputs: any[] = [];
 
   constructor(private _workflowService: WorkflowService) { 
   }
@@ -21,4 +22,21 @@ export class CenterBottomContentComponent {
       this.selectedWorkflows = res;
     });
   }
+
+  addFormData(formData: any) {
+    if (!this.formDataOutputs.length) {
+      this.formDataOutputs.push(formData)
+    } 
+    else {
+      const findDuplicate = this.formDataOutputs.find(ele => ele.title === formData.title)
+      if (!this.formDataOutputs.includes(findDuplicate)) {
+        this.formDataOutputs.push(formData);
+      } else {
+        const index = this.formDataOutputs.indexOf(findDuplicate);
+        this.formDataOutputs.splice(index, 1, formData)
+      }
+    }
+    this._workflowService.setFormData(this.formDataOutputs)
+  }
+
 }
