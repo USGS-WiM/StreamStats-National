@@ -9,16 +9,16 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
 })
 export class ReportComponent implements OnInit {
   currentClick!: object;
-  public selectedWorkflows: any
+  workflowData: any;
+
   constructor(private _mapService: MapService, private _workflowService: WorkflowService) { }
 
   ngOnInit(): void {
     this._mapService.clickPoint.subscribe((point: object) => {
 			this.currentClick = point; 
 		});
-
-    this._workflowService.selectedWorkflow.subscribe((res) => {
-      this.selectedWorkflows = res;
+    this._workflowService.formData.subscribe(data => {
+      this.workflowData = data;
     });
   }
 

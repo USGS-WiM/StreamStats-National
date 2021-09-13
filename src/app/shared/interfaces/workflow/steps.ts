@@ -1,11 +1,11 @@
 import { Options } from './options';
 
 export interface Steps {
-    stepId: number;
-    title: string;
-    valueType: string;
-    description: string;
-    options: Array<Options>;
+    label: string;
+    name: string;
     value: string;
-    required?: boolean;
+    type: string;
+    validators?: any;
+    options?: Array<Options>;
+    //required?: boolean;
 }

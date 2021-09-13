@@ -1,5 +1,59 @@
 [
     {
+        "title": "Example Workflow",
+        "description": "This is an example workflow.",
+        "functionality": "Core",
+        "icon": "fa fa-sitemap",
+        "steps":
+        [
+            {
+                "label": "Select Your Favorite Color",
+                "name": "selectColor",
+                "type": "checkbox",
+                "validotors": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Red",
+                        "selected": false
+                    },
+                    {
+                        "text":"Yellow",
+                        "selected": false
+                    },
+                    {
+                        "text":"Blue",
+                        "selected": false
+                    }
+                ]
+            },
+            {
+                "label":"Type Something",
+                "name": "selectPoints",
+                "type": "text",
+                "validotors": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Placeholder text"
+                    }
+                ]
+            }
+        ],
+        "output": 
+        {
+            "value": "",
+            "valueType": "geojson",
+            "displayType": "map"
+        }
+    },
+    {
         "title": "Delineation",
         "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
         "functionality": "Core",
@@ -7,83 +61,173 @@
         "steps":
         [
             {
-                "stepId": 1,
-                "title": "Select Delineation Method(s)",
-                "valueType": "option",
+                "label": "Select Delineation Process",
+                "name": "selectDelineationProcess",
+                "type": "checkbox",
                 "options":
                 [
                     {
-                        "title": "NLDI Delineation",
-                        "description": "This is a placeholder"
+                        "text": "NLDI Delineation",
+                        "selected": false
                     },
                     {
-                        "title": "State-Based Delineation",
-                        "description": "Example: user will need to be beyond zoom level 15 and click along a stream grid"
+                        "text": "State-Based Delineation",
+                        "selected": false
                     },
                     {
-                        "title": "Open-Source Delineation",
-                        "description": "This is a placeholder"
+                        "text": "Open-Source Delineation",
+                        "selected": false
                     }
-                ],
-                "value":"getSelectedDelineationProcess",
-                "required": true
+                ]
             },
             {
-                "stepId": 2,
-                "title":"Select Delineation Point",
-                "valueType": "subscription",
-                "description": "Use the map to select a delineation point along a stream.",
-                "value": "geojson point geometry",
-                "required": true
+                "label":"Select Delineation Point",
+                "name": "selectDelineationPoint",
+                "type": "subscription",
+                "validotors": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Click on the map",
+                        "selected": false
+                    }
+                ]
             }
         ],
         "output": 
         {
             "value": "delineationPolygon",
             "valueType": "geojson",
-            "reportDisplayType": "map"
+            "displayType": "map"
         }
     },
     {
         "title": "FireHydro",
         "description": "Description Here.",
         "functionality": "Core",
-        "icon": "fa fa-fire"
+        "icon": "far fa-chart-area",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Basin Characteristics",
+        "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area.",
+        "functionality": "Core",
+        "icon": "far fa-chart-bar",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Flow Statistics",
+        "description": "Description Here.",
+        "functionality": "Core",
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Wateruse",
+        "description": "Description Here",
+        "functionality": "State",
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Regulation",
+        "description": "Description Here.",
+        "functionality": "State",
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Other",
+        "description": "Description Here.",
+        "functionality": "Additional",
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "",
+                "name": "",
+                "type": "",
+                "options":
+                [
+                    {
+                        "text": "",
+                        "selected": false
+                    }
+                ]
+            }
+        ]
     }
-    // {
-    //     "title": "Flowtrace",
-    //     "description": "Description Here.",
-    //     "functionality": "Core",
-    //     "icon": "far fa-chart-area"
-    // },
-    // {
-    //     "title": "Basin Characteristics",
-    //     "description": "Calculate characteristics for an area of interest, e.g. a click point, basin or other area.",
-    //     "functionality": "Core",
-    //     "icon": "far fa-chart-bar"
-    // },
-    // {
-    //     "title": "Flow Statistics",
-    //     "description": "Description Here.",
-    //     "functionality": "Core",
-    //     "icon": "far fa-map-marker"
-    // },
-    // {
-    //     "title": "Wateruse",
-    //     "description": "Description Here",
-    //     "functionality": "State",
-    //     "icon": "far fa-map-marker"
-    // },
-    // {
-    //     "title": "Regulation",
-    //     "description": "Description Here.",
-    //     "functionality": "State",
-    //     "icon": "far fa-map-marker"
-    // },
-    // {
-    //     "title": "Other",
-    //     "description": "Description Here.",
-    //     "functionality": "Additional",
-    //     "icon": "far fa-map-marker"
-    // }
 ]

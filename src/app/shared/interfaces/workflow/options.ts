@@ -1,4 +1,4 @@
 export interface Options {
-    title: string;
-    description: string;
+    text: string;
+    selected: boolean
 }
