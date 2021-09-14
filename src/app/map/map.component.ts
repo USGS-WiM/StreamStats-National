@@ -9,6 +9,7 @@ import { WorkflowService } from '../shared/services/workflow.service';
 import "leaflet/dist/images/marker-shadow.png";
 import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import * as messageType from '../shared/messageType';
+import * as esri from 'esri-leaflet';
 
 @Component({
   selector: 'app-map',
@@ -142,6 +143,12 @@ export class MapComponent implements OnInit {
 
   // On map click, set click point value, for delineation
   public onMouseClick() {
+    esri.dynamicMapLayer({
+      'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
+      'layers': [5,6]
+    }).addTo(this._mapService.map);
+   
+
     if (this.selectedWorkflows.length==0){
       console.log('select a workflow')
     } else {
@@ -182,11 +189,9 @@ export class MapComponent implements OnInit {
     }
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
-      console.log('trying message')
       try {
         let options: Partial<IndividualConfig> = null;
         if (timeout) { options = { timeOut: timeout }; }
-        console.log('trying message')
         this.messager.show(msg, title, options, mType);
       } catch (e) {
       }

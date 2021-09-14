@@ -61,14 +61,19 @@ export class MapService {
                 attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS',
                 maxZoom: 13
             }),
-            Gray: L.tileLayer(
-                'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-                {
-                    zIndex: 1,
-                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-                    maxZoom: 16
+            Gray: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{
+                zIndex: 1,
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                maxZoom: 16
+            }),
+            NHDFlowLines: {
+                url: 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
+                layerOptions: {
+                    layers: [5,6],
+                    opacity: 0.9,
+                    attribution: "Copyright:© 2014 Esri, FAO, NOAA"
                 }
-            )
+            }
         };
 
         this.configSettings = this._configService.getConfiguration();

@@ -1,3 +1,4 @@
+import { ConditionalExpr } from '@angular/compiler';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
@@ -13,7 +14,8 @@ export class WorkflowComponent implements OnInit {
   @Output() onFormCompletion: EventEmitter<any> = new EventEmitter();
 
   public workflowForm: FormGroup;
-  stepsArray!: FormArray;
+  public stepsArray: FormArray;
+  public stepCounter;
 
   constructor(private _fb: FormBuilder) {
     this.workflowForm = this._fb.group({
@@ -72,4 +74,23 @@ export class WorkflowComponent implements OnInit {
     console.log(event)
   }
 
+  public nextStep() {
+    if (this.stepCounter > this.stepsArray.length - 1) { 
+      console.log('last step')
+    } else {
+      console.log(this.stepsArray[this.stepCounter].label); 
+      this.stepCounter = this.stepCounter + 1; 
+    }
+  }
+
+  public backStep() {
+    console.log(this.stepCounter)
+      if (this.stepCounter === 1) { 
+          console.log('first step')
+      } else {
+        this.stepCounter = this.stepCounter - 1; // decrease by one
+        console.log(this.stepsArray[this.stepCounter].label); // give us back the item of where we are now
+      }
+
+  }
 }
