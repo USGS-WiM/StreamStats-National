@@ -35,12 +35,48 @@ export class SidebarLeftComponent implements OnInit {
 		// this.baselayers = this.MapService.baseMaps;
 		// console.log(this.baselayers);
 
-		for (var key in this.MapService.baseMaps) {
-			if (this.MapService.baseMaps.hasOwnProperty(key)) {
-				var val = this.MapService.baseMaps[key];
-				this.baselayers.push([val.name, val.img]);
-			}
+		// var obj = {"1":5,"2":7,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0}
+		// var result = Object.keys(this.MapService.baseMaps).map((key) => [this.MapService.baseMaps[key]]);
+		// var result2 = Object.entries(this.MapService.baseMaps);
+		// console.log(result2);
+		// for (const val of result) { // You can use `let` instead of `const` if you like
+		// 	// console.log(val["name"]);
+		// }
+
+		// objectArray.forEach(([key, value]) => {
+		// 	console.log(key); // 'one'
+		// 	console.log(value); // 1
+		//   });
+
+		// var baselayers = [];
+		// for (var i = 0; i < this.MapService.baseMaps.length; i++) {
+		// 		console.log(this.MapService.baseMaps[i].name);
+		// 		baselayers.push(this.MapService.baseMaps[i].name);
+		// }
+
+		// console.log(this.MapService.baseMaps);
+		// console.log(typeof(this.MapService.baseMaps));
+		// for (var baseMap in this.MapService.baseMaps) {
+		// 	console.log(baseMap);
+		// 	console.log(baseMap);
+		// }
+
+		// var obj = {a: 1, b: 2};
+		// for (var key in this.MapService.baseMaps) {
+		// 	if (this.MapService.baseMaps.hasOwnProperty(key)) {
+		// 		var val = this.MapService.baseMaps[key];
+		// 		// console.log(val);
+		// 		this.baselayers.push([val.name, val.img]);
+		// 	}
+			
+		// 	console.log(this.baselayers);
+		// }
+
+		for (const baseMap in this.MapService.baseMaps) {
+			// console.log(baseMap);
+			this.baselayers.push([baseMap, baseMap.replace(' ','').toLowerCase() + ".jpg"]);
 		}
+		// console.log(this.baselayers);
 	}
 
 	public SetBaselayer(LayerName: string) {

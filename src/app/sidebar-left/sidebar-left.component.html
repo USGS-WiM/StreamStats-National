@@ -26,7 +26,7 @@
 				<div *ngFor="let item of baselayers" class="basemap-selector"> 
 					<label class="basemap-option">
 						<input type="radio" name="basemap" value="item[0]" (click)="SetBaselayer(item[0])">
-						<img src="/assets/images/{{item[1].img}}"> {{item[0]}}
+						<img src="assets/images/{{item[1]}}"> {{item[0]}}
 					</label>
 				</div>
 			</div>

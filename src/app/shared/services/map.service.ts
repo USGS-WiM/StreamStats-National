@@ -74,7 +74,7 @@ export class MapService {
             }
             var layer = this.loadLayer(ml);
             if (layer != null) {
-                this.baseMaps[ml["name"]] = ml;
+                this.baseMaps[ml["name"]] = layer;
             }
 
             // Then load the overlay layers
@@ -336,15 +336,18 @@ export class MapService {
     public SetBaselayer(layername: string) {
         
         // Set previous basemap visibility to false and remove from map
+        // for (const basemap of this.baseMaps){
+        //     this.map.removeLayer(this.loadLayer(this.baseMaps[basemap]));
+        // }
         if (this.chosenBaseLayer != layername) {
             this.baseMaps[this.chosenBaseLayer].visible = false;
-            this.map.removeLayer(this.loadLayer(this.baseMaps[this.chosenBaseLayer]));
+            this.map.removeLayer(this.baseMaps[this.chosenBaseLayer]);
         }
 
         // Set the new basemap visibility to true and add to map
         this.baseMaps[layername].visible = true;
         this.chosenBaseLayer = layername;
-        this.map.addLayer(this.loadLayer(this.baseMaps[layername]));
+        this.map.addLayer(this.baseMaps[layername]);
             
         // Set previous basemap visibility to false
         // if (this.chosenBaseLayer != layername) {
