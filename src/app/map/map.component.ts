@@ -11,26 +11,18 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
+	public baselayers = [] as any;
   private configSettings: Config;
   public clickPoint = {};
-  public streamgageLayer: any;
   public currentZoom: number = 4;
   public latestDischarge: any;
-  public selectedSite: any
-  public selectedPopup: any;
-  public selectedFeature: any;
-	public baselayers = [] as any;
 	public overlays = [] as any;
-  
-  // private _layers = [] as any;
-  // private _layersControl: any;
+  public selectedFeature: any;
+  public selectedPopup: any;
+  public selectedSite: any
+  public streamgageLayer: any;
 
-  // public get LayersControl() {
-  //   return this._layersControl;
-  // }
-
-  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient,
-    ) { 
+  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient) { 
     this.configSettings = this._configService.getConfiguration();
   }
 
@@ -40,7 +32,7 @@ export class MapComponent implements OnInit {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
-      maxZoom: 16,
+      maxZoom: 13,
       renderer: L.canvas(),
       zoomControl: false
     });
