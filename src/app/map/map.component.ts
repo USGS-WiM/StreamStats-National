@@ -22,12 +22,12 @@ export class MapComponent implements OnInit {
 	public baselayers = [] as any;
 	public overlays = [] as any;
   
-  private _layers = [] as any;
-  private _layersControl: any;
+  // private _layers = [] as any;
+  // private _layersControl: any;
 
-  public get LayersControl() {
-    return this._layersControl;
-  }
+  // public get LayersControl() {
+  //   return this._layersControl;
+  // }
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient,
     ) { 
@@ -45,32 +45,28 @@ export class MapComponent implements OnInit {
       zoomControl: false
     });
 
-        //#region "Base layer and overlay subscribers"
     // method to subscribe to the layers
-    this._mapService.LayersControl.subscribe(data => {
-      this._layersControl = {
-        baseLayers: data.baseLayers.reduce((acc, ml) => {
-          acc[ml.name] = ml.layer;
-          return acc;
-        }, {}),
-        overlays: data.overlays.reduce((acc, ml) => { acc[ml.name] = ml.layer; return acc; }, {})
-      };
+    // this._mapService.LayersControl.subscribe(data => {
+    //   this._layersControl = {
+    //     baseLayers: data.baseLayers.reduce((acc, ml) => {
+    //       acc[ml.name] = ml.layer;
+    //       return acc;
+    //     }, {}),
+    //     overlays: data.overlays.reduce((acc, ml) => { acc[ml.name] = ml.layer; return acc; }, {})
+    //   };
 
-      // method to filter out layers by visibility
-      if (data.overlays.length > 0) {
-        const activelayers = data.overlays
-          .filter((l: any) => l.visible)
-          .map((l: any) => l.layer);
-        activelayers.unshift(data.baseLayers.find((l: any) => (l.visible)).layer);
-        this._layers = activelayers;
-      }
-    });
+    //   // method to filter out layers by visibility
+    //   if (data.overlays.length > 0) {
+    //     const activelayers = data.overlays
+    //       .filter((l: any) => l.visible)
+    //       .map((l: any) => l.layer);
+    //     activelayers.unshift(data.baseLayers.find((l: any) => (l.visible)).layer);
+    //     this._layers = activelayers;
+    //   }
+    // });
 
-    
-
-
-    // Add basemaps
-    this._mapService.map.addLayer(this._mapService.baseMaps[this._mapService.chosenBaseLayer]);
+    // Add basemap
+    this._mapService.SetBaselayer(this._mapService.chosenBaseLayer);
 
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
@@ -88,7 +84,7 @@ export class MapComponent implements OnInit {
     // this._mapService.map.addControl(this._mapService.compass);
     
     // setting local click point variable
-      layers: [this._mapService.baseMaps[this._mapService.chosenBaseLayer]]
+      // layers: [this._mapService.baseMaps[this._mapService.chosenBaseLayer]]
     
 
     // Get streamgages

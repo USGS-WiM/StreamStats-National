@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MapService } from 'src/app/shared/services/map.service';
 declare let search_api: any;
 import * as L from 'leaflet';
+// import { ConsoleReporter } from 'jasmine';
 
 @Component({
 	selector: 'app-sidebar-left',
@@ -23,14 +24,23 @@ export class SidebarLeftComponent implements OnInit {
 
 	ngOnInit(): void {
 
-		this.MapService.LayersControl.subscribe(data => {
-			if (this.overlays.length > 0 || this.baselayers.length > 0) {
-			  this.overlays = [];
-			  this.baselayers = [];
+		// this.MapService.LayersControl.subscribe(data => {
+		// 	if (this.overlays.length > 0 || this.baselayers.length > 0) {
+		// 	  this.overlays = [];
+		// 	  this.baselayers = [];
+		// 	}
+		// 	this.overlays = data.overlays;
+		// 	this.baselayers = data.baseLayers;
+		//   });
+		// this.baselayers = this.MapService.baseMaps;
+		// console.log(this.baselayers);
+
+		for (var key in this.MapService.baseMaps) {
+			if (this.MapService.baseMaps.hasOwnProperty(key)) {
+				var val = this.MapService.baseMaps[key];
+				this.baselayers.push([val.name, val.img]);
 			}
-			this.overlays = data.overlays;
-			this.baselayers = data.baseLayers;
-		  });
+		}
 	}
 
 	public SetBaselayer(LayerName: string) {
@@ -40,9 +50,9 @@ export class SidebarLeftComponent implements OnInit {
 	// Remove the existing basemap and add the newly selected basemap
 	public toggleBasemap(selectedBase: string) {
 		console.log(this.MapService);
-		this.MapService.map.removeLayer(this.MapService.baseMaps[this.MapService.chosenBaseLayer ]);
+		// this.MapService.map.removeLayer(this.MapService.baseMaps[this.MapService.chosenBaseLayer ]);
 		this.MapService.chosenBaseLayer = selectedBase;
-		this.MapService.map.addLayer(this.MapService.baseMaps[selectedBase]);
+		// this.MapService.map.addLayer(this.MapService.baseMaps[selectedBase]);
 	}
 
 	public geosearch(): void {
