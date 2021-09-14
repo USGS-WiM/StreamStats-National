@@ -180,7 +180,17 @@ export class MapService {
 
     }
 
-    public AddMapLayer(mlayer: MapLayer) {
+    public AddMapLayer(ml: MapLayer) {
+
+        this.overlays.push(ml);
+
+        if (ml["visible"]) {
+            this.map.addLayer(ml.layer);
+        }
+        // var layer = this.loadLayer(ml);
+        // if (layer != null) {
+        //     this.baseMaps[ml["name"]] = layer;
+        // }
         
     }
 
