@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added leaflet map
 -   Updated site icon to WIM favicon
 -   Added template components and initial hookups into basic app structure
+-   Added example workflows
+-   Added general map functions: scale, zoom, show your location, geosearch, basemap selection
 
 ### Changed
 
