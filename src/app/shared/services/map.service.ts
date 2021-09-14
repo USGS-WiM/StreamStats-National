@@ -181,14 +181,7 @@ export class MapService {
     }
 
     public AddMapLayer(mlayer: MapLayer) {
-        // var ml = this._layersControl.overlays.find((l: any) => (l.name === mlayer.name));
-    
-        // if (ml != null) ml.layer = mlayer.layer;
-    
-        // else this._layersControl.overlays.push(mlayer);
-    
-        // //Notify subscribers
-        // this.LayersControl.next(this._layersControl);
+        
     }
 
     public zoomLocation(): void {

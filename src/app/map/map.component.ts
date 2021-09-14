@@ -37,26 +37,6 @@ export class MapComponent implements OnInit {
       zoomControl: false
     });
 
-    // method to subscribe to the layers
-    // this._mapService.LayersControl.subscribe(data => {
-    //   this._layersControl = {
-    //     baseLayers: data.baseLayers.reduce((acc, ml) => {
-    //       acc[ml.name] = ml.layer;
-    //       return acc;
-    //     }, {}),
-    //     overlays: data.overlays.reduce((acc, ml) => { acc[ml.name] = ml.layer; return acc; }, {})
-    //   };
-
-    //   // method to filter out layers by visibility
-    //   if (data.overlays.length > 0) {
-    //     const activelayers = data.overlays
-    //       .filter((l: any) => l.visible)
-    //       .map((l: any) => l.layer);
-    //     activelayers.unshift(data.baseLayers.find((l: any) => (l.visible)).layer);
-    //     this._layers = activelayers;
-    //   }
-    // });
-
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayer);
 
@@ -75,10 +55,6 @@ export class MapComponent implements OnInit {
     // Add compass
     // this._mapService.map.addControl(this._mapService.compass);
     
-    // setting local click point variable
-      // layers: [this._mapService.baseMaps[this._mapService.chosenBaseLayer]]
-    
-
     // Get streamgages
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
@@ -163,9 +139,5 @@ export class MapComponent implements OnInit {
     SSgagepage + '" target="_blank">link</a></br>';
     popup.setContent( innerHTML );
   }
-
-
-
-  
 
 }
