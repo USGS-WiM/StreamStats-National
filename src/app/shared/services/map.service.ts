@@ -117,28 +117,4 @@ export class MapService {
     public get waterData(): any {
         return this._waterServiceData.asObservable();
     }
-
-    // Delineation
-    private _delineationSubject: Subject<any> = new Subject<any>();
-    public getDelineation(entity: object) {
-        const options = { headers: this.jsonHeader, observe: 'response' as 'response'}
-
-        // to be added to config file once other issues are finished
-        const nldiURL = "https://nhgf.wim.usgs.gov/processes/nldi-splitcatchment/jobs?response=document";
-
-        // return this._http.post(nldiURL, entity, options).subscribe(resp => {
-        //     console.log(resp.body)
-        //     //this._delineationSubject.next(entity);
-        // })
-        return this._http
-        .post(nldiURL, entity, options)
-        .subscribe(resp => {
-            //console.log(resp.body)
-            this._delineationSubject.next(resp.body);
-            return resp.body;
-        })
-    }
-    public get delineationPolygon(): any {
-        return this._delineationSubject.asObservable();
-    }
  }

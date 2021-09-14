@@ -53,6 +53,13 @@ export function ConfigLoader(configService: ConfigService) {
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    ToastNoAnimationModule.forRoot({
+      timeOut: 5000,
+      positionClass: 'toast-bottom-right',
+      progressAnimation:'decreasing',
+      preventDuplicates: true,
+      countDuplicates:true
+    }),
     ReactiveFormsModule
   ],
   providers: [

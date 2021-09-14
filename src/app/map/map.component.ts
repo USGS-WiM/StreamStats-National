@@ -6,6 +6,9 @@ import { ConfigService } from '../shared/config/config.service';
 import { HttpClient } from '@angular/common/http';
 import { NLDIService } from '../shared/services/nldi.service';
 import { WorkflowService } from '../shared/services/workflow.service';
+import "leaflet/dist/images/marker-shadow.png";
+import { ToastrService, IndividualConfig } from 'ngx-toastr';
+import * as messageType from '../shared/messageType';
 
 @Component({
   selector: 'app-map',
@@ -14,6 +17,7 @@ import { WorkflowService } from '../shared/services/workflow.service';
 })
 export class MapComponent implements OnInit {
   private configSettings: Config;
+  private messager: ToastrService;
   public clickPoint = {};
   public streamgageLayer: any;
   public currentZoom: number = 4;
@@ -23,12 +27,15 @@ export class MapComponent implements OnInit {
   public selectedFeature: any;
   public marker!: L.Marker;
   public basin!: any;
-  public catchmentLayer!: any;
-  public splitCatchmentLayer!: any;
+  public splitCatchmentLayer: any;
   public fitBounds!: L.LatLngBounds;
   public selectedWorkflows: any;
-  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService) { 
+  public delineationLoader: boolean = false;
+  
+  constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
+     HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService, public toastr: ToastrService) { 
     this.configSettings = this._configService.getConfiguration();
+    this.messager = toastr;
   }
 
   ngOnInit() {
@@ -139,42 +146,49 @@ export class MapComponent implements OnInit {
       console.log('select a workflow')
     } else {
       this._mapService.map?.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
-        if (this._mapService.map?.hasLayer(this.catchmentLayer)) {
-          this._mapService.map?.removeLayer(this.catchmentLayer)
-        }
-        if (this._mapService.map?.hasLayer(this.splitCatchmentLayer)) {
-          this._mapService.map?.removeLayer(this.splitCatchmentLayer)
-        }
         this._mapService.setClickPoint(evt.latlng)
         this.addPoint(evt.latlng);
         this.marker.openPopup();
-        //TODO: option to user to select True/False??
+        this.delineationLoader = true;
+        this.createMessage("Delineating Basin. Please wait.");
         this._nldiService.getUpstream(evt.latlng.lat, evt.latlng.lng, "True");
       });
 
       this._nldiService.delineationPolygon.subscribe((poly: any) => {
         this.basin = poly.outputs;
-        console.log(this.basin)
         if (this.basin) {
-          //this.catchmentLayer = L.geoJSON(this.basin.features[0]);
+          this.removeLayer(this.splitCatchmentLayer)
           this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-          //this._mapService.map?.addLayer(this.catchmentLayer);
           this._mapService.map?.addLayer(this.splitCatchmentLayer);
-          //this._mapService.map?.fitBounds(this.catchmentLayer.getBounds(), { padding: [75,75] });
+          this._mapService.map?.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
         }
+        this.delineationLoader = false;
       });
     }
 
     };
 
     public addPoint(latlng: any) {
-      if (this._mapService.map?.hasLayer(this.marker)) {
-        this._mapService.map?.removeLayer(this.marker)
-      }
+      this.removeLayer(this.marker)
       const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
       this.marker = L.marker(latlng).bindPopup(content).openPopup();
-      //this.marker = L.marker(latlng).addTo(this._mapService.map);
-      //this.marker.addTo(this._mapService.map?);
       this._mapService.map?.addLayer(this.marker)
+    }
+
+    public removeLayer(layer: any) {
+      if (this._mapService.map?.hasLayer(layer)) {
+        this._mapService.map?.removeLayer(layer)
+      }
+    }
+
+    private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
+      console.log('trying message')
+      try {
+        let options: Partial<IndividualConfig> = null;
+        if (timeout) { options = { timeOut: timeout }; }
+        console.log('trying message')
+        this.messager.show(msg, title, options, mType);
+      } catch (e) {
+      }
     }
 }
