@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { WorkflowService } from '../shared/services/workflow.service';
+import { WorkflowSelectionComponent } from './components-bottom/report-builder/workflow-selection/workflow-selection.component';
 
 import { CenterBottomContentComponent } from './center-bottom-content.component';
 
@@ -22,7 +23,8 @@ describe('CenterBottomContentComponent', () => {
         { provide: WorkflowService, useClass: mockWorkflowService }  
       ],
       imports: [
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        WorkflowSelectionComponent
       ],
       declarations: [ CenterBottomContentComponent ]
     })
