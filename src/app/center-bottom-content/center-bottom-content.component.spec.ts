@@ -23,10 +23,12 @@ describe('CenterBottomContentComponent', () => {
         { provide: WorkflowService, useClass: mockWorkflowService }  
       ],
       imports: [
-        HttpClientTestingModule,
-        WorkflowSelectionComponent
+        HttpClientTestingModule
       ],
-      declarations: [ CenterBottomContentComponent ]
+      declarations: [ 
+        CenterBottomContentComponent,
+        WorkflowSelectionComponent 
+      ]
     })
     .compileComponents();
   });
