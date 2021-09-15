@@ -1,12 +1,19 @@
 import { TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NLDIService } from './nldi.service';
 
 describe('NLDIService', () => {
   let service: NLDIService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        NLDIService
+      ],
+      imports: [
+        HttpClientTestingModule
+      ]
+    });
     service = TestBed.inject(NLDIService);
   });
 
