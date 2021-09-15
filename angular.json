@@ -48,8 +48,7 @@
               "src/styles.scss",
               "./node_modules/leaflet/dist/leaflet.css",
               "./node_modules/font-awesome/css/font-awesome.css",
-			        "./node_modules/uswds/dist/css/uswds.min.css",
-              "./node_modules/leaflet/dist/leaflet.css"
+			        "./node_modules/uswds/dist/css/uswds.min.css"
             ],
             "scripts": [
               "node_modules/uswds/dist/js/uswds.min.js",
