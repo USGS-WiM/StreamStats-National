@@ -10,17 +10,12 @@ import { MapLayer } from '../interfaces/maplayer';
 declare const L: any;
 // import 'leaflet-compass';
 
-export interface layerControl {
-    baseLayers: Array<any>;
-    overlays: Array<any>
-}
-
 @Injectable({
     providedIn: 'root'
 })
 export class MapService {
     public authHeader: HttpHeaders;
-    public baseMaps: any[] = [];
+    public baseMaps: any;
     public chosenBaseLayer!: string;
     public compass: any;
     private configSettings!: Config;
@@ -42,6 +37,8 @@ export class MapService {
         this.configSettings = this._configService.getConfiguration();
 
         // Load baselayers
+        this.baseMaps = new Object();
+        console.log(this.configSettings);
         this.configSettings.baseLayers.forEach(ml => {
 
             if (ml["visible"]) {
