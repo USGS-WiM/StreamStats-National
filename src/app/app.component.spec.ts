@@ -2,6 +2,10 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { TopBarComponent } from './top-bar/top-bar.component';
+import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
+import { MapComponent } from './map/map.component';
+import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -11,7 +15,11 @@ describe('AppComponent', () => {
         HttpClientTestingModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        TopBarComponent,
+        SidebarLeftComponent,
+        MapComponent,
+        SidebarRightComponent
       ],
     }).compileComponents();
   });
