@@ -18,10 +18,10 @@ export class MapService {
     public baseMaps: any;
     public chosenBaseLayer!: string;
     public compass: any;
-    private configSettings!: Config;
+    private configSettings: Config;
     public locationButton: any;
     public map!: Map;
-    public overlays: any[] = [];
+    public overlays: any;
     public scale: any;
     public textBox: any;
     public zoomHome: any;
@@ -38,19 +38,22 @@ export class MapService {
 
         // Load baselayers
         this.baseMaps = new Object();
-        console.log(this.configSettings);
-        this.configSettings.baseLayers.forEach(ml => {
+        if (this.configSettings) {
+            this.configSettings.baseLayers.forEach(ml => {
 
-            if (ml["visible"]) {
-                this.chosenBaseLayer = ml["name"];
-            }
-            var layer = this.loadLayer(ml);
-            if (layer != null) {
-                this.baseMaps[ml["name"]] = layer;
-            }
-        });
-
+                if (ml["visible"]) {
+                    this.chosenBaseLayer = ml["name"];
+                }
+                var layer = this.loadLayer(ml);
+                if (layer != null) {
+                    this.baseMaps[ml["name"]] = layer;
+                }
+            });
+    
+        }
+        
         // TODO: Load overlay layers?
+        this.overlays = new Object();
 
         // Scalebar
         this.scale = L.control.scale();
@@ -179,15 +182,12 @@ export class MapService {
 
     public AddMapLayer(ml: MapLayer) {
 
-        this.overlays.push(ml);
+        // Add layer to overlays 
+        // this.overlays[ml["name"]] = ml;
 
         if (ml["visible"]) {
             this.map.addLayer(ml.layer);
         }
-        // var layer = this.loadLayer(ml);
-        // if (layer != null) {
-        //     this.baseMaps[ml["name"]] = layer;
-        // }
         
     }
 
@@ -264,10 +264,12 @@ export class MapService {
         }
 
         // Set the new basemap visibility to true and add to map
-        this.baseMaps[layername].visible = true;
-        this.chosenBaseLayer = layername;
-        this.map.addLayer(this.baseMaps[layername]);
-
+        if (this.baseMaps[layername]) {
+            this.baseMaps[layername].visible = true;
+            this.chosenBaseLayer = layername;
+            this.map.addLayer(this.baseMaps[layername]);
+        }
+        
     }
 
 }
