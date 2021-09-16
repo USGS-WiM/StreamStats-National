@@ -49,7 +49,6 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       layers: [this._mapService.baseMaps[this._mapService.chosenBaseLayer]]
     });
-
     // Get streamgages
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
@@ -76,17 +75,27 @@ export class MapComponent implements OnInit {
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
+      this.addLayers();
       this.setBbox();
     }) 
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
       this.setBbox();
     })
-
     // Subsribe to workflow
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflows = res;
     });
+  }
+
+  public addLayers() {
+    //Setting stream layer
+    if (this.currentZoom >= 8 && this.selectedWorkflows.some(workflow=>workflow.title === 'Delineation')) { // checking current zoom and workflow
+      esri.dynamicMapLayer({
+        'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
+        'layers': [5,6]
+      }).addTo(this._mapService.map);
+    }
   }
 
   public setBbox(){
@@ -143,12 +152,6 @@ export class MapComponent implements OnInit {
 
   // On map click, set click point value, for delineation
   public onMouseClick() {
-    esri.dynamicMapLayer({
-      'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
-      'layers': [5,6]
-    }).addTo(this._mapService.map);
-   
-
     if (this.selectedWorkflows.length==0){
       console.log('select a workflow')
     } else {
@@ -190,7 +193,7 @@ export class MapComponent implements OnInit {
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
       try {
-        let options: Partial<IndividualConfig> = null;
+        let options: Partial<IndividualConfig> = undefined;
         if (timeout) { options = { timeOut: timeout }; }
         this.messager.show(msg, title, options, mType);
       } catch (e) {

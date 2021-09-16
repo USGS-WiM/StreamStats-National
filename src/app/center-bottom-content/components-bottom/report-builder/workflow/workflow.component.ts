@@ -15,7 +15,10 @@ export class WorkflowComponent implements OnInit {
 
   public workflowForm: FormGroup;
   public stepsArray: FormArray;
-  public stepCounter;
+  public stepCounter: number = 0;
+  public stepsCompleted: number = 0;
+  public numberOfSteps: number;
+  public finalStep: boolean = false;
 
   constructor(private _fb: FormBuilder) {
     this.workflowForm = this._fb.group({
@@ -45,6 +48,7 @@ export class WorkflowComponent implements OnInit {
         options: this.setOptions(step)
       }))
     })
+    this.numberOfSteps = this.stepsArray.value.length;
   }
 
   getSteps(form: any) {
@@ -70,27 +74,11 @@ export class WorkflowComponent implements OnInit {
     this.onFormCompletion.emit(formValue)
   }
 
-  public selectedCheckbox(event: any){
-    console.log(event)
-  }
-
-  public nextStep() {
-    if (this.stepCounter > this.stepsArray.length - 1) { 
-      console.log('last step')
-    } else {
-      console.log(this.stepsArray[this.stepCounter].label); 
-      this.stepCounter = this.stepCounter + 1; 
+  public selectedCheckbox(i){
+    this.workflowForm.value.steps[i].completed = true;
+    this.stepsCompleted = this.stepsCompleted + 1;
+    if (this.stepsCompleted == this.numberOfSteps) {
+      this.finalStep = true;
     }
-  }
-
-  public backStep() {
-    console.log(this.stepCounter)
-      if (this.stepCounter === 1) { 
-          console.log('first step')
-      } else {
-        this.stepCounter = this.stepCounter - 1; // decrease by one
-        console.log(this.stepsArray[this.stepCounter].label); // give us back the item of where we are now
-      }
-
   }
 }

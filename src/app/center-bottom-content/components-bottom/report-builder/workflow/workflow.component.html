@@ -1,25 +1,24 @@
 <!-- Workflow Steps/Walkthru -->
 <div class="app-wrapper">
-  <p>{{workflow.title}}</p>
+  <h3>{{workflow.title}}</h3>
 
   <form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
     <div formArrayName="steps">
-      <div *ngFor="let step of getSteps(workflowForm); let i = index">
+      <div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
         <div formGroupName="{{i}}">
           <h4> Step {{i+1}}: {{ step.value.label}} </h4>
           <div formArrayName="options">
-
             <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
 
-              <div *ngIf="step.value.type === 'checkbox'">
-                <input type="checkbox" formControlName="selected"> {{option.value.text}}
+              <div style="margin-left: 40px" *ngIf="step.value.type === 'checkbox'">
+                <input type="checkbox" formControlName="selected" (change)="selectedCheckbox(i)"> {{option.value.text}}
               </div>
 
-              <div *ngIf="step.value.type === 'subscription'">
+              <div style="margin-left: 40px" *ngIf="step.value.type === 'subscription'">
                 <input type="hidden" formControlName="selected"> {{option.value.text}}
               </div>
 
-              <div *ngIf="step.value.type === 'text'">
+              <div style="margin-left: 40px" *ngIf="step.value.type === 'text'">
                 <input type="text" formControlName="text">
               </div>
               
@@ -29,37 +28,8 @@
         </div>  
       </div>
     </div>
-    <button type="submit">Continue</button>
+    <br><button *ngIf="finalStep" type="submit">Finish</button>
   </form>
 
 </div>
 
-
-
-
-
-
-
-
-
-
-
-<!-- Workflow Steps/Walkthru -->
-<!-- <div class="app-wrapper">
-  <p>{{workFlowTitle}}</p>
-  <h4> Step {{stepCounter}}: {{stepsArray[stepCounter-1].label}}</h4>
-    <div *ngFor="let option of stepsArray[stepCounter-1].options; let j = index">
-      <div *ngIf="stepsArray[stepCounter-1].type === 'checkbox'">
-        <input type="checkbox" (change)="selectedCheckbox(option.text)"> {{option.text}}
-      </div>
-      <div *ngIf="stepsArray[stepCounter-1].type === 'subscription'">
-        <input type="hidden"> {{option.text}}
-      </div>
-      <div *ngIf="stepsArray[stepCounter-1].type === 'text'">
-        <input type="text">
-      </div>
-    </div>
-  <button *ngIf="stepCounter!=1" (click)="backStep()">Back</button>
-  <button *ngIf="stepCounter<stepsArray.length" (click)="nextStep()">Next Step</button>
-  <button *ngIf="stepCounter==stepsArray.length" (click)="addToReport()">Finish</button> 
-</div> -->
