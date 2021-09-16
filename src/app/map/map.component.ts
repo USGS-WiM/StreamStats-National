@@ -34,6 +34,7 @@ export class MapComponent implements OnInit {
   public selectedPopup: any;
   public selectedSite: any
   public streamgageLayer: any;
+  public workflowData: any;
   
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
      HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService, public toastr: ToastrService) { 
@@ -91,7 +92,16 @@ export class MapComponent implements OnInit {
     // On map click, set click point value, for delineation
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
-      this.onMouseClick();
+      console.log(this.workflowData)
+      this.workflowData.forEach(workflow => {
+        console.log(workflow)
+        if (workflow.title == "Delineation") {
+          console.log(workflow.steps)
+          if(workflow.steps[0].completed){ 
+          this.onMouseClickDelineation();
+          }
+        }
+      })
     }) 
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
@@ -103,9 +113,14 @@ export class MapComponent implements OnInit {
     this._mapService.map.on('dragend',() => {
       this.setBbox();
     })
-    // Subsribe to workflow
+    // Subscribe to workflow
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflows = res;
+    });
+
+    //Subscribe to the form data
+    this._workflowService.formData.subscribe(data => {
+      this.workflowData = data;
     });
   }
 
@@ -172,52 +187,49 @@ export class MapComponent implements OnInit {
   }
 
   // On map click, set click point value, for delineation
-  public onMouseClick() {
-    if (this.selectedWorkflows.length==0){
-      console.log('select a workflow')
-    } else {
-      this._mapService.map?.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
-        this._mapService.setClickPoint(evt.latlng)
-        this.addPoint(evt.latlng);
-        this.marker.openPopup();
-        this.delineationLoader = true;
-        this.createMessage("Delineating Basin. Please wait.");
-        this._nldiService.getUpstream(evt.latlng.lat, evt.latlng.lng, "True");
-      });
+  public onMouseClickDelineation() {
+    this._mapService.map?.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
+      console.log(evt.latlng)
+      this._mapService.setClickPoint(evt.latlng)
+      this.addPoint(evt.latlng);
+      this.marker.openPopup();
+      this.delineationLoader = true;
+      this.createMessage("Delineating Basin. Please wait.");
+      this._nldiService.getUpstream(evt.latlng.lat, evt.latlng.lng, "True");
+    });
 
-      this._nldiService.delineationPolygon.subscribe((poly: any) => {
-        this.basin = poly.outputs;
-        if (this.basin) {
-          this.removeLayer(this.splitCatchmentLayer)
-          this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-          this._mapService.map?.addLayer(this.splitCatchmentLayer);
-          this._mapService.map?.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
-        }
-        this.delineationLoader = false;
-      });
-    }
-
-    };
-
-    public addPoint(latlng: any) {
-      this.removeLayer(this.marker)
-      const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
-      this.marker = L.marker(latlng).bindPopup(content).openPopup();
-      this._mapService.map?.addLayer(this.marker)
-    }
-
-    public removeLayer(layer: any) {
-      if (this._mapService.map?.hasLayer(layer)) {
-        this._mapService.map?.removeLayer(layer)
+    this._nldiService.delineationPolygon.subscribe((poly: any) => {
+      this.basin = poly.outputs;
+      if (this.basin) {
+        console.log('test')
+        this.removeLayer(this.splitCatchmentLayer)
+        this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
+        this._mapService.map?.addLayer(this.splitCatchmentLayer);
+        this._mapService.map?.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
       }
-    }
+      this.delineationLoader = false;
+    });
+  }
 
-    private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
-      try {
-        let options: Partial<IndividualConfig> = undefined;
-        if (timeout) { options = { timeOut: timeout }; }
-        this.messager.show(msg, title, options, mType);
-      } catch (e) {
-      }
+  public addPoint(latlng: any) {
+    this.removeLayer(this.marker)
+    const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
+    this.marker = L.marker(latlng).bindPopup(content).openPopup();
+    this._mapService.map?.addLayer(this.marker)
+  }
+
+  public removeLayer(layer: any) {
+    if (this._mapService.map?.hasLayer(layer)) {
+      this._mapService.map?.removeLayer(layer)
     }
+  }
+
+  private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
+    try {
+      let options: Partial<IndividualConfig> = undefined;
+      if (timeout) { options = { timeOut: timeout }; }
+      this.messager.show(msg, title, options, mType);
+    } catch (e) {
+    }
+  }
 }

@@ -2,6 +2,7 @@ import { ConditionalExpr } from '@angular/compiler';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
+import { MapService } from 'src/app/shared/services/map.service';
 import { NLDIService } from 'src/app/shared/services/nldi.service';
 
 @Component({
@@ -22,8 +23,9 @@ export class WorkflowComponent implements OnInit {
   public finalStep: boolean = false;
   public checkboxsSelected = [];
   public delineationPolygon;
-
-  constructor(private _fb: FormBuilder, private _nldiService: NLDIService) {
+  public clickedPoint;
+  
+  constructor(private _fb: FormBuilder, private _nldiService: NLDIService, public _mapService: MapService) {
     this.workflowForm = this._fb.group({
       title: [],
       steps: this._fb.array([])
@@ -38,6 +40,10 @@ export class WorkflowComponent implements OnInit {
       this.delineationPolygon = data;
       this.nextStep(this.stepsCompleted, "subscription")
     });
+
+    this._mapService.clickPoint.subscribe((point: {}) => {
+      this.clickedPoint = point;
+    })
   }
 
   public setTitle() {
@@ -83,7 +89,6 @@ export class WorkflowComponent implements OnInit {
   }
 
   public checkbox(i) {
-    console.log(this.workflowForm.value)
     this.checkboxsSelected = [];
     if (this.workflowForm.value.title == "Delineation") {
       this.workflowForm.value.steps[i].options.forEach(options => {
@@ -100,25 +105,24 @@ export class WorkflowComponent implements OnInit {
   }
 
   public text(i) {
-    console.log(this.workflowForm.value)
   }
 
   public subscription(i) {
-    console.log(this.workflowForm.value)
 
     if (this.workflowForm.value.title == "Delineation") {
-      console.log(this.workflowForm.value.steps[i])
-      this.workflowForm.value.steps[i].clickPoint = [this.delineationPolygon.latitude, this.delineationPolygon.longitude] ;
+      this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
     } 
+    console.log(this.workflowForm.value)
   }
 
   public nextStep(step, value) {
+    console.log(step, value)
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
       console.log('workflow completed')
-    }
+    } 
     if (value == "checkbox"){
       this.checkbox(step)
     } else if (value == "subscription"){

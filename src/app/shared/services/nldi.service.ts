@@ -46,7 +46,7 @@ export class NLDIService {
       ]
     }
     return this._http.post(url, post, options).subscribe(resp => {
-      this._delineationSubject.next({polygon: resp.body, latitude: lat, longitude: lng});
+      this._delineationSubject.next(resp.body);
       this.hasDelineation = true;
       return resp.body;
     });
