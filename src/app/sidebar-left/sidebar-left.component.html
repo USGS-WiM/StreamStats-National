@@ -1,5 +1,5 @@
 <div class="sidebar-inner">
-	<!-- Home -->
+	<!-- Base Maps -->
 	<div class="sidebar-group">
 		<button class="sidebar-button" (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}">
 			<i class="far fa-map"></i>
@@ -13,15 +13,22 @@
 			Height will auto expand to fit content, and scroll if too tall
 		-->
 		<div class="sidebar-popout" *ngIf="popout == 'map'">
-			<h3 class="sidebar-popout-header">Map Stuff</h3>
+			<h3 class="sidebar-popout-header">Base Maps</h3>
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
-				This is the content of the map button popout window.
+				<!-- This is the content of the map button popout window.
 				<br/>
 				Show and hide the map content with a click on the button.sidebar-button
 				<br/><br/><br/><br/><br/><br/><br/><br/>
-				If you have too much content in the map popout, <br> It'll scroll.
+				If you have too much content in the map popout, <br> It'll scroll. -->
+
+				<div *ngFor="let item of baselayers" class="basemap-selector"> 
+					<label class="basemap-option">
+						<input type="radio" name="basemap" value="item[0]" (click)="SetBaselayer(item[0])">
+						<img src="assets/images/{{item[1]}}"> {{item[0]}}
+					</label>
+				</div>
 			</div>
 		</div>
 
@@ -45,16 +52,58 @@
 				Show and hide the map layers button with a click on the button.sidebar-button
 				<br/><br/><br/><br/><br/><br/>
 				If you have too much content in the map layers, it'll scroll.
+
+				
 			</div>
 		</div>
-
 	</div>
+
+	
 	
 	<!-- Dog -->
-	<div class="sidebar-group">
+	<!-- <div class="sidebar-group">
 		<button class="sidebar-button">
 			<i class="far fa-dog"></i>
 		</button>
+	</div> -->
+
+	<!-- Geolocate -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="zoomLocation()">
+			<i class="far fa-crosshairs"></i>
+		</button>
+	</div>
+
+	<!-- Geosearch -->
+	<div class="sidebar-group">
+		<button class="sidebar-button" (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}">
+			<i class="far fa-search"></i>
+		</button>
+
+		<!-- Sidebar Popout window
+			- These could be moved to separate components,
+			It just needs to be a div with class sidebar-popout within the sidebar-group div
+	
+			Add class "wide" to make it wider,
+			Height will auto expand to fit content, and scroll if too tall
+		-->
+		<div class="sidebar-popout medium" *ngIf="popout == 'geosearch'">
+			<h3 class="sidebar-popout-header">Geosearch</h3>
+	
+			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
+			<div class="sidebar-popout-content">
+				<!-- This is the content of the map button popout window.
+				<br/>
+				Show and hide the map content with a click on the button.sidebar-button
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				If you have too much content in the map popout, <br> It'll scroll. -->
+
+				<!-- Search box -->
+				<div id="searchBox"></div>
+
+			</div>
+		</div>
+
 	</div>
 
 	<!-- Spacer - stretches to fill gap -->

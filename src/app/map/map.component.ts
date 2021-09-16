@@ -17,14 +17,13 @@ import * as esri from 'esri-leaflet';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
+	public baselayers = [] as any;
   private configSettings: Config;
   private messager: ToastrService;
   public clickPoint = {};
-  public streamgageLayer: any;
   public currentZoom: number = 4;
   public latestDischarge: any;
-  public selectedSite: any
-  public selectedPopup: any;
+	public overlays = [] as any;
   public selectedFeature: any;
   public marker!: L.Marker;
   public basin!: any;
@@ -32,6 +31,9 @@ export class MapComponent implements OnInit {
   public fitBounds!: L.LatLngBounds;
   public selectedWorkflows: any;
   public delineationLoader: boolean = false;
+  public selectedPopup: any;
+  public selectedSite: any
+  public streamgageLayer: any;
   
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
      HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService, public toastr: ToastrService) { 
@@ -41,14 +43,33 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // Initialize map
-    this._mapService.map = L.map('map', {
+    this._mapService.map =  L.map('map', {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
-      maxZoom: 19,
+      maxZoom: 13,
       renderer: L.canvas(),
-      layers: [this._mapService.baseMaps[this._mapService.chosenBaseLayer]]
+      zoomControl: false
     });
+
+    // Add basemap
+    this._mapService.SetBaselayer(this._mapService.chosenBaseLayer);
+
+    // Add scale bar
+    this._mapService.scale.addTo(this._mapService.map);
+
+    // Add custom zoom/home buttons
+    this._mapService.zoomHome.addTo(this._mapService.map);
+
+    // Add textbox in bottom left with map scale information
+    this._mapService.textBox.addTo(this._mapService.map);
+    this._mapService.map.on('zoomend', e => {
+      this._mapService.textBox.addTo(this._mapService.map); //Reload text box
+  });
+
+    // Add compass
+    // this._mapService.map.addControl(this._mapService.compass);
+    
     // Get streamgages
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;

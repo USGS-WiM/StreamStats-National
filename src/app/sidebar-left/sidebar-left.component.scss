@@ -4,4 +4,38 @@
     color: white;
     height: 100%;
     width: 60px;
+
+    .basemap-option {
+        display: block;
+    }
+
+    .basemap-selector input{
+        margin:0;padding:0;
+        -webkit-appearance:none;
+            -moz-appearance:none;
+                appearance:none;
+    }
+
+    .basemap-option{
+        cursor:pointer;
+        -webkit-transition: all 100ms ease-in;
+            -moz-transition: all 100ms ease-in;
+                transition: all 100ms ease-in;
+        -webkit-filter: opacity(.8);
+            -moz-filter: opacity(.8);
+                filter: opacity(.8);
+    }
+
+    .basemap-option:hover{
+        -webkit-filter: opacity(1);
+        -moz-filter: opacity(1);
+                filter: opacity(1);
+    }
+
+    input:focus { 
+        outline: none; 
+    }
 }
+
+
+

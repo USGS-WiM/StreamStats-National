@@ -1,5 +1,6 @@
 // Import SCSS partials
 @import 'variables.scss';
+@import url('markers.scss');
 
 /* You can add global styles to this file, and also import other style files */
 html,body{
@@ -137,6 +138,11 @@ html,body{
 	color: var(--text);
 	background-color: var(--background);
 	border: 1px solid var(--borderLight);
+
+	&.medium{
+		max-width: 600px;
+		min-width: 335px;
+	}
 
 	&.wide{
 		max-width: 600px;
