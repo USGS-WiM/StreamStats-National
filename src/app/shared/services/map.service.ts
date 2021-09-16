@@ -251,7 +251,7 @@ export class MapService {
         return L.tileLayer(
             ml["url"],
             {attribution: ml["attribution"],
-            maxZoom: 13
+            maxZoom: 19
         });
     }
 

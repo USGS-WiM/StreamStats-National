@@ -11,7 +11,7 @@
             <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
 
               <div style="margin-left: 40px" *ngIf="step.value.type === 'checkbox'">
-                <input type="checkbox" formControlName="selected" (change)="selectedCheckbox(i)"> {{option.value.text}}
+                <input type="checkbox" formControlName="selected"> {{option.value.text}} 
               </div>
 
               <div style="margin-left: 40px" *ngIf="step.value.type === 'subscription'">
@@ -19,10 +19,12 @@
               </div>
 
               <div style="margin-left: 40px" *ngIf="step.value.type === 'text'">
-                <input type="text" formControlName="text">
+                <input type="text" formControlName="text"> 
               </div>
               
             </div>
+
+            <button *ngIf = "step.value.type!='subscription'" (click)="nextStep(i, step.value.type)">Next</button>
 
           </div>
         </div>  

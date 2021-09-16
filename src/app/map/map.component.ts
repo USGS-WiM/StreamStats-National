@@ -47,7 +47,7 @@ export class MapComponent implements OnInit {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
-      maxZoom: 13,
+      maxZoom: 19,
       renderer: L.canvas(),
       zoomControl: false
     });

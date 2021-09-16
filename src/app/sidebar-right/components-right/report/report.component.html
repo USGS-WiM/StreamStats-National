@@ -7,6 +7,7 @@
             <li>{{step.label}}
                 <ul *ngFor="let option of step.options; let k = index">
                     <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
+                    <li *ngIf="step.label == 'Select Delineation Point'">{{step.clickPoint}}</li>
                 </ul>
             </li>
         </ul>
