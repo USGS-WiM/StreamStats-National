@@ -10,8 +10,8 @@ import { WorkflowService } from '../shared/services/workflow.service';
   styleUrls: ['./center-bottom-content.component.scss']
 })
 export class CenterBottomContentComponent {
-  public selectedWorkflows: Array<Workflow> = [];
-  reportBuilderTab ='selection';
+  public selectedWorkflow: Workflow = null;
+  public reportBuilderTab ='selection';
   public formDataOutputs: any[] = [];
 
   constructor(private _workflowService: WorkflowService) { 
@@ -19,24 +19,15 @@ export class CenterBottomContentComponent {
 
   ngOnInit(): void {
     this._workflowService.selectedWorkflow.subscribe((res) => {
-      this.selectedWorkflows = res;
+      this.selectedWorkflow = res;
     });
   }
 
-  addFormData(formData: any) {
-    if (!this.formDataOutputs.length) {
-      this.formDataOutputs.push(formData)
-    } 
-    else {
-      const findDuplicate = this.formDataOutputs.find(ele => ele.title === formData.title)
-      if (!this.formDataOutputs.includes(findDuplicate)) {
-        this.formDataOutputs.push(formData);
-      } else {
-        const index = this.formDataOutputs.indexOf(findDuplicate);
-        this.formDataOutputs.splice(index, 1, formData)
-      }
-    }
-    this._workflowService.setFormData(this.formDataOutputs)
+  public addFormData(formData: any) {
+    this.formDataOutputs.push(formData)
   }
 
+  public removeWorkFlow() {
+    this._workflowService.setSelectedWorkflows(null)
+  }
 }

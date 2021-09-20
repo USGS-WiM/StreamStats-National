@@ -11,7 +11,8 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
 export class WorkflowSelectionComponent implements OnInit {
 
   public workflows: Array<Workflow> = [];
-  public selectedWorkflows: Array<Workflow> = [];
+  public selectedWorkflow: Workflow;
+  public isWorkflowSelected: boolean = false;
 
   constructor(private _workflowService: WorkflowService ) { }
 
@@ -19,17 +20,14 @@ export class WorkflowSelectionComponent implements OnInit {
     this._workflowService.getWorkflows().subscribe((res) => {
       this.workflows = res; // get all available workflows from json file
     });
+    this._workflowService.selectedWorkflow.subscribe((res) => {
+      this.selectedWorkflow = res;
+    });
   }
 
-  // Gets all workflows that user has selected/deselected and sets selected workflow
-  addRemoveWorkflow(selectedWorkflow: Workflow) {
-    const index = this.selectedWorkflows.indexOf(selectedWorkflow);
-    if (index === -1) {
-      this.selectedWorkflows.push(selectedWorkflow);
-    } else {
-      this.selectedWorkflows.splice(index, 1)
-    }
-    this._workflowService.setSelectedWorkflows(this.selectedWorkflows);
+  // Gets the workflow the user selected
+  public selectWorkflow(selectedWorkflow: Workflow) {
+    this._workflowService.setSelectedWorkflows(selectedWorkflow);
   }
 
 }

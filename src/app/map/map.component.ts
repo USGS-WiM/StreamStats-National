@@ -10,6 +10,7 @@ import "leaflet/dist/images/marker-shadow.png";
 import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import * as messageType from '../shared/messageType';
 import * as esri from 'esri-leaflet';
+import { Workflow } from '../shared/interfaces/workflow/workflow';
 
 @Component({
   selector: 'app-map',
@@ -29,7 +30,7 @@ export class MapComponent implements OnInit {
   public basin!: any;
   public splitCatchmentLayer: any;
   public fitBounds!: L.LatLngBounds;
-  public selectedWorkflows: any;
+  public selectedWorkflow: Workflow;
   public delineationLoader: boolean = false;
   public selectedPopup: any;
   public selectedSite: any
@@ -115,7 +116,7 @@ export class MapComponent implements OnInit {
     })
     // Subscribe to workflow
     this._workflowService.selectedWorkflow.subscribe((res) => {
-      this.selectedWorkflows = res;
+      this.selectedWorkflow = res;
     });
 
     //Subscribe to the form data
@@ -126,7 +127,7 @@ export class MapComponent implements OnInit {
 
   public addLayers() {
     //Setting stream layer
-    if (this.currentZoom >= 8 && this.selectedWorkflows.some(workflow=>workflow.title === 'Delineation')) { // checking current zoom and workflow
+    if (this.currentZoom >= 8 && this.selectedWorkflow.title === 'Delineation') { // checking current zoom and workflow
       esri.dynamicMapLayer({
         'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
         'layers': [5,6]
@@ -201,7 +202,6 @@ export class MapComponent implements OnInit {
     this._nldiService.delineationPolygon.subscribe((poly: any) => {
       this.basin = poly.outputs;
       if (this.basin) {
-        console.log('test')
         this.removeLayer(this.splitCatchmentLayer)
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
         this._mapService.map?.addLayer(this.splitCatchmentLayer);

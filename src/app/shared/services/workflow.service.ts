@@ -34,11 +34,11 @@ export class WorkflowService {
   }
 
   //get all selected workflows
-  private _selectedWorkflow: BehaviorSubject<Array<Workflow>> = new BehaviorSubject<Array<Workflow>>([]);
-  public setSelectedWorkflows(w: Array<Workflow>) {
+  private _selectedWorkflow: Subject<Workflow> = new Subject<Workflow>();
+  public setSelectedWorkflows(w: Workflow) {
     this._selectedWorkflow.next(w);
   }
-  public get selectedWorkflow(): Observable<Array<Workflow>> {
+  public get selectedWorkflow(): Observable<Workflow> {
     return this._selectedWorkflow.asObservable();
   }
 

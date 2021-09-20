@@ -29,7 +29,7 @@ describe('WorkflowSelectionComponent', () => {
 
   beforeEach(() => {
     mockWorkflowService = {
-      selectedWorkflow: new Observable<Workflow[]>()
+      selectedWorkflow: new Observable<Workflow>()
     };
     fixture = TestBed.createComponent(WorkflowSelectionComponent);
     workflowService = TestBed.inject(WorkflowService)
@@ -41,11 +41,9 @@ describe('WorkflowSelectionComponent', () => {
     //expect(component).toBeTruthy();
   //});
 
-  it('#addRemoveWorkflow should add/remove workflow to/from selected workflows', () => {
-    component.addRemoveWorkflow(component.selectedWorkflows[0]);
-    expect(component.selectedWorkflows.length).toEqual(1);
-    component.addRemoveWorkflow(component.selectedWorkflows[0]);
-    expect(component.selectedWorkflows.length).toEqual(0);
+  it('#addRemoveWorkflow should add workflow to selected workflow', () => {
+    component.selectWorkflow(component.selectedWorkflow[0]);
+    expect(component.selectedWorkflow).not.toEqual(null);
   });
   
   // TODO: update to make sure certain elements are loading in the DOM once more finalized. 
