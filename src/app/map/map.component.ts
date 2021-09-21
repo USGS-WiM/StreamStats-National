@@ -21,7 +21,7 @@ export class MapComponent implements OnInit {
 	public baselayers = [] as any;
   private configSettings: Config;
   private messager: ToastrService;
-  public clickPoint = {};
+  public clickPoint;
   public currentZoom: number = 4;
   public latestDischarge: any;
 	public overlays = [] as any;
@@ -29,6 +29,7 @@ export class MapComponent implements OnInit {
   public marker!: L.Marker;
   public basin!: any;
   public splitCatchmentLayer: any;
+  public NHDLayer;
   public fitBounds!: L.LatLngBounds;
   public selectedWorkflow: Workflow;
   public delineationLoader: boolean = false;
@@ -49,13 +50,14 @@ export class MapComponent implements OnInit {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
-      maxZoom: 19,
+      maxZoom: this._mapService.chosenBaseLayer.maxZoom,
       renderer: L.canvas(),
       zoomControl: false
     });
 
+    console.log(this._mapService.chosenBaseLayer)
     // Add basemap
-    this._mapService.SetBaselayer(this._mapService.chosenBaseLayer);
+    this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
 
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
@@ -93,8 +95,8 @@ export class MapComponent implements OnInit {
     // On map click, set click point value, for delineation
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
-      if (this.workflowData && this.workflowData.title == "Delineation") {
-        if (this.workflowData.steps[0].completed) { 
+      if (this.workflowData) {
+        if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
           this.onMouseClickDelineation();
         }
       }
@@ -103,13 +105,7 @@ export class MapComponent implements OnInit {
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
       this.setBbox();
-      if (this.currentZoom >= 8 && this.workflowData && this.workflowData.title === 'Delineation') { // checking current zoom and workflow
-        this.workflowData.steps[0].options.forEach(o => {
-          if (o.text == "NLDI Delineation" && o.selected == true) {
-            this.addLayers('NHD')
-          }
-        })
-      }
+      this.checkAvaliableLayers();
     }) 
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
@@ -123,15 +119,30 @@ export class MapComponent implements OnInit {
     //Subscribe to the form data
     this._workflowService.formData.subscribe(data => {
       this.workflowData = data;
+      this.checkAvaliableLayers();
+      if (!this.workflowData) {
+        this.removeLayer(this.NHDLayer)
+      }
     });
+  }
+
+  public checkAvaliableLayers(){
+    if (this.currentZoom >= 8 && this.workflowData && this.workflowData.title === 'Delineation') { // checking current zoom and workflow
+      this.workflowData.steps[0].options.forEach(o => {
+        if (o.text == "NLDI Delineation" && o.selected == true) {
+          this.addLayers('NHD');
+        }
+      })
+    }
   }
 
   public addLayers(layerName: string) {
     if (layerName == "NHD") {    //Setting stream layer
-      esri.dynamicMapLayer({
+      this.NHDLayer = esri.dynamicMapLayer({
         'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
         'layers': [5,6]
-      }).addTo(this._mapService.map);
+      })
+      this.NHDLayer.addTo(this._mapService.map);
     }   
   }
 
@@ -188,44 +199,37 @@ export class MapComponent implements OnInit {
   }
 
   // On map click, set click point value, for delineation
-  public onMouseClickDelineation() {
-    if (this.splitCatchmentLayer) {
-      this._mapService.map.removeLayer(this.splitCatchmentLayer)
-    }  
-    this._mapService.map?.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
-      this._mapService.setClickPoint(evt.latlng)
-      this.addPoint(evt.latlng);
-      this.marker.openPopup();
-      this.delineationLoader = true;
-      this.createMessage("Delineating Basin. Please wait.");
-      this._nldiService.getUpstream(evt.latlng.lat, evt.latlng.lng, "True");
-    });
+  public onMouseClickDelineation() { 
+    this.removeLayer(this.splitCatchmentLayer);
+    this.addPoint(this.clickPoint);
+    this.marker.openPopup();
+    this.delineationLoader = true;
+    this.createMessage("Delineating Basin. Please wait.");
+    this._nldiService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
     this._nldiService.delineationPolygon.subscribe((poly: any) => {
       this.basin = poly.outputs;
-      if (this.basin) {
-        if(this.splitCatchmentLayer) { 
-          this._mapService.map.removeLayer(this.splitCatchmentLayer)
-        }        
+      if (this.basin) {  
+        this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
         this.splitCatchmentLayer.addTo(this._mapService.map)
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
       }
       this.delineationLoader = false;
     });
-
-    
   }
 
   public addPoint(latlng: any) {
-    this.removeLayer(this.marker)
+    this.removeLayer(this.marker);
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng).bindPopup(content).openPopup();
     this._mapService.map?.addLayer(this.marker)
   }
 
   public removeLayer(layer: any) {
-    if (this._mapService.map?.hasLayer(layer)) {
-      this._mapService.map?.removeLayer(layer)
+    console.log(layer)
+    if (this._mapService.map.hasLayer(layer)) {
+      console.log('has layer')
+      this._mapService.map.removeLayer(layer)
     }
   }
 

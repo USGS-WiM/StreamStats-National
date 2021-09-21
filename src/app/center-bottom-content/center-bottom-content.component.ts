@@ -28,6 +28,7 @@ export class CenterBottomContentComponent {
   }
 
   public removeWorkFlow() {
-    this._workflowService.setSelectedWorkflow(null)
+    this._workflowService.setSelectedWorkflow(null);
+    this._workflowService.setFormData(null);
   }
 }

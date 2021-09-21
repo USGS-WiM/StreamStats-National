@@ -24,7 +24,7 @@
               
             </div>
 
-            <button *ngIf = "step.value.type!='subscription'" (click)="nextStep(i, step.value.type)">Next</button>
+            <button (click)="nextStep(i, step.value.type)">Next</button>
 
           </div>
         </div>  
