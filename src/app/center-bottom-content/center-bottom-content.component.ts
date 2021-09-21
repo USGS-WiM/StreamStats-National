@@ -24,10 +24,10 @@ export class CenterBottomContentComponent {
   }
 
   public addFormData(formData: any) {
-    this.formDataOutputs.push(formData)
+    this._workflowService.setFormData(formData)
   }
 
   public removeWorkFlow() {
-    this._workflowService.setSelectedWorkflows(null)
+    this._workflowService.setSelectedWorkflow(null)
   }
 }

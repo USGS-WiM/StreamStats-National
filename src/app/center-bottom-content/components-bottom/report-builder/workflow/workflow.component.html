@@ -30,7 +30,7 @@
         </div>  
       </div>
     </div>
-    <br><button *ngIf="finalStep" type="submit">Finish</button>
+    <br><button *ngIf="finalStep" type="submit" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
   </form>
 
 </div>

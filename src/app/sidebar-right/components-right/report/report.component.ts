@@ -13,7 +13,7 @@ export class ReportComponent implements OnInit {
   constructor(private _mapService: MapService, private _workflowService: WorkflowService) { }
 
   ngOnInit(): void {
-    this._workflowService.formData.subscribe(data => {
+    this._workflowService.completedData.subscribe(data => {
       this.workflowData = data;
     });
   }

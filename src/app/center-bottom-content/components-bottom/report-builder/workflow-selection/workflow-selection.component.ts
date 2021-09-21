@@ -27,7 +27,7 @@ export class WorkflowSelectionComponent implements OnInit {
 
   // Gets the workflow the user selected
   public selectWorkflow(selectedWorkflow: Workflow) {
-    this._workflowService.setSelectedWorkflows(selectedWorkflow);
+    this._workflowService.setSelectedWorkflow(selectedWorkflow);
   }
 
 }

@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { NLDIService } from 'src/app/shared/services/nldi.service';
+import { WorkflowService } from 'src/app/shared/services/workflow.service';
 
 @Component({
   selector: 'app-workflow',
@@ -24,7 +25,7 @@ export class WorkflowComponent implements OnInit {
   public delineationPolygon;
   public clickedPoint;
   
-  constructor(private _fb: FormBuilder, private _nldiService: NLDIService, public _mapService: MapService) {
+  constructor(private _fb: FormBuilder, private _nldiService: NLDIService, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
       title: [],
       steps: this._fb.array([])
@@ -97,7 +98,6 @@ export class WorkflowComponent implements OnInit {
       });
       this.checkboxsSelected.forEach(checkbox => {
         if (checkbox.text == "NLDI Delineation"){
-          console.log('Now make delination and streamgage layer active')
         } // add NLDI Delineation and State-Based Delineation
       })
     } 
@@ -107,20 +107,17 @@ export class WorkflowComponent implements OnInit {
   }
 
   public subscription(i) {
-
     if (this.workflowForm.value.title == "Delineation") {
       this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
+      this.workflowForm.value.steps[i].polygon = 'polygon';   
     } 
-    console.log(this.workflowForm.value)
   }
 
   public nextStep(step, value) {
-    console.log(step, value)
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
-      console.log('workflow completed')
     } 
     if (value == "checkbox"){
       this.checkbox(step)
@@ -130,4 +127,10 @@ export class WorkflowComponent implements OnInit {
       this.text(step);
     }
   }
+
+  public finishedWorkflow(formValue: any) {
+    this._workflowService.setCompletedData(formValue);
+    this._workflowService.setSelectedWorkflow(null)
+  }
+
 }
