@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MapService } from 'src/app/shared/services/map.service';
+import { Component, OnInit } from '@angular/core';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
 
 @Component({
@@ -8,9 +7,9 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
-  workflowData: any;
+  public workflowData: any;
 
-  constructor(private _mapService: MapService, private _workflowService: WorkflowService) { }
+  constructor(private _workflowService: WorkflowService) { }
 
   ngOnInit(): void {
     this._workflowService.completedData.subscribe(data => {

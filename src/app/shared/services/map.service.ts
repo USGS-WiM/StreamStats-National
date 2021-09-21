@@ -6,7 +6,6 @@ import { Config } from '../interfaces/config/config';
 import { Subject } from 'rxjs';
 import { AppService } from './app.service';
 import { MapLayer } from '../interfaces/maplayer';
-import { ConditionalExpr } from '@angular/compiler';
 
 declare const L: any;
 // import 'leaflet-compass';

@@ -12,7 +12,6 @@ import { WorkflowService } from '../shared/services/workflow.service';
 export class CenterBottomContentComponent {
   public selectedWorkflow: Workflow = null;
   public reportBuilderTab ='selection';
-  public formDataOutputs: any[] = [];
 
   constructor(private _workflowService: WorkflowService) { 
   }
@@ -24,7 +23,7 @@ export class CenterBottomContentComponent {
   }
 
   public addFormData(formData: any) {
-    this._workflowService.setFormData(formData)
+    this._workflowService.setFormData(formData);
   }
 
   public removeWorkFlow() {

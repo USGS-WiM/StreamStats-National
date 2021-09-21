@@ -55,7 +55,7 @@ export class WorkflowService {
   //get all selected workflows
   private _completedData: BehaviorSubject<Array<Workflow>> = new BehaviorSubject<Array<Workflow>>([]);
   public setCompletedData(w: Array<Workflow>) {
-    this.completedWorkflows.push(w)
+    this.completedWorkflows.push(w);
     this._completedData.next(this.completedWorkflows);
   }
   public get completedData(): Observable<Array<Workflow>> {

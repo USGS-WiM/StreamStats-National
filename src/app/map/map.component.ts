@@ -26,11 +26,11 @@ export class MapComponent implements OnInit {
   public latestDischarge: any;
 	public overlays = [] as any;
   public selectedFeature: any;
-  public marker!: L.Marker;
-  public basin!: any;
+  public marker: L.Marker;
+  public basin: any;
   public splitCatchmentLayer: any;
   public NHDLayer;
-  public fitBounds!: L.LatLngBounds;
+  public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
   public delineationLoader: boolean = false;
   public selectedPopup: any;
@@ -68,7 +68,7 @@ export class MapComponent implements OnInit {
     this._mapService.textBox.addTo(this._mapService.map);
     this._mapService.map.on('zoomend', e => {
       this._mapService.textBox.addTo(this._mapService.map); //Reload text box
-  });
+    });
 
     // Add compass
     // this._mapService.map.addControl(this._mapService.compass);
@@ -76,7 +76,7 @@ export class MapComponent implements OnInit {
     // Get streamgages
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
-      if (this.latestDischarge){
+      if (this.latestDischarge) {
         this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature);
       }
     })
@@ -120,7 +120,7 @@ export class MapComponent implements OnInit {
       this.workflowData = data;
       this.checkAvaliableLayers();
       if (!this.workflowData) {
-        this.removeLayer(this.NHDLayer)
+        this.removeLayer(this.NHDLayer);
       }
     });
   }
@@ -221,12 +221,12 @@ export class MapComponent implements OnInit {
     this.removeLayer(this.marker);
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng).bindPopup(content).openPopup();
-    this._mapService.map?.addLayer(this.marker)
+    this._mapService.map?.addLayer(this.marker);
   }
 
   public removeLayer(layer: any) {
     if (this._mapService.map.hasLayer(layer)) {
-      this._mapService.map.removeLayer(layer)
+      this._mapService.map.removeLayer(layer);
     }
   }
 

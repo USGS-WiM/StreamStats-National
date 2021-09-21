@@ -12,7 +12,6 @@ export class WorkflowSelectionComponent implements OnInit {
 
   public workflows: Array<Workflow> = [];
   public selectedWorkflow: Workflow;
-  public isWorkflowSelected: boolean = false;
 
   constructor(private _workflowService: WorkflowService ) { }
 

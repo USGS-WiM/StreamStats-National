@@ -46,16 +46,16 @@ describe('CenterBottomContentComponent', () => {
 
   // Testing service dependencies 
   it('#selectedWorkflow should display a selected workflow values', () => {
-    // const workflow: Workflow = [{
-    //   title: "Delineation",
-    //   description: "string",
-    //   functionality: "string",
-    //   icon: "string",
-    //   steps: [],
-    //   output: []
-    // }];
-    // component.selectedWorkflow = workflow;
-    // expect(component.selectedWorkflow[0].title).toEqual(workflow[0].title);
+    const workflow: Workflow = {
+      title: "Delineation",
+      description: "string",
+      functionality: "string",
+      icon: "string",
+      steps: [],
+      output: []
+    };
+    component.selectedWorkflow = workflow;
+    expect(component.selectedWorkflow.title).toEqual(workflow.title);
   });
 
   afterEach(() => {

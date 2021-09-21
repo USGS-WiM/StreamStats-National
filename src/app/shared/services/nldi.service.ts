@@ -14,7 +14,6 @@ export class NLDIService {
     Accept: 'application/json',
     'Content-Type': 'application/json'  
   });
-  public hasDelineation: boolean = false;
 
   constructor(private _http: HttpClient, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -47,7 +46,6 @@ export class NLDIService {
     }
     return this._http.post(url, post, options).subscribe(resp => {
       this._delineationSubject.next(resp.body);
-      this.hasDelineation = true;
       return resp.body;
     });
   };

@@ -1,6 +1,5 @@
-import { Component, Input, OnInit, Output, EventEmitter, ComponentFactoryResolver } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Options } from 'selenium-webdriver';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { NLDIService } from 'src/app/shared/services/nldi.service';
@@ -18,7 +17,6 @@ export class WorkflowComponent implements OnInit {
 
   public workflowForm: FormGroup;
   public stepsArray: FormArray;
-  public stepCounter: number = 0;
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
@@ -65,10 +63,10 @@ export class WorkflowComponent implements OnInit {
   }
 
   public getSteps(form: any) {
-    return form.controls.steps.controls
+    return form.controls.steps.controls;
   }
   public getOptions(form: any) {
-    return form.controls.options.controls
+    return form.controls.options.controls;
   }
 
   public setOptions(step: any) {        
@@ -84,7 +82,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onContinue(formValue: any) {
-    this.onFormCompletion.emit(formValue)
+    this.onFormCompletion.emit(formValue);
   }
 
   public radio(i) {
@@ -101,30 +99,29 @@ export class WorkflowComponent implements OnInit {
   }
 
   public nextStep(step, value) {
-    console.log(this.workflowForm.value)
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
     } 
-    if (value == "radio"){
-      this.radio(step)
-    } else if (value == "subscription"){
+    if (value == "radio") {
+      this.radio(step);
+    } else if (value == "subscription") {
       this.subscription(step);
-    } else if (value == "text"){
+    } else if (value == "text") {
       this.text(step);
     }
   }
 
   public finishedWorkflow(formValue: any) {
     this._workflowService.setCompletedData(formValue);
-    this._workflowService.setSelectedWorkflow(null)
-    this._workflowService.setFormData(null)
+    this._workflowService.setSelectedWorkflow(null);
+    this._workflowService.setFormData(null);
   }
 
   public onRadioChange(option, step) {
-    step.options.forEach(opt => {
-      if (opt.text == option.text){
+    step.options.forEach( opt => {
+      if (opt.text == option.text) {
         option.selected = true;
       } else {
         opt.selected = false;

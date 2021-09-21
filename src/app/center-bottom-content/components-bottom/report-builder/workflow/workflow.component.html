@@ -1,7 +1,6 @@
 <!-- Workflow Steps/Walkthru -->
 <div class="app-wrapper">
   <h3>{{workflow.title}}</h3>
-
   <form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
     <div formArrayName="steps">
       <div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
@@ -9,29 +8,24 @@
           <h4> Step {{i+1}}: {{ step.value.label}} </h4>
           <div formArrayName="options">
             <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
-
+              <!-- Radio Buttons -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'radio'">
                 <input type="radio" name="selected" formControlName="selected" [checked]="false" (change)="onRadioChange(option.value, step.value)"> {{option.value.text}} 
               </div>
-
+              <!-- Subscription -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'subscription'">
                 <input type="hidden" formControlName="selected"> {{option.value.text}}
               </div>
-
+              <!-- Text -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'text'">
                 <input type="text" formControlName="text"> 
               </div>
-              
             </div>
-
             <button (click)="nextStep(i, step.value.type)">Next</button>
-
           </div>
         </div>  
       </div>
     </div>
     <br><button *ngIf="finalStep" type="submit" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
   </form>
-
 </div>
-
