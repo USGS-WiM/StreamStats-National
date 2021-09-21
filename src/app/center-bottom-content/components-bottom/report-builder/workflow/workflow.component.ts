@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ComponentFactoryResolver } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Options } from 'selenium-webdriver';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { NLDIService } from 'src/app/shared/services/nldi.service';
@@ -21,7 +22,6 @@ export class WorkflowComponent implements OnInit {
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
-  public checkboxsSelected = [];
   public delineationPolygon;
   public clickedPoint;
 
@@ -87,7 +87,7 @@ export class WorkflowComponent implements OnInit {
     this.onFormCompletion.emit(formValue)
   }
 
-  public checkbox(i) {
+  public radio(i) {
   }
 
   public text(i) {
@@ -101,13 +101,14 @@ export class WorkflowComponent implements OnInit {
   }
 
   public nextStep(step, value) {
+    console.log(this.workflowForm.value)
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
     } 
-    if (value == "checkbox"){
-      this.checkbox(step)
+    if (value == "radio"){
+      this.radio(step)
     } else if (value == "subscription"){
       this.subscription(step);
     } else if (value == "text"){
@@ -121,4 +122,13 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setFormData(null)
   }
 
+  public onRadioChange(option, step) {
+    step.options.forEach(opt => {
+      if (opt.text == option.text){
+        option.selected = true;
+      } else {
+        opt.selected = false;
+      }
+    });
+  }
 }

@@ -55,7 +55,6 @@ export class MapComponent implements OnInit {
       zoomControl: false
     });
 
-    console.log(this._mapService.chosenBaseLayer)
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
 
@@ -211,7 +210,7 @@ export class MapComponent implements OnInit {
       if (this.basin) {  
         this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-        this.splitCatchmentLayer.addTo(this._mapService.map)
+        this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
       }
       this.delineationLoader = false;
@@ -226,9 +225,7 @@ export class MapComponent implements OnInit {
   }
 
   public removeLayer(layer: any) {
-    console.log(layer)
     if (this._mapService.map.hasLayer(layer)) {
-      console.log('has layer')
       this._mapService.map.removeLayer(layer)
     }
   }

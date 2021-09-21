@@ -9,7 +9,7 @@
             {
                 "label": "Select Your Favorite Color",
                 "name": "selectColor",
-                "type": "checkbox",
+                "type": "radio",
                 "validotors": 
                 {
                     "required": true
@@ -63,7 +63,7 @@
             {
                 "label": "Select Delineation Process",
                 "name": "selectDelineationProcess",
-                "type": "checkbox",
+                "type": "radio",
                 "options":
                 [
                     {
