@@ -42,7 +42,7 @@ describe('WorkflowSelectionComponent', () => {
   //});
 
   it('#addRemoveWorkflow should add workflow to selected workflow', () => {
-    component.selectWorkflow(component.selectedWorkflow[0]);
+    component.selectWorkflow(component.selectedWorkflow);
     expect(component.selectedWorkflow).not.toEqual(null);
   });
   
