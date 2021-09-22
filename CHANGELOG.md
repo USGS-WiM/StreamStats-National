@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added example workflows
 -   Added general map functions: scale, zoom, show your location, geosearch, basemap selection
 -   Added google analytics
+-   Added basin delineation workflow
+
 
 ### Changed
 

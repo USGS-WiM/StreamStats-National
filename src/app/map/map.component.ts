@@ -1,9 +1,16 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
 import { HttpClient } from '@angular/common/http';
+import { NLDIService } from '../shared/services/nldi.service';
+import { WorkflowService } from '../shared/services/workflow.service';
+import "leaflet/dist/images/marker-shadow.png";
+import { ToastrService, IndividualConfig } from 'ngx-toastr';
+import * as messageType from '../shared/messageType';
+import * as esri from 'esri-leaflet';
+import { Workflow } from '../shared/interfaces/workflow/workflow';
 
 @Component({
   selector: 'app-map',
@@ -13,17 +20,28 @@ import { HttpClient } from '@angular/common/http';
 export class MapComponent implements OnInit {
 	public baselayers = [] as any;
   private configSettings: Config;
-  public clickPoint = {};
+  private messager: ToastrService;
+  public clickPoint;
   public currentZoom: number = 4;
   public latestDischarge: any;
 	public overlays = [] as any;
   public selectedFeature: any;
+  public marker: L.Marker;
+  public basin: any;
+  public splitCatchmentLayer: any;
+  public NHDLayer;
+  public fitBounds: L.LatLngBounds;
+  public selectedWorkflow: Workflow;
+  public delineationLoader: boolean = false;
   public selectedPopup: any;
   public selectedSite: any
   public streamgageLayer: any;
-
-  constructor(public _mapService: MapService, private _configService: ConfigService, private _http: HttpClient) { 
+  public workflowData: any;
+  
+  constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
+     HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService, public toastr: ToastrService) { 
     this.configSettings = this._configService.getConfiguration();
+    this.messager = toastr;
   }
 
   ngOnInit() {
@@ -32,13 +50,13 @@ export class MapComponent implements OnInit {
       center: L.latLng(41.1, -98.7),
       zoom: 4,
       minZoom: 4,
-      maxZoom: 13,
+      maxZoom: this._mapService.chosenBaseLayer.maxZoom,
       renderer: L.canvas(),
       zoomControl: false
     });
 
     // Add basemap
-    this._mapService.SetBaselayer(this._mapService.chosenBaseLayer);
+    this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
 
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
@@ -50,7 +68,7 @@ export class MapComponent implements OnInit {
     this._mapService.textBox.addTo(this._mapService.map);
     this._mapService.map.on('zoomend', e => {
       this._mapService.textBox.addTo(this._mapService.map); //Reload text box
-  });
+    });
 
     // Add compass
     // this._mapService.map.addControl(this._mapService.compass);
@@ -58,7 +76,7 @@ export class MapComponent implements OnInit {
     // Get streamgages
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
-      if (this.latestDischarge){
+      if (this.latestDischarge) {
         this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature);
       }
     })
@@ -76,16 +94,55 @@ export class MapComponent implements OnInit {
     // On map click, set click point value, for delineation
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
+      if (this.workflowData) {
+        if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
+          this.onMouseClickDelineation();
+        }
+      }
     }) 
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
       this.setBbox();
+      this.checkAvaliableLayers();
     }) 
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
       this.setBbox();
     })
+    // Subscribe to workflow
+    this._workflowService.selectedWorkflow.subscribe((res) => {
+      this.selectedWorkflow = res;
+    });
+
+    //Subscribe to the form data
+    this._workflowService.formData.subscribe(data => {
+      this.workflowData = data;
+      this.checkAvaliableLayers();
+      if (!this.workflowData) {
+        this.removeLayer(this.NHDLayer);
+      }
+    });
+  }
+
+  public checkAvaliableLayers(){
+    if (this.currentZoom >= 8 && this.workflowData && this.workflowData.title === 'Delineation') { // checking current zoom and workflow
+      this.workflowData.steps[0].options.forEach(o => {
+        if (o.text == "NLDI Delineation" && o.selected == true) {
+          this.addLayers('NHD');
+        }
+      })
+    }
+  }
+
+  public addLayers(layerName: string) {
+    if (layerName == "NHD") {    //Setting stream layer
+      this.NHDLayer = esri.dynamicMapLayer({
+        'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
+        'layers': [5,6]
+      })
+      this.NHDLayer.addTo(this._mapService.map);
+    }   
   }
 
   public setBbox(){
@@ -140,4 +197,45 @@ export class MapComponent implements OnInit {
     popup.setContent( innerHTML );
   }
 
+  // On map click, set click point value, for delineation
+  public onMouseClickDelineation() { 
+    this.removeLayer(this.splitCatchmentLayer);
+    this.addPoint(this.clickPoint);
+    this.marker.openPopup();
+    this.delineationLoader = true;
+    this.createMessage("Delineating Basin. Please wait.");
+    this._nldiService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
+    this._nldiService.delineationPolygon.subscribe((poly: any) => {
+      this.basin = poly.outputs;
+      if (this.basin) {  
+        this.removeLayer(this.splitCatchmentLayer);  
+        this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
+        this.splitCatchmentLayer.addTo(this._mapService.map);
+        this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+      }
+      this.delineationLoader = false;
+    });
+  }
+
+  public addPoint(latlng: any) {
+    this.removeLayer(this.marker);
+    const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
+    this.marker = L.marker(latlng).bindPopup(content).openPopup();
+    this._mapService.map?.addLayer(this.marker);
+  }
+
+  public removeLayer(layer: any) {
+    if (this._mapService.map.hasLayer(layer)) {
+      this._mapService.map.removeLayer(layer);
+    }
+  }
+
+  private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
+    try {
+      let options: Partial<IndividualConfig> = undefined;
+      if (timeout) { options = { timeOut: timeout }; }
+      this.messager.show(msg, title, options, mType);
+    } catch (e) {
+    }
+  }
 }

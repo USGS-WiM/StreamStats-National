@@ -7,10 +7,10 @@
             <li>{{step.label}}
                 <ul *ngFor="let option of step.options; let k = index">
                     <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
+                    <li *ngIf="step.label == 'Select Delineation Point'">({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
+                    <li *ngIf="step.label == 'Select Delineation Point'">{{step.polygon}}</li>
                 </ul>
             </li>
         </ul>
     </div>
 </div>
-
-<!-- <p>User map click: {{ clickPoint }}</p> -->
