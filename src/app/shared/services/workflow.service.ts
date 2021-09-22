@@ -18,6 +18,7 @@ export class WorkflowService {
   });
 
   private configSettings: Config;
+  public completedWorkflows = [];
 
   constructor(private _http: HttpClient, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
@@ -34,15 +35,15 @@ export class WorkflowService {
   }
 
   //get all selected workflows
-  private _selectedWorkflow: BehaviorSubject<Array<Workflow>> = new BehaviorSubject<Array<Workflow>>([]);
-  public setSelectedWorkflows(w: Array<Workflow>) {
+  private _selectedWorkflow: Subject<Workflow> = new Subject<Workflow>();
+  public setSelectedWorkflow(w: Workflow) {
     this._selectedWorkflow.next(w);
   }
-  public get selectedWorkflow(): Observable<Array<Workflow>> {
+  public get selectedWorkflow(): Observable<Workflow> {
     return this._selectedWorkflow.asObservable();
   }
 
-  //get all completed workflow form data
+  //get all completed current workflow form data
   private _formData: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
   public setFormData(obj: Array<any>) {
     this._formData.next(obj);
@@ -51,4 +52,13 @@ export class WorkflowService {
     return this._formData.asObservable();
   }
   
+  //get all selected workflows
+  private _completedData: BehaviorSubject<Array<Workflow>> = new BehaviorSubject<Array<Workflow>>([]);
+  public setCompletedData(w: Array<Workflow>) {
+    this.completedWorkflows.push(w);
+    this._completedData.next(this.completedWorkflows);
+  }
+  public get completedData(): Observable<Array<Workflow>> {
+    return this._completedData.asObservable();
+  }
 }

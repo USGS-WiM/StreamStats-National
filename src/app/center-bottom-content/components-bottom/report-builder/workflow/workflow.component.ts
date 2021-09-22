@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
+import { MapService } from 'src/app/shared/services/map.service';
+import { NLDIService } from 'src/app/shared/services/nldi.service';
+import { WorkflowService } from 'src/app/shared/services/workflow.service';
 
 @Component({
   selector: 'app-workflow',
@@ -13,9 +16,14 @@ export class WorkflowComponent implements OnInit {
   @Output() onFormCompletion: EventEmitter<any> = new EventEmitter();
 
   public workflowForm: FormGroup;
-  stepsArray!: FormArray;
+  public stepsArray: FormArray;
+  public stepsCompleted: number = 0;
+  public numberOfSteps: number;
+  public finalStep: boolean = false;
+  public delineationPolygon;
+  public clickedPoint;
 
-  constructor(private _fb: FormBuilder) {
+  constructor(private _fb: FormBuilder, private _nldiService: NLDIService, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
       title: [],
       steps: this._fb.array([])
@@ -25,15 +33,23 @@ export class WorkflowComponent implements OnInit {
 
   ngOnInit(): void {
     this.setSteps();
+
+    this._nldiService.delineationPolygon.subscribe(data => {
+      this.delineationPolygon = data;
+    });
+
+    this._mapService.clickPoint.subscribe((point: {}) => {
+      this.clickedPoint = point;
+    })
   }
 
-  setTitle() {
+  public setTitle() {
     this.workflowForm.patchValue({
       title: this.workflow.title
     })
   }
 
-  setSteps() {
+  public setSteps() {
     this.setTitle();
     this.workflow.steps.forEach(step => {
       this.stepsArray.push(this._fb.group({
@@ -43,16 +59,17 @@ export class WorkflowComponent implements OnInit {
         options: this.setOptions(step)
       }))
     })
+    this.numberOfSteps = this.stepsArray.value.length;
   }
 
-  getSteps(form: any) {
-    return form.controls.steps.controls
+  public getSteps(form: any) {
+    return form.controls.steps.controls;
   }
-  getOptions(form: any) {
-    return form.controls.options.controls
+  public getOptions(form: any) {
+    return form.controls.options.controls;
   }
 
-  setOptions(step: any) {        
+  public setOptions(step: any) {        
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
       arr.push(this._fb.group({
@@ -65,7 +82,50 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onContinue(formValue: any) {
-    this.onFormCompletion.emit(formValue)
+    this.onFormCompletion.emit(formValue);
   }
 
+  public radio(i) {
+  }
+
+  public text(i) {
+  }
+
+  public subscription(i) {
+    if (this.workflowForm.value.title == "Delineation") {
+      this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
+      this.workflowForm.value.steps[i].polygon = 'polygon';   
+    } 
+  }
+
+  public nextStep(step, value) {
+    this.workflowForm.value.steps[step].completed = true;
+    this.stepsCompleted = this.stepsCompleted + 1;
+    if (this.stepsCompleted == this.numberOfSteps) {
+      this.finalStep = true;
+    } 
+    if (value == "radio") {
+      this.radio(step);
+    } else if (value == "subscription") {
+      this.subscription(step);
+    } else if (value == "text") {
+      this.text(step);
+    }
+  }
+
+  public finishedWorkflow(formValue: any) {
+    this._workflowService.setCompletedData(formValue);
+    this._workflowService.setSelectedWorkflow(null);
+    this._workflowService.setFormData(null);
+  }
+
+  public onRadioChange(option, step) {
+    step.options.forEach( opt => {
+      if (opt.text == option.text) {
+        option.selected = true;
+      } else {
+        opt.selected = false;
+      }
+    });
+  }
 }

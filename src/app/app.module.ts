@@ -2,6 +2,7 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import {ToastrModule, ToastNoAnimation, ToastNoAnimationModule} from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,8 +26,6 @@ import { DiscoverComponent } from './center-bottom-content/components-bottom/dis
 import { LoaderComponent } from './shared/components/loader/loader.component';
 import { WorkflowSelectionComponent } from './center-bottom-content/components-bottom/report-builder/workflow-selection/workflow-selection.component';
 import { ValidatorsDirective } from './shared/directives/validators.directive';
-
-
 
 export function ConfigLoader(configService: ConfigService) {
   return () => configService.loadConfig(environment.configFile);
@@ -54,6 +53,13 @@ export function ConfigLoader(configService: ConfigService) {
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    ToastNoAnimationModule.forRoot({
+      timeOut: 5000,
+      positionClass: 'toast-bottom-right',
+      progressAnimation:'decreasing',
+      preventDuplicates: true,
+      countDuplicates:true
+    }),
     ReactiveFormsModule
   ],
   providers: [

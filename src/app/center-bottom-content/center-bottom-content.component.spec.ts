@@ -32,7 +32,7 @@ describe('CenterBottomContentComponent', () => {
 
   beforeEach(() => {
     mockWorkflowService = {
-      selectedWorkflow: new Observable<Workflow[]>()
+      selectedWorkflow: new Observable<Workflow>()
     };
     fixture = TestBed.createComponent(CenterBottomContentComponent);
     workflowService = TestBed.inject(WorkflowService)
@@ -45,16 +45,16 @@ describe('CenterBottomContentComponent', () => {
   });
 
   it('#selectedWorkflow should display a selected workflow values', () => {
-    const workflow: Workflow[] = [{
+    const workflow: Workflow = {
       title: "Delineation",
       description: "string",
       functionality: "string",
       icon: "string",
       steps: [],
       output: []
-    }];
-    component.selectedWorkflows = workflow;
-    expect(component.selectedWorkflows[0].title).toEqual(workflow[0].title);
+    };
+    component.selectedWorkflow = workflow;
+    expect(component.selectedWorkflow.title).toEqual(workflow.title);
   });
 
   it('#addFormData should take first if path and push formData', () => {

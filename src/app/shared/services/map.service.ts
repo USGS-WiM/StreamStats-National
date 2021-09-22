@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Map } from 'leaflet';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
 import { Subject } from 'rxjs';
 import { AppService } from './app.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Map } from 'leaflet';
 import { MapLayer } from '../interfaces/maplayer';
 
 declare const L: any;
@@ -16,7 +16,8 @@ declare const L: any;
 export class MapService {
     public authHeader: HttpHeaders;
     public baseMaps: any;
-    public chosenBaseLayer!: string;
+    public chosenBaseLayerName: string;
+    public chosenBaseLayer;
     public compass: any;
     private configSettings: Config;
     public locationButton: any;
@@ -40,9 +41,9 @@ export class MapService {
         this.baseMaps = new Object();
         if (this.configSettings) {
             this.configSettings.baseLayers.forEach(ml => {
-
                 if (ml["visible"]) {
-                    this.chosenBaseLayer = ml["name"];
+                    this.chosenBaseLayer = ml;
+                    this.chosenBaseLayerName = ml["name"];
                 }
                 var layer = this.loadLayer(ml);
                 if (layer != null) {
@@ -251,22 +252,20 @@ export class MapService {
         return L.tileLayer(
             ml["url"],
             {attribution: ml["attribution"],
-            maxZoom: 13
+            maxZoom: ml["maxZoom"]
         });
     }
 
     public SetBaselayer(layername: string) {
-        
         // Set previous basemap visibility to false and remove from map
-        if (this.chosenBaseLayer != layername) {
-            this.baseMaps[this.chosenBaseLayer].visible = false;
-            this.map.removeLayer(this.baseMaps[this.chosenBaseLayer]);
+        if (this.chosenBaseLayerName != layername) {
+            this.baseMaps[this.chosenBaseLayerName].visible = false;
+            this.map.removeLayer(this.baseMaps[this.chosenBaseLayerName]);
         }
-
         // Set the new basemap visibility to true and add to map
         if (this.baseMaps[layername]) {
             this.baseMaps[layername].visible = true;
-            this.chosenBaseLayer = layername;
+            this.chosenBaseLayerName = layername;
             this.map.addLayer(this.baseMaps[layername]);
         }
         
