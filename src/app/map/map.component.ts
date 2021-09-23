@@ -133,6 +133,11 @@ export class MapComponent implements OnInit {
         }
       })
     }
+
+    if (this.currentZoom >= 8 && this.workflowData && this.workflowData.title === 'Fire Hydrology') { // checking current zoom and workflow
+      this.addLayers('NHD');
+    }
+
   }
 
   public addLayers(layerName: string) {
