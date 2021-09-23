@@ -96,33 +96,12 @@ describe('WorkflowComponent', () => {
     expect(component.finishedWorkflow).toHaveBeenCalled();
   });
 
-  it('#onRadioChange should check for option = text to equal', () => {
-    const option = {
+  it('#onRadioChange should check for option = text', () => {
+    const optionOne = {
       text: "Red",
       selected: false
     };
-    const steps =[{
-      label: "Select Your Favorite Color",
-      name: "selectColor",
-      type: "radio",
-      options: [{
-        text:"Red",
-        selected: false
-      }]
-    }];
-    steps.forEach(step => {
-      component.onRadioChange(option, step);
-      expect(step.name).toBe("selectColor");
-      step.options.forEach(opt => {
-        expect(opt.text).toEqual(option.text);
-        option.selected = true;
-        expect(option.selected).toBe(true);
-      });
-    });
-  });
-  
-  it('#onRadioChange should check for option = text to not equal', () => {
-    const option = {
+    const optionTwo = {
       text: "Blue",
       selected: false
     };
@@ -136,9 +115,16 @@ describe('WorkflowComponent', () => {
       }]
     }];
     steps.forEach(step => {
-      component.onRadioChange(option, step);
+      component.onRadioChange(optionOne, step);
+      expect(step.name).toBe("selectColor");
       step.options.forEach(opt => {
-        expect(opt.text).not.toEqual(option.text);
+        expect(opt.text).toEqual(optionOne.text);
+        optionOne.selected = true;
+        expect(optionOne.selected).toBe(true);
+      });
+      component.onRadioChange(optionTwo, step);
+      step.options.forEach(opt => {
+        expect(opt.text).not.toEqual(optionTwo.text);
         expect(opt.selected).toBe(false);
       });
     });
