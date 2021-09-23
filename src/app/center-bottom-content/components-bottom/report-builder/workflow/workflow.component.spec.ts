@@ -5,45 +5,28 @@ import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { WorkflowComponent } from './workflow.component';
 
 let mockWorkflow: Workflow = {
-    title: "Example Workflow",
-    description: "This is an example workflow.",
-    functionality: "Core",
-    icon: "fa fa-sitemap",
-    steps:
-    [
-        {
-            label: "Select Your Favorite Color",
-            name: "selectColor",
-            type: "checkbox",
-            value: "",
-            validators: 
-            {
-                required: true
-            },
-            options:
-            [
-                {
-                    text:"Red",
-                    selected: false
-                },
-                {
-                    text:"Yellow",
-                    selected: false
-                },
-                {
-                    text:"Blue",
-                    selected: false
-                }
-            ]
-        }
-    ],
-    output: [        {
-        value: "",
-        valueType: "geojson",
-        displayType: "map", 
-        complete: false
-    }],
-    isSelected: true
+  title: "Example Workflow",
+  description: "This is an example workflow.",
+  functionality: "Core",
+  icon: "fa fa-sitemap",
+  steps: [{
+    label: "Select Your Favorite Color",
+    name: "selectColor",
+    type: "checkbox",
+    value: "",
+    validators: { required: true },
+    options: [
+      { text:"Red", selected: false },
+      { text:"Yellow", selected: false },
+      { text:"Blue", selected: false }]
+    }
+  ],
+  output: [{
+      value: "",
+      valueType: "geojson",
+      displayType: "map", 
+      complete: false
+  }]
 };
 
 describe('WorkflowComponent', () => {
@@ -79,6 +62,87 @@ describe('WorkflowComponent', () => {
     expect(component.workflowForm.value).toBeTruthy();
   });
 
+  it('#subscription should allow for clickedPoint', () => {
+    const form = component.workflowForm;
+    const title = form.controls.title;
+    title.setValue("Delineation");
+    const i = 0;
+    component.subscription(i);
+    expect(form.value.title).toEqual("Delineation")
+  });
+
+  it('#nextStep should count completed steps and determine step type', () => {
+    const step = 0;
+    const valueOne = "radio";
+    const valueTwo = "subscription";
+    const valueThree = "text";
+    component.nextStep(step, valueOne);
+    expect(step).toBe(0);
+    component.nextStep(step, valueTwo);
+    expect(step).toBe(0);
+    component.nextStep(step, valueThree);
+    expect(step).toBe(0);
+  });
+
+  it('#finishedWorkflow should update services', () => {
+    spyOn(component, 'finishedWorkflow').and.callThrough();
+    const formData = {
+      title: "Example Workflow",
+      description: "This is an example workflow.",
+      functionality: "Core",
+      icon: "fa fa-sitemap"
+    };
+    component.finishedWorkflow(formData);
+    expect(component.finishedWorkflow).toHaveBeenCalled();
+  });
+
+  it('#onRadioChange should check for option = text to equal', () => {
+    const option = {
+      text: "Red",
+      selected: false
+    };
+    const steps =[{
+      label: "Select Your Favorite Color",
+      name: "selectColor",
+      type: "radio",
+      options: [{
+        text:"Red",
+        selected: false
+      }]
+    }];
+    steps.forEach(step => {
+      component.onRadioChange(option, step);
+      expect(step.name).toBe("selectColor");
+      step.options.forEach(opt => {
+        expect(opt.text).toEqual(option.text);
+        option.selected = true;
+        expect(option.selected).toBe(true);
+      });
+    });
+  });
+  
+  it('#onRadioChange should check for option = text to not equal', () => {
+    const option = {
+      text: "Blue",
+      selected: false
+    };
+    const steps =[{
+      label: "Select Your Favorite Color",
+      name: "selectColor",
+      type: "radio",
+      options: [{
+        text:"Red",
+        selected: false
+      }]
+    }];
+    steps.forEach(step => {
+      component.onRadioChange(option, step);
+      step.options.forEach(opt => {
+        expect(opt.text).not.toEqual(option.text);
+        expect(opt.selected).toBe(false);
+      });
+    });
+  });
 
   // TODO: update to make sure certain elements are loading in the DOM once more finalized. 
   // it('should have <p> with "workflow works!"', () => {
