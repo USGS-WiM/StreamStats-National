@@ -97,8 +97,11 @@ export class MapComponent implements OnInit {
         if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
           this.onMouseClickDelineation();
         }
-        if (this.workflowData.title == "Fire Hydrology" && this.workflowData.steps[0].completed) { 
-          this.onMouseClickFireHydro();
+        if (this.workflowData.title == "Fire Hydrology - Query Basin" && this.workflowData.steps[0].completed) { 
+          this.onMouseClickFireHydroQueryBasin();
+        }
+        if (this.workflowData.title == "Fire Hydrology - Query Fire Perimeters" && this.workflowData.steps[0].completed) { 
+          this.onMouseClickFireHydroQueryBasin();
         }
       }
     }) 
@@ -151,13 +154,20 @@ export class MapComponent implements OnInit {
             });
           }
           break;
-        case "Fire Hydrology":
+        case "Fire Hydrology - Query Basin":
+          this.addLayers('NHD');
           this.addLayers('Archived WildFire Perimeters');
           this.addLayers('Active WildFire Perimeters');
           this.addLayers('MTBS Fire Boundaries');
           this.addLayers('Burn Severity');
           break;
-      }
+        case "Fire Hydrology - Query Fire Perimeters":
+          this.addLayers('Archived WildFire Perimeters');
+          this.addLayers('Active WildFire Perimeters');
+          this.addLayers('MTBS Fire Boundaries');
+          this.addLayers('Burn Severity');
+          break;
+    }
     }
 
   }
@@ -263,9 +273,12 @@ export class MapComponent implements OnInit {
     });
   }
 
-  public onMouseClickFireHydro() { 
-    this.addPoint(this.clickPoint);
-    this.marker.openPopup();
+  public onMouseClickFireHydroQueryBasin() { 
+    // Issue #57: see onMouseClickDelineation() to start
+  }
+
+  public onMouseClickFireHydroQueryFirePerimeter() { 
+    // Issue #58: see demo app for pointers
   }
 
   public addPoint(latlng: any) {

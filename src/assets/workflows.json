@@ -97,33 +97,13 @@
         }
     },
     {
-        "title": "Fire Hydrology",
+        "title": "Fire Hydrology - Query Basin",
         "description": "Description Here.",
         "functionality": "Core",
         "icon": "far fa-fire-alt",
         "disable": true,
         "steps":
         [
-            {
-                "label": "Select a Query",
-                "name": "selectFireHydroQuery",
-                "type": "radio",
-                "validators": 
-                {
-                    "required": true
-                },
-                "options":
-                [
-                    {
-                        "text":"Query a basin",
-                        "selected": false
-                    },
-                    {
-                        "text":"Query fire perimeters",
-                        "selected": false
-                    }
-                ]
-            },
             {
                 "label":"Select a Point",
                 "name": "selectFireHydroPoint",
@@ -152,11 +132,37 @@
                 [
                     {
                         "textLabel":"Start Year",
-                        "text":"2020"
+                        "text":"2021"
                     },
                     {
                         "textLabel":"End Year",
                         "text":"2021"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Fire Hydrology - Query Fire Perimeters",
+        "description": "Description Here.",
+        "functionality": "Core",
+        "icon": "far fa-fire-alt",
+        "disable": true,
+        "steps":
+        [
+            {
+                "label":"Select a Fire Perimeter",
+                "name": "selectFireHydroPoint",
+                "type": "subscription",
+                "validators": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Click on the map",
+                        "selected": false
                     }
                 ]
             }

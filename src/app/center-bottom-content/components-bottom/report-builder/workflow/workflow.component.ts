@@ -97,8 +97,13 @@ export class WorkflowComponent implements OnInit {
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
         this.workflowForm.value.steps[i].polygon = 'polygon';   
         break;
-      case "Fire Hydrology":
+      case "Fire Hydrology - Query Basin":
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
+        this.workflowForm.value.steps[i].polygon = 'polygon';   
+        break;
+      case "Fire Hydrology - Query Fire Perimeters":
+        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
+        // this.workflowForm.value.steps[i].polygon = 'polygon';   
         break;
     }
   }
