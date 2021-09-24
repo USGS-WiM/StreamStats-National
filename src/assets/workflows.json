@@ -10,7 +10,7 @@
                 "label": "Select Your Favorite Color",
                 "name": "selectColor",
                 "type": "radio",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
@@ -34,7 +34,7 @@
                 "label":"Type Something",
                 "name": "selectPoints",
                 "type": "text",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
@@ -76,7 +76,7 @@
                 "label":"Select Delineation Point",
                 "name": "selectDelineationPoint",
                 "type": "subscription",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
@@ -108,7 +108,7 @@
                 "label": "Select a Query",
                 "name": "selectFireHydroQuery",
                 "type": "radio",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
