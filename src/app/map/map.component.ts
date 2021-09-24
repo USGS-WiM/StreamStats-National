@@ -97,6 +97,9 @@ export class MapComponent implements OnInit {
         if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
           this.onMouseClickDelineation();
         }
+        if (this.workflowData.title == "Fire Hydrology" && this.workflowData.steps[0].completed) { 
+          this.onMouseClickFireHydro();
+        }
       }
     }) 
     // On map zoom, set current zoom, display gages
@@ -258,6 +261,11 @@ export class MapComponent implements OnInit {
       }
       this.delineationLoader = false;
     });
+  }
+
+  public onMouseClickFireHydro() { 
+    this.addPoint(this.clickPoint);
+    this.marker.openPopup();
   }
 
   public addPoint(latlng: any) {

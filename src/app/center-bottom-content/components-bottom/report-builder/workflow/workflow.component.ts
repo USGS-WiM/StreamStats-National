@@ -92,10 +92,15 @@ export class WorkflowComponent implements OnInit {
   }
 
   public subscription(i) {
-    if (this.workflowForm.value.title == "Delineation") {
-      this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
-      this.workflowForm.value.steps[i].polygon = 'polygon';   
-    } 
+    switch (this.workflowForm.value.title) {
+      case "Delineation":
+        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
+        this.workflowForm.value.steps[i].polygon = 'polygon';   
+        break;
+      case "Fire Hydrology":
+        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
+        break;
+    }
   }
 
   public nextStep(step, value) {
