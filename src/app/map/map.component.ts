@@ -112,6 +112,13 @@ export class MapComponent implements OnInit {
     // Subscribe to workflow
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
+      this.checkAvailableLayers();
+      if (!this.selectedWorkflow){
+        this.workflowLayers.forEach(layerName => {
+          this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
+        });
+
+      }
     });
 
     //Subscribe to the form data
@@ -129,14 +136,17 @@ export class MapComponent implements OnInit {
   }
 
   public checkAvailableLayers(){
-    if (this.workflowData) {
-      switch (this.workflowData.title) {
+    if (this.selectedWorkflow) {
+      // console.log(this.selectedWorkflow.title);
+      switch (this.selectedWorkflow.title) {
         case "Delineation":
-          this.workflowData.steps[0].options.forEach(o => {
-            if (o.text == "NLDI Delineation" && o.selected == true) {
-              this.addLayers('NHD');
-            }
-          });
+          if (this.workflowData) {
+            this.workflowData.steps[0].options.forEach(o => {
+              if (o.text == "NLDI Delineation" && o.selected == true) {
+                this.addLayers('NHD');
+              }
+            });
+          }
           break;
         case "Fire Hydrology":
           this.addLayers('Archived WildFire Perimeters');
@@ -172,7 +182,6 @@ export class MapComponent implements OnInit {
         console.error(ml.name + ' layer failed to load', error);
       }
     });
-    // console.log(this.workflowLayers);
   }
 
   public addLayers(layerName: string) {
