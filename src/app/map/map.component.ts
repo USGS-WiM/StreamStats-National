@@ -24,12 +24,11 @@ export class MapComponent implements OnInit {
   public clickPoint;
   public currentZoom: number = 4;
   public latestDischarge: any;
-	public overlays = [] as any;
+	public workflowLayers = [] as any;
   public selectedFeature: any;
   public marker: L.Marker;
   public basin: any;
   public splitCatchmentLayer: any;
-  public NHDLayer;
   public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
   public delineationLoader: boolean = false;
@@ -104,7 +103,7 @@ export class MapComponent implements OnInit {
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
       this.setBbox();
-      this.checkAvaliableLayers();
+      this.checkAvailableLayers();
     }) 
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
@@ -118,36 +117,66 @@ export class MapComponent implements OnInit {
     //Subscribe to the form data
     this._workflowService.formData.subscribe(data => {
       this.workflowData = data;
-      this.checkAvaliableLayers();
+      this.checkAvailableLayers();
       if (!this.workflowData) {
-        this.removeLayer(this.NHDLayer);
-      }
+        this.workflowLayers.forEach(layerName => {
+          this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
+        });
+      } 
     });
+
+    this.loadLayers();
   }
 
-  public checkAvaliableLayers(){
-    if (this.currentZoom >= 8 && this.workflowData && this.workflowData.title === 'Delineation') { // checking current zoom and workflow
-      this.workflowData.steps[0].options.forEach(o => {
-        if (o.text == "NLDI Delineation" && o.selected == true) {
-          this.addLayers('NHD');
+  public checkAvailableLayers(){
+    if (this.workflowData) {
+      switch (this.workflowData.title) {
+        case "Delineation":
+          this.workflowData.steps[0].options.forEach(o => {
+            if (o.text == "NLDI Delineation" && o.selected == true) {
+              this.addLayers('NHD');
+            }
+          });
+          break;
+        case "Fire Hydrology":
+          this.addLayers('Archived WildFire Perimeters');
+          this.addLayers('Active WildFire Perimeters');
+          this.addLayers('MTBS Fire Boundaries');
+          this.addLayers('Burn Severity');
+          break;
+      }
+    }
+
+  }
+
+  private loadLayers() {
+    this.configSettings.workflowLayers.forEach(ml => {
+      try {
+        let options;
+        switch (ml.type) {
+          case "agsDynamic":
+            options = ml.layerOptions;
+            options.url = ml.url;
+            this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
+            break;
+          case "agsFeature":
+            options = ml.layerOptions;
+            options.url = ml.url;
+            this.workflowLayers[ml.name] = esri.featureLayer(options);
+            if (this.configSettings.symbols[ml.name]) { 
+              this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
+            }
+            break;
         }
-      })
-    }
-
-    if (this.currentZoom >= 8 && this.workflowData && this.workflowData.title === 'Fire Hydrology') { // checking current zoom and workflow
-      this.addLayers('NHD');
-    }
-
+      } catch (error) {
+        console.error(ml.name + ' layer failed to load', error);
+      }
+    });
+    // console.log(this.workflowLayers);
   }
 
   public addLayers(layerName: string) {
-    if (layerName == "NHD") {    //Setting stream layer
-      this.NHDLayer = esri.dynamicMapLayer({
-        'url': 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
-        'layers': [5,6]
-      })
-      this.NHDLayer.addTo(this._mapService.map);
-    }   
+    this.workflowLayers[layerName].addTo(this._mapService.map);
   }
 
   public setBbox(){
