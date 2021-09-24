@@ -11,13 +11,14 @@
         "type": "agsDynamic",
         "layerOptions": {
             "zIndex": 9999,
-            "layers": [5,6]
+            "layers": [5,6],
+            "minZoom": 8
         },
         "visible": false
     },
     {
         "name": "Active WildFire Perimeters",
-        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Public_Wildfire_Perimeters_View/FeatureServer/0",
+        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Perimeters/FeatureServer/0",
         "type": "agsFeature",
         "layerOptions": {
             "zIndex": 9999
