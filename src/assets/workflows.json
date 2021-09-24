@@ -119,8 +119,44 @@
                         "selected": false
                     },
                     {
-                        "text":"Query fire perimeters at this point",
+                        "text":"Query fire perimeters",
                         "selected": false
+                    }
+                ]
+            },
+            {
+                "label":"Select a Point",
+                "name": "selectFireHydroPoint",
+                "type": "subscription",
+                "validators": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Click on the map",
+                        "selected": false
+                    }
+                ]
+            },
+            {
+                "label":"Burn Area Year Range",
+                "name": "burnAreaStartYear",
+                "type": "text",
+                "validators": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "textLabel":"Start Year",
+                        "text":"2020"
+                    },
+                    {
+                        "textLabel":"End Year",
+                        "text":"2021"
                     }
                 ]
             }
