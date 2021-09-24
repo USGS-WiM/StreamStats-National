@@ -4,6 +4,56 @@
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
     "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
+    "workflowLayers":[
+    {
+        "name": "NHD",
+        "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "type": "agsDynamic",
+        "layerOptions": {
+            "zIndex": 9999,
+            "layers": [5,6]
+        },
+        "visible": false
+    },
+    {
+        "name": "Active WildFire Perimeters",
+        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Public_Wildfire_Perimeters_View/FeatureServer/0",
+        "type": "agsFeature",
+        "layerOptions": {
+            "zIndex": 9999
+        },
+        "visible": false
+    },
+    {
+        "name": "Archived WildFire Perimeters",
+        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
+        "type": "agsFeature",
+        "layerOptions": {
+            "zIndex": 9999
+        },
+        "visible": false
+    },
+    {
+        "name": "MTBS Fire Boundaries",
+        "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
+        "type": "agsDynamic",
+        "layerOptions": {
+            "zIndex": 9999,
+            "layers": [63]
+        },
+        "visible": false
+        },
+        {
+        "name": "Burn Severity",
+        "url": "https://apps.fs.usda.gov/arcx/rest/services/RDW_Wildfire/MTBS_CONUS/MapServer",
+        "type": "agsDynamic",
+        "layerOptions": {
+            "zIndex": 9999,
+            "minZoom": 10
+        },
+        "visible": false
+        }
+    ],
     "baseLayers": [
         { 
             "name": "World Topographic",
@@ -54,7 +104,17 @@
             "visible": false,
             "maxZoom": 13
         }
-    ]
+    ],
+    "symbols": {
+        "Active WildFire Perimeters": {
+            "color": "#EBCF26",
+            "fillColor": "#EBCF26"
+        },
+        "Archived WildFire Perimeters": {
+            "color": "#ed8f24",
+            "fillColor": "#ed8f24"
+        }
+    }
 
     
 }
