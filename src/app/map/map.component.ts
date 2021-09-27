@@ -12,6 +12,13 @@ import * as messageType from '../shared/messageType';
 import * as esri from 'esri-leaflet';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
 
+import area from '@turf/area';
+import intersect from '@turf/intersect';
+import dissolve from '@turf/dissolve';
+import union from '@turf/union';
+import combine from '@turf/combine';
+import explode from '@turf/explode';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
