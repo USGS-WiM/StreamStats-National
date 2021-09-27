@@ -2,7 +2,6 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
-import { NLDIService } from 'src/app/shared/services/nldi.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
 
 @Component({
@@ -20,10 +19,9 @@ export class WorkflowComponent implements OnInit {
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
-  public delineationPolygon;
   public clickedPoint;
 
-  constructor(private _fb: FormBuilder, private _nldiService: NLDIService, public _mapService: MapService, private _workflowService: WorkflowService) {
+  constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
       title: [],
       steps: this._fb.array([])
@@ -33,10 +31,6 @@ export class WorkflowComponent implements OnInit {
 
   ngOnInit(): void {
     this.setSteps();
-
-    this._nldiService.delineationPolygon.subscribe(data => {
-      this.delineationPolygon = data;
-    });
 
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
