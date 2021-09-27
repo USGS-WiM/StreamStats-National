@@ -93,14 +93,15 @@ export class MapComponent implements OnInit {
     // On map click, set click point value, for delineation
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
-      if (this.workflowData) {
-        if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
+      // console.log(this.selectedWorkflow);
+      if (this.selectedWorkflow) {
+        if (this.selectedWorkflow.title == "Delineation" && this.workflowData.steps[0].completed) { 
           this.onMouseClickDelineation();
         }
-        if (this.workflowData.title == "Fire Hydrology - Query Basin" && this.workflowData.steps[0].completed) { 
+        if (this.selectedWorkflow.title == "Fire Hydrology - Query Basin") { 
           this.onMouseClickFireHydroQueryBasin();
         }
-        if (this.workflowData.title == "Fire Hydrology - Query Fire Perimeters" && this.workflowData.steps[0].completed) { 
+        if (this.selectedWorkflow.title == "Fire Hydrology - Query Fire Perimeters" && this.workflowData.steps[0].completed) { 
           this.onMouseClickFireHydroQueryBasin();
         }
       }
@@ -275,6 +276,21 @@ export class MapComponent implements OnInit {
 
   public onMouseClickFireHydroQueryBasin() { 
     // Issue #57: see onMouseClickDelineation() to start
+    this.addPoint(this.clickPoint);
+    this.marker.openPopup();
+    this.delineationLoader = true;
+    this.createMessage("Delineating Basin. Please wait.");
+    this._nldiService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
+    this._nldiService.delineationPolygon.subscribe((poly: any) => {
+      this.basin = poly.outputs;
+      if (this.basin) {  
+        this.removeLayer(this.splitCatchmentLayer);  
+        this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
+        this.splitCatchmentLayer.addTo(this._mapService.map);
+        this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+      }
+      this.delineationLoader = false;
+    });
   }
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
