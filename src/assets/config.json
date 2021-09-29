@@ -2,57 +2,69 @@
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
+    "geologyURL": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3/query?where=1%3D1&returnIdsOnly=true&f=json",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
     "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
     "workflowLayers":[
-    {
-        "name": "NHD",
-        "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
-        "type": "agsDynamic",
-        "layerOptions": {
-            "zIndex": 9999,
-            "layers": [5,6],
-            "minZoom": 8
-        },
-        "visible": false
-    },
-    {
-        "name": "Active WildFire Perimeters",
-        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Perimeters/FeatureServer/0",
-        "type": "agsFeature",
-        "layerOptions": {
-            "zIndex": 9999
-        },
-        "visible": false
-    },
-    {
-        "name": "Archived WildFire Perimeters",
-        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
-        "type": "agsFeature",
-        "layerOptions": {
-            "zIndex": 9999
-        },
-        "visible": false
-    },
-    {
-        "name": "MTBS Fire Boundaries",
-        "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
-        "type": "agsDynamic",
-        "layerOptions": {
-            "zIndex": 9999,
-            "layers": [63]
-        },
-        "visible": false
+        {
+            "name": "NHD",
+            "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "layers": [5,6],
+                "minZoom": 8
+            },
+            "visible": false
         },
         {
-        "name": "Burn Severity",
-        "url": "https://apps.fs.usda.gov/arcx/rest/services/RDW_Wildfire/MTBS_CONUS/MapServer",
-        "type": "agsDynamic",
-        "layerOptions": {
-            "zIndex": 9999,
-            "minZoom": 10
+            "name": "Active WildFire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Perimeters/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": false
         },
-        "visible": false
+        {
+            "name": "Archived WildFire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": false
+        },
+        {
+            "name": "MTBS Fire Boundaries",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "layers": [63]
+            },
+            "visible": false
+        },
+        {
+            "name": "Burn Severity",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/RDW_Wildfire/MTBS_CONUS/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10
+            },
+            "visible": false
+        },
+        {
+            "name": "Geology",
+            "url": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10,
+                "layers": [3]
+            },
+            "visible": false
         }
     ],
     "baseLayers": [
