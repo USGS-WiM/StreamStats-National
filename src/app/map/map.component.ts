@@ -17,7 +17,6 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-	public baselayers = [] as any;
   private configSettings: Config;
   private messager: ToastrService;
   public clickPoint;
@@ -36,7 +35,7 @@ export class MapComponent implements OnInit {
   public selectedSite: any
   public streamgageLayer: any;
   public workflowData: any;
-  
+  public count: number = 0;
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
      HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService) { 
     this.configSettings = this._configService.getConfiguration();
@@ -94,7 +93,7 @@ export class MapComponent implements OnInit {
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
       if (this.selectedWorkflow) {
-        if(this.workflowData){
+        if (this.workflowData) {
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
             this.onMouseClickDelineation();
           }
@@ -280,6 +279,7 @@ export class MapComponent implements OnInit {
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this.loader = true;
+    this.count = 0;
     this.createMessage('Querying layers, please wait...');
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
@@ -299,12 +299,10 @@ export class MapComponent implements OnInit {
   }
 
   public async findFeatures(error,results,layerName) {
-    let count = 0;
     let popupcontent;
     let selectedPerimeters = [];
     let layer;
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
-
     if (error) {
       this.createMessage('Error occurred, check console','error');
       this.loader = false;
@@ -312,7 +310,7 @@ export class MapComponent implements OnInit {
     if (results && results.features.length > 0) {
       results.features.forEach(feat => {
         popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-        if(layerName === 'MTBS Fire Boundaries'){
+        if (layerName === 'MTBS Fire Boundaries') {
           let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
           if (date.indexOf('undefined') > -1) date = 'N/A';
         }
@@ -326,9 +324,9 @@ export class MapComponent implements OnInit {
           }
         });
         popupcontent += '<br>';
-        if (layerName === 'MTBS Fire Boundaries'){
+        if (layerName === 'MTBS Fire Boundaries') {
           layer = L.geoJSON(feat.geometry);
-        } else if(layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters'){
+        } else if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
           const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
           layer = L.geoJSON(feat.geometry, {style: {color: col}});
         }
@@ -340,8 +338,8 @@ export class MapComponent implements OnInit {
       this.addTraceLayer(data);
     }
     this._mapService.setSelectedPerimeters(selectedPerimeters);
-    count ++;
-    this.checkCount(count, 3);
+    this.count ++;
+    this.checkCount(this.count, 3);
   }
 
   public addTraceLayer(data) {

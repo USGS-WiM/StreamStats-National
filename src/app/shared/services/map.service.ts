@@ -21,7 +21,6 @@ export class MapService {
     public chosenBaseLayer;
     public compass: any;
     private configSettings: Config;
-    public locationButton: any;
     public map!: Map;
     public overlays: any;
     public scale: any;
