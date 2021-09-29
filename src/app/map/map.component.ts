@@ -280,85 +280,68 @@ export class MapComponent implements OnInit {
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this.loader = true;
-    let count = 0;
-    let selectedPerimeters = [];
-    let popupcontent;
     this.createMessage('Querying layers, please wait...');
-    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
-          .run(async (error: any, results: any) => {
-            if (error) {
-              this.createMessage('Error occurred, check console','error');
-              this.loader = false;
-            } 
-            if (results && results.features.length > 0) {
-              results.features.forEach(feat => {
-                popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-                Object.keys(feat.properties).forEach(prop => {
-                    if (shownFields.indexOf(prop.toUpperCase()) > -1) {
-                      let val = feat.properties[prop];
-                      if (prop.toLowerCase().indexOf('date') > -1) {
-                          val = new Date(val).toLocaleDateString();
-                      }
-                      popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
-                    }
-                });
-                popupcontent += '<br>';
-                console.log(popupcontent)
-                const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
-                const layer = L.geoJSON(feat.geometry, {style: {color: col}});
-                layer.addTo(this._mapService.map);
-                this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
-              });
-              selectedPerimeters.push({ 'Key': layerName, 'Data': results})
-              const data = await this._mapService.trace(results).toPromise();
-              this.addTraceLayer(data);
-            }
-            this._mapService.setSelectedPerimeters(selectedPerimeters);
-            count ++;
-            this.checkCount(count, 3);
+          .run((error: any, results: any) => {
+            this.findFeatures(error,results,layerName);
           }
         );
       } else if (layerName === 'MTBS Fire Boundaries') {
         this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
           .run(async (error: any, results: any) => {
-            if (error) {
-              this.createMessage('Error occurred, check console','error');
-              this.loader = false;
-            } 
-            if (results && results.features.length > 0) {
-              results.features.forEach(feat => {
-                popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-                let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
-                if (date.indexOf('undefined') > -1) date = 'N/A';
-                Object.keys(feat.properties).forEach(prop => {
-                  if (shownFields.indexOf(prop.toUpperCase()) > -1) {
-                    let val = feat.properties[prop];
-                    if (prop.toLowerCase().indexOf('date') > -1) {
-                      val = new Date(val).toLocaleDateString();
-                    }
-                    popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
-                  }
-                });
-                popupcontent += '<br>';
-                console.log(popupcontent)
-                const layer = L.geoJSON(feat.geometry);
-                layer.addTo(this._mapService.map);
-                this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
-              });
-              selectedPerimeters.push({ 'Key': layerName, 'Data': results})
-              const data = await this._mapService.trace(results).toPromise();
-              this.addTraceLayer(data);
-            }
-            this._mapService.setSelectedPerimeters(selectedPerimeters);
-            count ++;
-            this.checkCount(count, 3);
+            this.findFeatures(error,results,layerName);
           }
         );
       }
     });
+  }
+
+  public async findFeatures(error,results,layerName) {
+    let count = 0;
+    let popupcontent;
+    let selectedPerimeters = [];
+    let layer;
+    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
+
+    if (error) {
+      this.createMessage('Error occurred, check console','error');
+      this.loader = false;
+    } 
+    if (results && results.features.length > 0) {
+      results.features.forEach(feat => {
+        popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
+        if(layerName === 'MTBS Fire Boundaries'){
+          let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
+          if (date.indexOf('undefined') > -1) date = 'N/A';
+        }
+        Object.keys(feat.properties).forEach(prop => {
+          if (shownFields.indexOf(prop.toUpperCase()) > -1) {
+            let val = feat.properties[prop];
+            if (prop.toLowerCase().indexOf('date') > -1) {
+              val = new Date(val).toLocaleDateString();
+            }
+            popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
+          }
+        });
+        popupcontent += '<br>';
+        if (layerName === 'MTBS Fire Boundaries'){
+          layer = L.geoJSON(feat.geometry);
+        } else if(layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters'){
+          const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
+          layer = L.geoJSON(feat.geometry, {style: {color: col}});
+        }
+        layer.addTo(this._mapService.map);
+        this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
+      });
+      selectedPerimeters.push({ 'Key': layerName, 'Data': results})
+      const data = await this._mapService.trace(results).toPromise();
+      this.addTraceLayer(data);
+    }
+    this._mapService.setSelectedPerimeters(selectedPerimeters);
+    count ++;
+    this.checkCount(count, 3);
   }
 
   public addTraceLayer(data) {
