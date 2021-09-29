@@ -7,4 +7,5 @@ export interface Config {
     GageStatsServices: string;
     GageStatsServicesBounds: string;
     baseLayers: [];
+    workflowLayers: [];
 }

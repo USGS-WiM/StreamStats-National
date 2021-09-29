@@ -57,6 +57,8 @@ export class MapComponent implements OnInit {
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
 
+    this.workflowLayers = this._mapService.workflowLayers;
+
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
 
@@ -120,10 +122,13 @@ export class MapComponent implements OnInit {
       this.selectedWorkflow = res;
       this.checkAvailableLayers();
       if (!this.selectedWorkflow){
-        this.workflowLayers.forEach(layerName => {
+        this.configSettings.workflowLayers.forEach((layer: any) => {
+          layer.visible = false;
+        });
+        Object.keys(this.workflowLayers).forEach(layerName => {
+          this._mapService.removeWorkflowLayers(layerName);
           this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
         });
-
       }
     });
 
@@ -132,13 +137,17 @@ export class MapComponent implements OnInit {
       this.workflowData = data;
       this.checkAvailableLayers();
       if (!this.workflowData) {
-        this.workflowLayers.forEach(layerName => {
+        this.configSettings.workflowLayers.forEach((layer: any) => {
+          layer.visible = false;
+        });
+        Object.keys(this.workflowLayers).forEach(layerName => {
+          this._mapService.removeWorkflowLayers(layerName);
           this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
         });
       } 
     });
 
-    this.loadLayers();
+    //this.loadLayers();
   }
 
   public checkAvailableLayers(){
@@ -149,13 +158,13 @@ export class MapComponent implements OnInit {
           if (this.workflowData) {
             this.workflowData.steps[0].options.forEach(o => {
               if (o.text == "NLDI Delineation" && o.selected == true) {
-                this.addLayers('NHD');
+                this.addLayers('NHD Flowlines');
               }
             });
           }
           break;
         case "Fire Hydrology - Query Basin":
-          this.addLayers('NHD');
+          this.addLayers('NHD Flowlines');
           this.addLayers('Archived WildFire Perimeters');
           this.addLayers('Active WildFire Perimeters');
           this.addLayers('MTBS Fire Boundaries');
@@ -172,32 +181,40 @@ export class MapComponent implements OnInit {
 
   }
 
-  private loadLayers() {
-    this.configSettings.workflowLayers.forEach(ml => {
-      try {
-        let options;
-        switch (ml.type) {
-          case "agsDynamic":
-            options = ml.layerOptions;
-            options.url = ml.url;
-            this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
-            break;
-          case "agsFeature":
-            options = ml.layerOptions;
-            options.url = ml.url;
-            this.workflowLayers[ml.name] = esri.featureLayer(options);
-            if (this.configSettings.symbols[ml.name]) { 
-              this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
-            }
-            break;
-        }
-      } catch (error) {
-        console.error(ml.name + ' layer failed to load', error);
-      }
-    });
-  }
+  // Moved this the map service, leaveing for now just in case
+
+  // private loadLayers() {
+  //   this.configSettings.workflowLayers.forEach(ml => {
+  //     try {
+  //       let options;
+  //       switch (ml.type) {
+  //         case "agsDynamic":
+  //           options = ml.layerOptions;
+  //           options.url = ml.url;
+  //           this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
+  //           break;
+  //         case "agsFeature":
+  //           options = ml.layerOptions;
+  //           options.url = ml.url;
+  //           this.workflowLayers[ml.name] = esri.featureLayer(options);
+  //           if (this.configSettings.symbols[ml.name]) { 
+  //             this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
+  //           }
+  //           break;
+  //       }
+  //     } catch (error) {
+  //       console.error(ml.name + ' layer failed to load', error);
+  //     }
+  //   });
+  // }
 
   public addLayers(layerName: string) {
+    this.configSettings.workflowLayers.forEach((layer: any) => {
+      if (layer.name === layerName) {
+        layer.visible = true;
+        this._mapService.setWorkflowLayers(layer);
+      }
+    }); 
     this.workflowLayers[layerName].addTo(this._mapService.map);
   }
 

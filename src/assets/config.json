@@ -6,7 +6,7 @@
     "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
     "workflowLayers":[
     {
-        "name": "NHD",
+        "name": "NHD Flowlines",
         "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
         "type": "agsDynamic",
         "layerOptions": {

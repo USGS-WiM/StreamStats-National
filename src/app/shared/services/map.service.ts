@@ -3,9 +3,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Map } from 'leaflet';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { AppService } from './app.service';
 import { MapLayer } from '../interfaces/maplayer';
+import * as esri from 'esri-leaflet';
 
 declare const L: any;
 // import 'leaflet-compass';
@@ -23,6 +24,8 @@ export class MapService {
     public locationButton: any;
     public map!: Map;
     public overlays: any;
+    public activeLayers = [];
+    public workflowLayers = [] as any;
     public scale: any;
     public textBox: any;
     public zoomHome: any;
@@ -52,9 +55,34 @@ export class MapService {
             });
     
         }
-        
         // TODO: Load overlay layers?
         this.overlays = new Object();
+
+        // Load workflow layers, feeds into map.component.ts's workflowLayers
+        if (this.configSettings) {
+            this.configSettings.workflowLayers.forEach(ml => {
+              try {
+                let options;
+                switch (ml["type"]) {
+                  case "agsDynamic":
+                    options = ml["layerOptions"];
+                    options.url = ml["url"];
+                    this.workflowLayers[ml["name"]] = esri.dynamicMapLayer(options);
+                    break;
+                  case "agsFeature":
+                    options = ml["layerOptions"];
+                    options.url = ml["url"];
+                    this.workflowLayers[ml["name"]] = esri.featureLayer(options);
+                    if (this.configSettings["symbols"][ml["name"]]) { 
+                      this.workflowLayers[ml["name"]].setStyle(this.configSettings["symbols"][ml["name"]]); 
+                    }
+                    break;
+                }
+              } catch (error) {
+                console.error(ml["name"] + ' layer failed to load', error);
+              }
+            });
+          }
 
         // Scalebar
         this.scale = L.control.scale();
@@ -142,7 +170,7 @@ export class MapService {
             onAdd: function (map: Map) {
                 var text = L.DomUtil.create('div');
                 text.id = "info_text";
-                var scaleNumber;
+                var scaleNumber: string;
                 switch (map.getZoom()) {
                     case 19: scaleNumber = '1,128'; break;
                     case 18: scaleNumber = '2,256'; break;
@@ -269,6 +297,35 @@ export class MapService {
             this.map.addLayer(this.baseMaps[layername]);
         }
         
+    }
+
+    //get all active workflow layers and remove active workflow layers depending on selected workflow, toggle active workflow layers
+    private _workflowLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
+    public setWorkflowLayers(ml: Array<any>) {
+        this.activeLayers.push(ml);
+        console.log(this.activeLayers)
+        this._workflowLayers.next(this.activeLayers);
+    }
+    public get activeWorkflowLayers(): Observable<Array<any>> {
+        return this._workflowLayers.asObservable();
+    }
+    public removeWorkflowLayers(layerName: string) {
+        const findLayer = this.activeLayers.find(ele => ele.name === layerName);
+        const index = this.activeLayers.indexOf(findLayer);
+        this.activeLayers.splice(index, 1)
+    }
+    public toggleWorkflowLayers(layerName: string) {
+        this.activeLayers.forEach(layer => {
+            if (layer.name === layerName) {
+                if (layer.visible) { // if layer is on, toggle off
+                    layer.visible = false;
+                    this.map.removeLayer(this.workflowLayers[layerName])
+                } else { // if layer is off, toggle on 
+                    layer.visible = true;
+                    this.map.addLayer(this.workflowLayers[layerName])
+                }
+            }
+        })     
     }
 
 }

@@ -37,23 +37,30 @@
 	<!-- Layers -->
 	<div class="sidebar-group">
 
-		<button class="sidebar-button" (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}">
+		<button class="sidebar-button" (click)="popoutLayers == 'layers' ? popoutLayers = '' : popoutLayers = 'layers'" [ngClass]="{'active': popoutLayers == 'layers'}">
 			<i class="far fa-layer-group"></i>
 		</button>
 
 		<!-- Sidebar Popout window -->
-		<div class="sidebar-popout wide" *ngIf="popout == 'layers'">
-			<h3 class="sidebar-popout-header">Map Layers (Wide popout)</h3>
+		<!-- <div class="sidebar-popout wide" *ngIf="popout == 'layers'"> -->
+		<div class="sidebar-popout" *ngIf="popoutLayers == 'layers'">
+			<h3 class="sidebar-popout-header">Map Layers</h3>
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
-				This is the content of the map layers button popout window.
-				<br/>
-				Show and hide the map layers button with a click on the button.sidebar-button
-				<br/><br/><br/><br/><br/><br/>
-				If you have too much content in the map layers, it'll scroll.
+				<!-- Section for layers that load automatically/not part of an active workflow  -->
+				<div>
+					<h4>Base Layers</h4>
+					<p>Gagestats layer to go here</p>
+				</div>
+				<!-- Section for layers that part of teh active workflow  -->
+				<div *ngIf="workflowLayers.length">
+					<h4>Active Workflow Layers</h4>
+					<div *ngFor="let layer of workflowLayers">
+						<input type="checkbox" name="activeWorkflowLayers" value="layer.name" (change)="updateActiveLayer(layer.name)" [checked]="true"> {{layer.name}}
+					</div>
+				</div>
 
-				
 			</div>
 		</div>
 	</div>

@@ -12,10 +12,12 @@ import * as L from 'leaflet';
 export class SidebarLeftComponent implements OnInit {
 
 	popout = '';
+	popoutLayers = '';
 	discoverTab = '';
 	title = 'StreamStats-National';
 	private MapService: MapService;
 	public baselayers = [] as any;
+	public workflowLayers;
 	public overlays = [] as any;
 
   	constructor(private _mapService: MapService) {
@@ -28,10 +30,20 @@ export class SidebarLeftComponent implements OnInit {
 		for (const baseMap in this.MapService.baseMaps) {
 			this.baselayers.push([baseMap, baseMap.replace(' ','').toLowerCase() + ".jpg"]);
 		}
+		// Set up workflowLayers list for layers turned on as part of workflow
+		this.MapService.activeWorkflowLayers.subscribe(layer => {
+			console.log(layer)
+			this.workflowLayers = layer; 
+		});
+
 	}
 
 	public SetBaselayer(LayerName: string) {
 		this.MapService.SetBaselayer(LayerName);
+	}
+
+	public updateActiveLayer(layerName: string) {
+		this.MapService.toggleWorkflowLayers(layerName);
 	}
 
 	public geosearch(): void {
