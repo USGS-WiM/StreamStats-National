@@ -49,9 +49,11 @@
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
 				<!-- Section for layers that load automatically/not part of an active workflow  -->
-				<div>
+				<div *ngIf="overlays.length">
 					<h4>Base Layers</h4>
-					<p>Gagestats layer to go here</p>
+					<div *ngFor="let overlay of overlays">
+						<input type="checkbox" value="overlay[0]" (change)="setOverlayLayer(overlay[0])" [checked]="currentZoom >= 8" [disabled]=" 8 > currentZoom"> {{overlay[0]}}
+					</div>
 				</div>
 				<!-- Section for layers that part of teh active workflow  -->
 				<div *ngIf="workflowLayers.length">

@@ -110,6 +110,7 @@ export class MapComponent implements OnInit {
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
+      this._mapService.setCurrentZoomLevel(evt.target._zoom);
       this.setBbox();
       this.checkAvailableLayers();
     }) 
@@ -219,7 +220,14 @@ export class MapComponent implements OnInit {
   }
 
   public setBbox(){
-    if (this.streamgageLayer !== undefined) this._mapService.map.removeLayer(this.streamgageLayer);
+    if (this.streamgageLayer !== undefined) {
+      this._mapService.map.removeLayer(this.streamgageLayer);
+      this.configSettings.overlays.forEach((overlay: any) => {
+        if (overlay.name === "Streamgages") {
+            overlay.visible = false;
+        }
+    });
+    }
     if (this.currentZoom >= 8) {
       var bBox = this._mapService.map.getBounds();
       var ne = bBox.getNorthEast(); // LatLng of the north-east corner
@@ -255,6 +263,8 @@ export class MapComponent implements OnInit {
           return L.marker(latlng,{icon: MyIcon});
         }
       }).addTo(this._mapService.map);
+      //setting streamgages layer in map services
+      this._mapService.setStreamgagesLayer(this.streamgageLayer)
     }
   }
 

@@ -8,4 +8,5 @@ export interface Config {
     GageStatsServicesBounds: string;
     baseLayers: [];
     workflowLayers: [];
+    overlays: [];
 }

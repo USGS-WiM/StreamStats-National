@@ -26,9 +26,11 @@ export class MapService {
     public overlays: any;
     public activeLayers = [];
     public workflowLayers = [] as any;
+    public streamgageLayer: any;
     public scale: any;
     public textBox: any;
     public zoomHome: any;
+    public currentZoom: number = 4;
     
     constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
         
@@ -57,7 +59,14 @@ export class MapService {
         }
         // TODO: Load overlay layers?
         this.overlays = new Object();
-
+        if (this.configSettings) {
+            this.configSettings.overlays.forEach(ml => {
+                var layer = this.loadLayer(ml);
+                if (layer != null) {
+                    this.overlays[ml["name"]] = layer;
+                }
+            })
+        }
         // Load workflow layers, feeds into map.component.ts's workflowLayers
         if (this.configSettings) {
             this.configSettings.workflowLayers.forEach(ml => {
@@ -232,6 +241,15 @@ export class MapService {
             })
     }
 
+    // Setting current zoom level
+    private _zoomLevelSubject: Subject<any> = new Subject<any>();
+    public setCurrentZoomLevel(level: number) {
+        this._zoomLevelSubject.next(level);
+    }
+    public get currentZoomLevel(): any {
+        return this._zoomLevelSubject.asObservable();
+    }
+
     // Get user map click, used in delineation 
     // TODO: add additional functionality to be able to allow user to click multiple delineation points, future functionality
     private _clickPointSubject: Subject<any> = new Subject<any>();
@@ -249,12 +267,26 @@ export class MapService {
         this._http.get(url, {headers: this.authHeader}).subscribe(res => {
             var streamgageLayer = res;
             this._streamgages.next(streamgageLayer);
+            this.configSettings.overlays.forEach((overlay: any) => {
+                if (overlay.name === "Streamgages") {
+                    overlay.visible = true;
+                }
+            });
         }, error => {
             console.log(error);
         })
     }
     public get streamgages(): any {
         return this._streamgages.asObservable();
+    }
+    // Setting current streamgages layer
+    private _streamgageSubject: Subject<any> = new Subject<any>();
+    public setStreamgagesLayer(layer: any) {
+        this.streamgageLayer = layer;
+        this._streamgageSubject.next(layer);
+    }
+    public get streamgagesLayer(): any {
+        return this._streamgageSubject.asObservable();
     }
 
     //Get water service data - current discharge
@@ -299,11 +331,27 @@ export class MapService {
         
     }
 
+    // Set overlay visibilty, add/remove from map
+    public setOverlayLayer(layerName: string) {
+        this.configSettings.overlays.forEach((overlay: any) => {
+            if (overlay.name === layerName) {
+                if (overlay.visible) { // if layer is off, toggle on 
+                    overlay.visible = false;
+                    this.map.removeLayer(this.overlays[layerName]);
+                    this.map.removeLayer(this.streamgageLayer);
+                }  else { // if layer is on, toggle off
+                    overlay.visible = true;
+                    this.map.addLayer(this.overlays[layerName]);
+                    this.map.addLayer(this.streamgageLayer);
+                }
+            }
+        });
+    }
+
     //get all active workflow layers and remove active workflow layers depending on selected workflow, toggle active workflow layers
     private _workflowLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
     public setWorkflowLayers(ml: Array<any>) {
         this.activeLayers.push(ml);
-        console.log(this.activeLayers)
         this._workflowLayers.next(this.activeLayers);
     }
     public get activeWorkflowLayers(): Observable<Array<any>> {
@@ -312,20 +360,20 @@ export class MapService {
     public removeWorkflowLayers(layerName: string) {
         const findLayer = this.activeLayers.find(ele => ele.name === layerName);
         const index = this.activeLayers.indexOf(findLayer);
-        this.activeLayers.splice(index, 1)
+        this.activeLayers.splice(index, 1);
     }
     public toggleWorkflowLayers(layerName: string) {
         this.activeLayers.forEach(layer => {
             if (layer.name === layerName) {
                 if (layer.visible) { // if layer is on, toggle off
                     layer.visible = false;
-                    this.map.removeLayer(this.workflowLayers[layerName])
+                    this.map.removeLayer(this.workflowLayers[layerName]);
                 } else { // if layer is off, toggle on 
                     layer.visible = true;
-                    this.map.addLayer(this.workflowLayers[layerName])
+                    this.map.addLayer(this.workflowLayers[layerName]);
                 }
             }
-        })     
+        });     
     }
 
 }

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MapService } from 'src/app/shared/services/map.service';
 declare let search_api: any;
 import * as L from 'leaflet';
+import { ConfigService } from '../shared/config/config.service';
+import { Config } from '../shared/interfaces/config/config';
 // import { ConsoleReporter } from 'jasmine';
 
 @Component({
@@ -16,12 +18,15 @@ export class SidebarLeftComponent implements OnInit {
 	discoverTab = '';
 	title = 'StreamStats-National';
 	private MapService: MapService;
+	private configSettings: Config;
 	public baselayers = [] as any;
 	public workflowLayers;
 	public overlays = [] as any;
+	public currentZoom: number = 4;
 
-  	constructor(private _mapService: MapService) {
+  	constructor(private _mapService: MapService, private _configService: ConfigService) {
 		this.MapService = _mapService;
+		this.configSettings = this._configService.getConfiguration();
 	  }
 
 	ngOnInit(): void {
@@ -30,16 +35,32 @@ export class SidebarLeftComponent implements OnInit {
 		for (const baseMap in this.MapService.baseMaps) {
 			this.baselayers.push([baseMap, baseMap.replace(' ','').toLowerCase() + ".jpg"]);
 		}
+		// Set up overlay list
+		for (const overlay in this.MapService.overlays) {
+			this.configSettings.overlays.forEach((layer: any) => {
+			const overlayMinZoom = layer.layerOptions.minZoom;
+				if (overlay === layer.name) {
+					this.overlays.push([overlay, overlayMinZoom]);
+				}
+			});
+		}
 		// Set up workflowLayers list for layers turned on as part of workflow
 		this.MapService.activeWorkflowLayers.subscribe(layer => {
-			console.log(layer)
 			this.workflowLayers = layer; 
+		});
+		// Get current zoom level
+		this.MapService.currentZoomLevel.subscribe((zoom: number) => {
+			this.currentZoom = zoom;
 		});
 
 	}
 
 	public SetBaselayer(LayerName: string) {
 		this.MapService.SetBaselayer(LayerName);
+	}
+
+	public setOverlayLayer(layerName: string) {
+		this.MapService.setOverlayLayer(layerName)
 	}
 
 	public updateActiveLayer(layerName: string) {
