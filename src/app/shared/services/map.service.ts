@@ -303,9 +303,17 @@ export class MapService {
         return this._delineationSubject.asObservable();
     };
 
-    // Query Fire Parameters
-    public Trace(geojson: any) {
+    // Query Fire Perimeters
+    public trace(geojson: any) {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
         return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions);
+    }
+    // Get selected Fire Perimeters
+    private _selectedPerimeters: Subject<any> = new Subject<any>();
+    public setSelectedPerimeters(array) {
+        this._selectedPerimeters.next(array);
+    }
+    public get selectedPerimeters(): any {
+        return this._selectedPerimeters.asObservable();
     }
 }

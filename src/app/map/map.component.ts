@@ -281,82 +281,87 @@ export class MapComponent implements OnInit {
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this.loader = true;
     let count = 0;
+    let selectedPerimeters = [];
+    let popupcontent;
     this.createMessage('Querying layers, please wait...');
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
-      
-      Object.keys(this.workflowLayers).forEach(layerName => {
-        if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
-          this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
-            .run(async (error: any, results: any) => {
-              if (error) {
-                this.createMessage('Error occurred, check console','error');
-                this.loader = false;
-              } 
-              if (results && results.features.length > 0) {
-                results.features.forEach(feat => {
-                  let popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-                  Object.keys(feat.properties).forEach(prop => {
-                      if (shownFields.indexOf(prop.toUpperCase()) > -1) {
-                        let val = feat.properties[prop];
-                        if (prop.toLowerCase().indexOf('date') > -1) {
-                            val = new Date(val).toLocaleDateString();
-                        }
-                        popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
+    Object.keys(this.workflowLayers).forEach(layerName => {
+      if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
+        this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
+          .run(async (error: any, results: any) => {
+            if (error) {
+              this.createMessage('Error occurred, check console','error');
+              this.loader = false;
+            } 
+            if (results && results.features.length > 0) {
+              results.features.forEach(feat => {
+                popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
+                Object.keys(feat.properties).forEach(prop => {
+                    if (shownFields.indexOf(prop.toUpperCase()) > -1) {
+                      let val = feat.properties[prop];
+                      if (prop.toLowerCase().indexOf('date') > -1) {
+                          val = new Date(val).toLocaleDateString();
                       }
-                  });
-                  popupcontent += '<br>';
-                  const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
-                  const layer = L.geoJSON(feat.geometry, {style: {color: col}});
-                  layer.addTo(this._mapService.map);
-                  this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
-                });
-                const data = await this._mapService.Trace(results).toPromise();
-                this.addTraceLayer(data)
-              }
-              count ++;
-              this.checkCount(count, 3)
-
-            }
-          );
-        } else if (layerName === 'MTBS Fire Boundaries') {
-          this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
-            .run(async (error: any, results: any) => {
-              if (error) {
-                this.createMessage('Error occurred, check console','error');
-                this.loader = false;
-              } 
-              if (results && results.features.length > 0) {
-                results.features.forEach(feat => {
-                  let popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-                  let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' +
-                  feat.properties.YEAR;
-                  if (date.indexOf('undefined') > -1) date = 'N/A';
-                  Object.keys(feat.properties).forEach(key => {
-                    if (shownFields.indexOf(key.toUpperCase()) > -1) {
-                      let val = feat.properties[key];
-                      if (key.toLowerCase().indexOf('date') > -1) {
-                        val = new Date(val).toLocaleDateString();
-                      }
-                      popupcontent += '<b>' + key + ':</b> ' + val + '<br>';
+                      popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
                     }
-                  });
-                  popupcontent += '<br>';
-                  const layer = L.geoJSON(feat.geometry);
-                  layer.addTo(this._mapService.map);
-                  this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
                 });
-                const data = await this._mapService.Trace(results).toPromise();
-                this.addTraceLayer(data)
-              }
-              count ++;
-              this.checkCount(count, 3)
+                popupcontent += '<br>';
+                console.log(popupcontent)
+                const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
+                const layer = L.geoJSON(feat.geometry, {style: {color: col}});
+                layer.addTo(this._mapService.map);
+                this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
+              });
+              selectedPerimeters.push({ 'Key': layerName, 'Data': results})
+              const data = await this._mapService.trace(results).toPromise();
+              this.addTraceLayer(data);
             }
-          );
-        }
-      });
+            this._mapService.setSelectedPerimeters(selectedPerimeters);
+            count ++;
+            this.checkCount(count, 3);
+          }
+        );
+      } else if (layerName === 'MTBS Fire Boundaries') {
+        this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
+          .run(async (error: any, results: any) => {
+            if (error) {
+              this.createMessage('Error occurred, check console','error');
+              this.loader = false;
+            } 
+            if (results && results.features.length > 0) {
+              results.features.forEach(feat => {
+                popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
+                let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
+                if (date.indexOf('undefined') > -1) date = 'N/A';
+                Object.keys(feat.properties).forEach(prop => {
+                  if (shownFields.indexOf(prop.toUpperCase()) > -1) {
+                    let val = feat.properties[prop];
+                    if (prop.toLowerCase().indexOf('date') > -1) {
+                      val = new Date(val).toLocaleDateString();
+                    }
+                    popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
+                  }
+                });
+                popupcontent += '<br>';
+                console.log(popupcontent)
+                const layer = L.geoJSON(feat.geometry);
+                layer.addTo(this._mapService.map);
+                this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
+              });
+              selectedPerimeters.push({ 'Key': layerName, 'Data': results})
+              const data = await this._mapService.trace(results).toPromise();
+              this.addTraceLayer(data);
+            }
+            this._mapService.setSelectedPerimeters(selectedPerimeters);
+            count ++;
+            this.checkCount(count, 3);
+          }
+        );
+      }
+    });
   }
 
-  public addTraceLayer(data){
+  public addTraceLayer(data) {
     this.traceLayer = L.geoJSON(data);
     this.traceLayer.addTo(this._mapService.map);
     this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });

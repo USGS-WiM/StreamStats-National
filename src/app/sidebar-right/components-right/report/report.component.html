@@ -1,16 +1,30 @@
 <!-- Placeholder html -->
 <h4>Completed workflows:</h4>
-<div *ngFor="let data of workflowData; let i = index"> 
+<div *ngFor="let data of workflowData"> 
     <p>{{data.title}}</p>
-    <div *ngFor="let step of data.steps; let j = index">
+    <div *ngFor="let step of data.steps">
         <ul>
             <li>{{step.label}}
-                <ul *ngFor="let option of step.options; let k = index">
+                <ul *ngFor="let option of step.options">
                     <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
+                    <!-- Delineation -->
                     <li *ngIf="step.label == 'Select Delineation Point'">({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
                     <li *ngIf="step.label == 'Select Delineation Point'">{{step.polygon}}</li>
-                    <li *ngIf="step.label == 'Select a Fire Perimeter'">({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
-                    <li *ngIf="step.label == 'Select a Fire Perimeter'">Fire perimeters selected </li>
+                    <!-- Query Fire Perimeter -->
+                    <li *ngIf="step.label == 'Select a Fire Perimeter'">Point Clicked: ({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
+                    <li *ngIf="step.label == 'Select a Fire Perimeter'">Fire perimeters selected: 
+                        <div *ngFor="let perimeter of step.selectedPerimeters">
+                            <b>{{perimeter.Key}}:</b>
+                            <div *ngFor="let feat of perimeter.Data.features; let k = index">
+                                Feature {{k+1}}
+                                <div *ngFor="let prop of feat.properties | keyvalue">
+                                    <ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+                                        {{prop.key}}: {{prop.value}}
+                                    </ul>
+                                </div> 
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </li>
         </ul>

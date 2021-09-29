@@ -20,6 +20,7 @@ export class WorkflowComponent implements OnInit {
   public numberOfSteps: number;
   public finalStep: boolean = false;
   public clickedPoint;
+  public selectedPerimeters;
 
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
@@ -34,6 +35,10 @@ export class WorkflowComponent implements OnInit {
 
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
+    })
+
+    this._mapService.selectedPerimeters.subscribe((perimeters) => {
+      this.selectedPerimeters = perimeters;
     })
   }
 
@@ -97,7 +102,7 @@ export class WorkflowComponent implements OnInit {
         break;
       case "Fire Hydrology - Query Fire Perimeters":
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-        // this.workflowForm.value.steps[i].polygon = 'polygon';   
+        this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;   
         break;
     }
   }
