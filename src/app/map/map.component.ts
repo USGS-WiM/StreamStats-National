@@ -10,6 +10,7 @@ import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import * as messageType from '../shared/messageType';
 import * as esri from 'esri-leaflet';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
+import { LoaderService } from '../shared/services/loader.service';
 
 @Component({
   selector: 'app-map',
@@ -30,14 +31,14 @@ export class MapComponent implements OnInit {
   public traceLayer;
   public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
-  public loader: boolean = false;
+  public loader: boolean;
   public selectedPopup: any;
   public selectedSite: any
   public streamgageLayer: any;
   public workflowData: any;
   public count: number = 0;
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService) { 
+     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -137,6 +138,11 @@ export class MapComponent implements OnInit {
           this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
         });
       } 
+    });
+
+    //Subscribe to loader state
+    this._loaderService.loaderState.subscribe((state: boolean) => {
+      this.loader = state;
     });
 
     this.loadLayers();
@@ -258,8 +264,8 @@ export class MapComponent implements OnInit {
     this.removeLayer(this.splitCatchmentLayer);
     this.addPoint(this.clickPoint);
     this.marker.openPopup();
-    this.loader = true;
-    this.createMessage("Delineating Basin. Please wait.");
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Delineating basin. Please wait.");
     this._mapService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
     this._mapService.delineationPolygon.subscribe((poly: any) => {
       this.basin = poly.outputs;
@@ -269,7 +275,7 @@ export class MapComponent implements OnInit {
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
       }
-      this.loader = false;
+      this._loaderService.hideFullPageLoad();
     });
   }
 
@@ -278,9 +284,9 @@ export class MapComponent implements OnInit {
   }
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
-    this.loader = true;
+    this._loaderService.showFullPageLoad();
     this.count = 0;
-    this.createMessage('Querying layers, please wait...');
+    this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
@@ -304,8 +310,8 @@ export class MapComponent implements OnInit {
     let layer;
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
     if (error) {
-      this.createMessage('Error occurred, check console','error');
-      this.loader = false;
+      this.createMessage('Error occurred.','error');
+      this._loaderService.hideFullPageLoad();
     } 
     if (results && results.features.length > 0) {
       results.features.forEach(feat => {
@@ -346,14 +352,14 @@ export class MapComponent implements OnInit {
     this.traceLayer = L.geoJSON(data);
     this.traceLayer.addTo(this._mapService.map);
     this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
-    this.loader = false;
+    this._loaderService.hideFullPageLoad();
   }
 
   public checkCount(count, goal) {
     if (count === goal) {
       if (this.loader == true) {
-        this.loader = false;
-        this.createMessage('Must select a fire perimeter','error','',0);
+        this._loaderService.hideFullPageLoad();
+        this.createMessage('Must select a fire perimeter.','error');
       }
     }
   }

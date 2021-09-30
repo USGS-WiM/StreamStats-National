@@ -3,9 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Map } from 'leaflet';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
-import { Subject } from 'rxjs';
+import { Subject, throwError } from 'rxjs';
 import { AppService } from './app.service';
 import { MapLayer } from '../interfaces/maplayer';
+import { LoaderService } from './loader.service';
+import { IndividualConfig, ToastrService } from 'ngx-toastr';
+import * as messageType from '../../shared/messageType';
+import {catchError} from 'rxjs/operators';
 
 declare const L: any;
 // import 'leaflet-compass';
@@ -14,6 +18,7 @@ declare const L: any;
     providedIn: 'root'
 })
 export class MapService {
+    private messager: ToastrService;
     public authHeader: HttpHeaders;
     public jsonHeader: HttpHeaders
     public baseMaps: any;
@@ -27,8 +32,9 @@ export class MapService {
     public textBox: any;
     public zoomHome: any;
 
-    constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
-        
+    constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService, private _loaderService: LoaderService,public toastr: ToastrService) {
+        this.messager = toastr;
+
         this.authHeader = new HttpHeaders({
             'Content-Type': 'application/json',
             Authorization: localStorage.getItem('auth') || '',
@@ -243,7 +249,7 @@ export class MapService {
             var streamgageLayer = res;
             this._streamgages.next(streamgageLayer);
         }, error => {
-            console.log(error);
+            this.createMessage("Error retrieving streamgages.", 'error');
         })
     }
     public get streamgages(): any {
@@ -262,7 +268,7 @@ export class MapService {
             if (parsedString[2][4]) { this._waterServiceData.next(parsedString[2][4] + " @ " + parsedString[2][2]);
             } else this._waterServiceData.next("No Data");
         }, error => {
-            console.log(error);
+            this.createMessage("Error retrieving data.", 'error');
         })
     }
     public get waterData(): any {
@@ -293,10 +299,13 @@ export class MapService {
             }
         ]
         }
-        return this._http.post(url, post, options).subscribe(resp => {
-        this._delineationSubject.next(resp.body);
-        return resp.body;
-        });
+        return this._http.post(url, post, options)
+        .subscribe(resp => {
+            this._delineationSubject.next(resp.body);
+        }, error => {
+            this.createMessage("Error delineating basin.", 'error');
+            this._loaderService.hideFullPageLoad();
+        })
     };
     public get delineationPolygon(): any {
         return this._delineationSubject.asObservable();
@@ -305,8 +314,14 @@ export class MapService {
     // Query Fire Perimeters
     public trace(geojson: any) {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
-        return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions);
+        return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions)
+        .pipe(catchError((err: any) => {
+            this.createMessage("Error getting fire perimeters.", 'error');
+            this._loaderService.hideFullPageLoad();
+            return throwError(err);  
+        }))
     }
+
     // Get selected Fire Perimeters
     private _selectedPerimeters: Subject<any> = new Subject<any>();
     public setSelectedPerimeters(array) {
@@ -315,4 +330,13 @@ export class MapService {
     public get selectedPerimeters(): any {
         return this._selectedPerimeters.asObservable();
     }
+
+    private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
+        try {
+          let options: Partial<IndividualConfig> = null;
+          if (timeout) { options = { timeOut: timeout }; }
+          this.messager.show(msg, title, options, mType);
+        } catch (e) {
+        }
+      }
 }
