@@ -4,7 +4,6 @@ import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
 import { HttpClient } from '@angular/common/http';
-import { NLDIService } from '../shared/services/nldi.service';
 import { WorkflowService } from '../shared/services/workflow.service';
 import "leaflet/dist/images/marker-shadow.png";
 import { ToastrService, IndividualConfig } from 'ngx-toastr';
@@ -18,7 +17,6 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-	public baselayers = [] as any;
   private configSettings: Config;
   private messager: ToastrService;
   public clickPoint;
@@ -29,16 +27,17 @@ export class MapComponent implements OnInit {
   public marker: L.Marker;
   public basin: any;
   public splitCatchmentLayer: any;
+  public traceLayer;
   public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
-  public delineationLoader: boolean = false;
+  public loader: boolean = false;
   public selectedPopup: any;
   public selectedSite: any
   public streamgageLayer: any;
   public workflowData: any;
-  
+  public count: number = 0;
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-     HttpClient, private _nldiService: NLDIService, private _workflowService: WorkflowService, public toastr: ToastrService) { 
+     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -92,18 +91,20 @@ export class MapComponent implements OnInit {
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickPoint = point;
     })
-    // On map click, set click point value, for delineation
+    // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
-      if (this.workflowData) {
-        if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
-          this.onMouseClickDelineation();
+      if (this.selectedWorkflow) {
+        if (this.workflowData) {
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
+            this.onMouseClickDelineation();
+          }
         }
-        if (this.workflowData.title == "Fire Hydrology - Query Basin" && this.workflowData.steps[0].completed) { 
+        if (this.selectedWorkflow.title == "Fire Hydrology - Query Basin") { 
           this.onMouseClickFireHydroQueryBasin();
         }
-        if (this.workflowData.title == "Fire Hydrology - Query Fire Perimeters" && this.workflowData.steps[0].completed) { 
-          this.onMouseClickFireHydroQueryBasin();
+        if (this.selectedWorkflow.title == "Fire Hydrology - Query Fire Perimeters") { 
+          this.onMouseClickFireHydroQueryFirePerimeter();
         }
       }
     }) 
@@ -153,10 +154,9 @@ export class MapComponent implements OnInit {
 
   public checkAvailableLayers(){
     if (this.selectedWorkflow) {
-      // console.log(this.selectedWorkflow.title);
       switch (this.selectedWorkflow.title) {
         case "Delineation":
-          if (this.workflowData) {
+          if (this.workflowData && this.workflowData.steps) {
             this.workflowData.steps[0].options.forEach(o => {
               if (o.text == "NLDI Delineation" && o.selected == true) {
                 this.addLayers('NHD Flowlines');
@@ -285,10 +285,10 @@ export class MapComponent implements OnInit {
     this.removeLayer(this.splitCatchmentLayer);
     this.addPoint(this.clickPoint);
     this.marker.openPopup();
-    this.delineationLoader = true;
+    this.loader = true;
     this.createMessage("Delineating Basin. Please wait.");
-    this._nldiService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
-    this._nldiService.delineationPolygon.subscribe((poly: any) => {
+    this._mapService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
+    this._mapService.delineationPolygon.subscribe((poly: any) => {
       this.basin = poly.outputs;
       if (this.basin) {  
         this.removeLayer(this.splitCatchmentLayer);  
@@ -296,7 +296,7 @@ export class MapComponent implements OnInit {
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
       }
-      this.delineationLoader = false;
+      this.loader = false;
     });
   }
 
@@ -305,7 +305,90 @@ export class MapComponent implements OnInit {
   }
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
-    // Issue #58: see demo app for pointers
+    this.loader = true;
+    this.count = 0;
+    this.createMessage('Querying layers, please wait...');
+    Object.keys(this.workflowLayers).forEach(layerName => {
+      if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
+        this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
+          .run((error: any, results: any) => {
+            this.findFeatures(error,results,layerName);
+          }
+        );
+      } else if (layerName === 'MTBS Fire Boundaries') {
+        this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
+          .run(async (error: any, results: any) => {
+            this.findFeatures(error,results,layerName);
+          }
+        );
+      }
+    });
+  }
+
+  public async findFeatures(error,results,layerName) {
+    let popupcontent;
+    let selectedPerimeters = [];
+    let layer;
+    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
+    if (error) {
+      this.createMessage('Error occurred, check console','error');
+      this.loader = false;
+    } 
+    if (results && results.features.length > 0) {
+      results.features.forEach(feat => {
+        popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
+        if (layerName === 'MTBS Fire Boundaries') {
+          let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
+          if (date.indexOf('undefined') > -1) date = 'N/A';
+        }
+        Object.keys(feat.properties).forEach(prop => {
+          if (shownFields.indexOf(prop.toUpperCase()) > -1) {
+            let val = feat.properties[prop];
+            if (prop.toLowerCase().indexOf('date') > -1) {
+              val = new Date(val).toLocaleDateString();
+            }
+            popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
+          }
+        });
+        popupcontent += '<br>';
+        if (layerName === 'MTBS Fire Boundaries') {
+          layer = L.geoJSON(feat.geometry);
+        } else if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
+          const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
+          layer = L.geoJSON(feat.geometry, {style: {color: col}});
+        }
+        layer.addTo(this._mapService.map);
+        this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
+      });
+      selectedPerimeters.push({ 'Key': layerName, 'Data': results})
+      const data = await this._mapService.trace(results).toPromise();
+      this.addTraceLayer(data);
+    }
+    this._mapService.setSelectedPerimeters(selectedPerimeters);
+    this.count ++;
+    this.checkCount(this.count, 3);
+  }
+
+  public addTraceLayer(data) {
+    this.traceLayer = L.geoJSON(data);
+    this.traceLayer.addTo(this._mapService.map);
+    this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
+    this.loader = false;
+  }
+
+  public checkCount(count, goal) {
+    if (count === goal) {
+      if (this.loader == true) {
+        this.loader = false;
+        this.createMessage('Must select a fire perimeter','error','',0);
+      }
+    }
+  }
+
+  public addBurnPoint(latlng, popupcontent) {
+    this.marker = L.marker(latlng).bindPopup(popupcontent).openPopup();
+    this._mapService.map?.addLayer(this.marker);
+    this.marker.openPopup();
   }
 
   public addPoint(latlng: any) {
@@ -323,7 +406,7 @@ export class MapComponent implements OnInit {
 
   private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
     try {
-      let options: Partial<IndividualConfig> = undefined;
+      let options: Partial<IndividualConfig> = null;
       if (timeout) { options = { timeOut: timeout }; }
       this.messager.show(msg, title, options, mType);
     } catch (e) {
