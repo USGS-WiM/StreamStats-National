@@ -8,6 +8,7 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
 })
 export class ReportComponent implements OnInit {
   public workflowData: any;
+  public shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
 
   constructor(private _workflowService: WorkflowService) { }
 
@@ -16,5 +17,4 @@ export class ReportComponent implements OnInit {
       this.workflowData = data;
     });
   }
-
 }
