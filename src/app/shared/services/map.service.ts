@@ -15,24 +15,28 @@ declare const L: any;
 })
 export class MapService {
     public authHeader: HttpHeaders;
+    public jsonHeader: HttpHeaders
     public baseMaps: any;
     public chosenBaseLayerName: string;
     public chosenBaseLayer;
     public compass: any;
     private configSettings: Config;
-    public locationButton: any;
     public map!: Map;
     public overlays: any;
     public scale: any;
     public textBox: any;
     public zoomHome: any;
-    
+
     constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
         
         this.authHeader = new HttpHeaders({
             'Content-Type': 'application/json',
             Authorization: localStorage.getItem('auth') || '',
             'Access-Control-Allow-Origin': "*"
+        });
+        this.jsonHeader= new HttpHeaders({
+            Accept: 'application/json',
+            'Content-Type': 'application/json'  
         });
 
         this.configSettings = this._configService.getConfiguration();
@@ -181,15 +185,33 @@ export class MapService {
 
     }
 
+    // Layers section
     public AddMapLayer(ml: MapLayer) {
-
         // Add layer to overlays 
         // this.overlays[ml["name"]] = ml;
-
         if (ml["visible"]) {
             this.map.addLayer(ml.layer);
         }
-        
+    }
+    private loadLayer(ml: any): L.Layer {
+        return L.tileLayer(
+            ml["url"],
+            {attribution: ml["attribution"],
+            maxZoom: ml["maxZoom"]
+        });
+    }
+    public SetBaselayer(layername: string) {
+        // Set previous basemap visibility to false and remove from map
+        if (this.chosenBaseLayerName != layername) {
+            this.baseMaps[this.chosenBaseLayerName].visible = false;
+            this.map.removeLayer(this.baseMaps[this.chosenBaseLayerName]);
+        }
+        // Set the new basemap visibility to true and add to map
+        if (this.baseMaps[layername]) {
+            this.baseMaps[layername].visible = true;
+            this.chosenBaseLayerName = layername;
+            this.map.addLayer(this.baseMaps[layername]);
+        }
     }
 
     public zoomLocation(): void {
@@ -204,8 +226,7 @@ export class MapService {
             })
     }
 
-    // Get user map click, used in delineation 
-    // TODO: add additional functionality to be able to allow user to click multiple delineation points, future functionality
+    // Get user map click
     private _clickPointSubject: Subject<any> = new Subject<any>();
     public setClickPoint(obj: { lat: number; lng: number; }) {
         this._clickPointSubject.next(obj);
@@ -248,27 +269,50 @@ export class MapService {
         return this._waterServiceData.asObservable();
     }
 
-    private loadLayer(ml: any): L.Layer {
-        return L.tileLayer(
-            ml["url"],
-            {attribution: ml["attribution"],
-            maxZoom: ml["maxZoom"]
+    // NLDI Delineation
+    private _delineationSubject: Subject<any> = new Subject<any>();
+    public getUpstream(lat: any, lng: any, upstream: any) {
+        const options = { headers: this.jsonHeader, observe: 'response' as 'response'};
+        let url = this.configSettings.nldiBaseURL + this.configSettings.nldiSplitCatchmentURL;
+        let post = {
+        "inputs": [
+            {
+            "id": "lat",
+            "value": lat,
+            "type": "text/plain"
+            },
+            {
+            "id": "lon",
+            "value": lng,
+            "type": "text/plain"
+            },
+            {
+            "id": "upstream",
+            "value": upstream,
+            "type": "text/plain"
+            }
+        ]
+        }
+        return this._http.post(url, post, options).subscribe(resp => {
+        this._delineationSubject.next(resp.body);
+        return resp.body;
         });
-    }
+    };
+    public get delineationPolygon(): any {
+        return this._delineationSubject.asObservable();
+    };
 
-    public SetBaselayer(layername: string) {
-        // Set previous basemap visibility to false and remove from map
-        if (this.chosenBaseLayerName != layername) {
-            this.baseMaps[this.chosenBaseLayerName].visible = false;
-            this.map.removeLayer(this.baseMaps[this.chosenBaseLayerName]);
-        }
-        // Set the new basemap visibility to true and add to map
-        if (this.baseMaps[layername]) {
-            this.baseMaps[layername].visible = true;
-            this.chosenBaseLayerName = layername;
-            this.map.addLayer(this.baseMaps[layername]);
-        }
-        
+    // Query Fire Perimeters
+    public trace(geojson: any) {
+        const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
+        return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions);
     }
-
+    // Get selected Fire Perimeters
+    private _selectedPerimeters: Subject<any> = new Subject<any>();
+    public setSelectedPerimeters(array) {
+        this._selectedPerimeters.next(array);
+    }
+    public get selectedPerimeters(): any {
+        return this._selectedPerimeters.asObservable();
+    }
 }
