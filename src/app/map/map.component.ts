@@ -142,11 +142,7 @@ export class MapComponent implements OnInit {
         }
       }
       if (!this.selectedWorkflow){
-        Object.keys(this.workflowLayers).forEach(layerName => {
-          this._appService.setLayerVisibility(layerName);
-          this._mapService.removeWorkflowLayers(layerName);
-          this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
-        });
+        this.removeWorkFlowLayers();
       }
     });
 
@@ -159,14 +155,18 @@ export class MapComponent implements OnInit {
         }
       }
       if (!this.workflowData) {
-        Object.keys(this.workflowLayers).forEach(layerName => {
-          this._appService.setLayerVisibility(layerName);
-          this._mapService.removeWorkflowLayers(layerName);
-          this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
-        });
+        this.removeWorkFlowLayers();
       } 
     });
 
+  }
+
+  public removeWorkFlowLayers(){
+    Object.keys(this.workflowLayers).forEach(layerName => {
+      this._appService.setLayerVisibility(layerName);
+      this._mapService.removeWorkflowLayers(layerName);
+      this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
+    });
   }
 
   public checkAvailableLayers(){
