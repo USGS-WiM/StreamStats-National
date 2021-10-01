@@ -10,6 +10,7 @@ import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import * as messageType from '../shared/messageType';
 import * as esri from 'esri-leaflet';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
+import { AppService } from '../shared/services/app.service';
 
 @Component({
   selector: 'app-map',
@@ -39,7 +40,7 @@ export class MapComponent implements OnInit {
   public workflowData: any;
   public count: number = 0;
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService) { 
+     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _appService: AppService) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -141,10 +142,8 @@ export class MapComponent implements OnInit {
         }
       }
       if (!this.selectedWorkflow){
-        this.configSettings.workflowLayers.forEach((layer: any) => {
-          layer.visible = false;
-        });
         Object.keys(this.workflowLayers).forEach(layerName => {
+          this._appService.setLayerVisibility(layerName);
           this._mapService.removeWorkflowLayers(layerName);
           this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
         });
@@ -160,17 +159,14 @@ export class MapComponent implements OnInit {
         }
       }
       if (!this.workflowData) {
-        this.configSettings.workflowLayers.forEach((layer: any) => {
-          layer.visible = false;
-        });
         Object.keys(this.workflowLayers).forEach(layerName => {
+          this._appService.setLayerVisibility(layerName);
           this._mapService.removeWorkflowLayers(layerName);
           this.removeLayer(this.workflowLayers[layerName]); // No workflow is selected; remove all workflow overlayers
         });
       } 
     });
 
-    //this.loadLayers();
   }
 
   public checkAvailableLayers(){
