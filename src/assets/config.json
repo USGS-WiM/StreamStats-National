@@ -15,7 +15,7 @@
                 "layers": [5,6],
                 "minZoom": 8
             },
-            "visible": false
+            "visible": true
         },
         {
             "name": "Active WildFire Perimeters",
@@ -24,7 +24,7 @@
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": false
+            "visible": true
         },
         {
             "name": "Archived WildFire Perimeters",
@@ -33,7 +33,7 @@
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": false
+            "visible": true
         },
         {
             "name": "MTBS Fire Boundaries",
@@ -43,7 +43,7 @@
                 "zIndex": 9999,
                 "layers": [63]
             },
-            "visible": false
+            "visible": true
         },
         {
             "name": "Burn Severity",
@@ -52,6 +52,17 @@
             "layerOptions": {
                 "zIndex": 9999,
                 "minZoom": 10
+            },
+            "visible": true
+        },
+        {
+            "name": "GeologyFeatures",
+            "url": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10,
+                "layers": [3]
             },
             "visible": false
         },
