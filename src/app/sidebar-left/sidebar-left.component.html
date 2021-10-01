@@ -48,11 +48,23 @@
 	
 			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
 			<div class="sidebar-popout-content">
+				
 				<!-- Section for layers that load automatically/not part of an active workflow  -->
-				<div *ngIf="overlays.length">
+				<div  *ngIf="overlays.length">
 					<h4>Base Layers</h4>
 					<div *ngFor="let overlay of overlays">
-						<input type="checkbox" value="overlay[0]" (change)="setOverlayLayer(overlay[0])" [checked]="currentZoom >= 8" [disabled]=" 8 > currentZoom"> {{overlay[0]}}
+						
+						<div *ngIf="overlay[0] === 'Streamgages'">
+							<input #overlayCheckbox type="checkbox" id="{{overlay[0]}}" (change)="setOverlayLayer(overlay[0])" [checked]="currentZoom >= 8" [disabled]=" 8 > currentZoom"> 
+							{{overlay[0]}}
+							<label  style="font-size: small;">(active at zoom level {{overlay[1]}} or greater)</label>
+						</div>
+
+						<div  *ngIf="overlay[0] !== 'Streamgages'">
+							<input #overlayCheckbox type="checkbox" id="{{overlay[0]}}" (change)="setOverlayLayer(overlay[0])" [checked]="false"> 
+							{{overlay[0]}}
+						</div>
+
 					</div>
 				</div>
 				<!-- Section for layers that part of teh active workflow  -->

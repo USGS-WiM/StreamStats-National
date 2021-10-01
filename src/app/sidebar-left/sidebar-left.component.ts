@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MapService } from 'src/app/shared/services/map.service';
 declare let search_api: any;
 import * as L from 'leaflet';
@@ -12,6 +12,8 @@ import { Config } from '../shared/interfaces/config/config';
 	styleUrls: ['./sidebar-left.component.scss']
 })
 export class SidebarLeftComponent implements OnInit {
+
+	@ViewChildren("overlayCheckbox") overlayCheckbox: any;
 
 	popout = '';
 	popoutLayers = '';
@@ -61,6 +63,11 @@ export class SidebarLeftComponent implements OnInit {
 
 	public setOverlayLayer(layerName: string) {
 		this.MapService.setOverlayLayer(layerName)
+		this.overlayCheckbox.toArray().map((element: { nativeElement: { id: string; }; }) => {
+			if(element.nativeElement.id === layerName) {
+				this.MapService.setStreamgageLayerStatus(element)
+			}
+		});
 	}
 
 	public updateActiveLayer(layerName: string) {

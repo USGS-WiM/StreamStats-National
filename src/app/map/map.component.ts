@@ -23,6 +23,7 @@ export class MapComponent implements OnInit {
   public currentZoom: number = 4;
   public latestDischarge: any;
 	public workflowLayers = [] as any;
+	public activeWorkflowLayers:any;
   public selectedFeature: any;
   public marker: L.Marker;
   public basin: any;
@@ -34,6 +35,7 @@ export class MapComponent implements OnInit {
   public selectedPopup: any;
   public selectedSite: any
   public streamgageLayer: any;
+  public streamgageLayerStatus: boolean;
   public workflowData: any;
   public count: number = 0;
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
@@ -56,7 +58,19 @@ export class MapComponent implements OnInit {
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
 
+    // Get available workflow layers / Get active workflow layers
     this.workflowLayers = this._mapService.workflowLayers;
+    this._mapService.activeWorkflowLayers.subscribe(activeLayers => {
+      this.activeWorkflowLayers = activeLayers;
+    })
+
+    // Get streamgages toggle status
+    this._mapService.streamgageLayerStatus.subscribe((status: boolean) => {
+      this.streamgageLayerStatus = status;
+      if (this.streamgageLayerStatus) {
+        this.setBbox();
+      }
+    })
 
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
@@ -113,7 +127,6 @@ export class MapComponent implements OnInit {
       this.currentZoom = evt.target._zoom;
       this._mapService.setCurrentZoomLevel(evt.target._zoom);
       this.setBbox();
-      this.checkAvailableLayers();
     }) 
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
@@ -122,7 +135,11 @@ export class MapComponent implements OnInit {
     // Subscribe to workflow
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
-      this.checkAvailableLayers();
+      if (this.selectedWorkflow) {
+        if(this.selectedWorkflow.title != "Delineation") {
+          this.checkAvailableLayers();
+        }
+      }
       if (!this.selectedWorkflow){
         this.configSettings.workflowLayers.forEach((layer: any) => {
           layer.visible = false;
@@ -137,7 +154,11 @@ export class MapComponent implements OnInit {
     //Subscribe to the form data
     this._workflowService.formData.subscribe(data => {
       this.workflowData = data;
-      this.checkAvailableLayers();
+      if (this.workflowData) {
+        if (this.workflowData.title == "Delineation") {
+          this.checkAvailableLayers();
+        }
+      }
       if (!this.workflowData) {
         this.configSettings.workflowLayers.forEach((layer: any) => {
           layer.visible = false;
@@ -156,12 +177,14 @@ export class MapComponent implements OnInit {
     if (this.selectedWorkflow) {
       switch (this.selectedWorkflow.title) {
         case "Delineation":
-          if (this.workflowData && this.workflowData.steps) {
-            this.workflowData.steps[0].options.forEach(o => {
-              if (o.text == "NLDI Delineation" && o.selected == true) {
-                this.addLayers('NHD Flowlines');
-              }
-            });
+          if (!this.activeWorkflowLayers.length) {
+            if (this.workflowData && this.workflowData.steps || this.activeWorkflowLayers.name != "NHD Flowlines") {
+              this.workflowData.steps[0].options.forEach(o => {
+                if (o.text == "NLDI Delineation" && o.selected == true) {
+                  this.addLayers('NHD Flowlines');
+                }
+              });
+            }
           }
           break;
         case "Fire Hydrology - Query Basin":
@@ -181,33 +204,6 @@ export class MapComponent implements OnInit {
     }
 
   }
-
-  // Moved this the map service, leaveing for now just in case
-
-  // private loadLayers() {
-  //   this.configSettings.workflowLayers.forEach(ml => {
-  //     try {
-  //       let options;
-  //       switch (ml.type) {
-  //         case "agsDynamic":
-  //           options = ml.layerOptions;
-  //           options.url = ml.url;
-  //           this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
-  //           break;
-  //         case "agsFeature":
-  //           options = ml.layerOptions;
-  //           options.url = ml.url;
-  //           this.workflowLayers[ml.name] = esri.featureLayer(options);
-  //           if (this.configSettings.symbols[ml.name]) { 
-  //             this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
-  //           }
-  //           break;
-  //       }
-  //     } catch (error) {
-  //       console.error(ml.name + ' layer failed to load', error);
-  //     }
-  //   });
-  // }
 
   public addLayers(layerName: string) {
     this.configSettings.workflowLayers.forEach((layer: any) => {
@@ -232,7 +228,9 @@ export class MapComponent implements OnInit {
       var bBox = this._mapService.map.getBounds();
       var ne = bBox.getNorthEast(); // LatLng of the north-east corner
       var sw = bBox.getSouthWest(); // LatLng of the south-west corder
-      this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
+      if (this.streamgageLayerStatus) {
+        this._mapService.setStreamgages(sw.lng, ne.lng, sw.lat, ne.lat)
+      }
     }
   }
   
@@ -263,7 +261,12 @@ export class MapComponent implements OnInit {
           return L.marker(latlng,{icon: MyIcon});
         }
       }).addTo(this._mapService.map);
-      //setting streamgages layer in map services
+      this.configSettings.overlays.forEach((overlay: any) => {
+        if (overlay.name === "Streamgages") {
+          overlay.visible = true;
+        }
+      });
+      // setting streamgages layer in map services
       this._mapService.setStreamgagesLayer(this.streamgageLayer)
     }
   }

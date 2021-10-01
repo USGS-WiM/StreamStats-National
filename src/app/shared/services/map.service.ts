@@ -24,6 +24,7 @@ export class MapService {
     private configSettings: Config;
     public map!: Map;
     public overlays: any;
+    public streamgageStatus: boolean;
     public activeLayers = [];
     public workflowLayers = [] as any;
     public streamgageLayer: any;
@@ -288,11 +289,6 @@ export class MapService {
         this._http.get(url, {headers: this.authHeader}).subscribe(res => {
             var streamgageLayer = res;
             this._streamgages.next(streamgageLayer);
-            this.configSettings.overlays.forEach((overlay: any) => {
-                if (overlay.name === "Streamgages") {
-                    overlay.visible = true;
-                }
-            });
         }, error => {
             console.log(error);
         })
@@ -376,21 +372,45 @@ export class MapService {
         return this._selectedPerimeters.asObservable();
     }
 
-    // Set overlay visibilty, add/remove from map
+    // Set overlay visibilty including streamgages, add/remove from map
     public setOverlayLayer(layerName: string) {
         this.configSettings.overlays.forEach((overlay: any) => {
             if (overlay.name === layerName) {
-                if (overlay.visible) { // if layer is off, toggle on 
-                    overlay.visible = false;
-                    this.map.removeLayer(this.overlays[layerName]);
-                    this.map.removeLayer(this.streamgageLayer);
-                }  else { // if layer is on, toggle off
-                    overlay.visible = true;
-                    this.map.addLayer(this.overlays[layerName]);
-                    this.map.addLayer(this.streamgageLayer);
+                if (layerName === "Streamgages") {
+                    if (overlay.visible) { // if layer is off, toggle on 
+                        overlay.visible = false;
+                        this.map.removeLayer(this.streamgageLayer);
+                    }  else { // if layer is on, toggle off
+                        overlay.visible = true;
+                        this.map.addLayer(this.streamgageLayer);
+                    }
+                } else {
+                    if (overlay.visible) { // if layer is off, toggle on 
+                        overlay.visible = false;
+                        this.map.removeLayer(this.overlays[layerName]);
+                    }  else { // if layer is on, toggle off
+                        overlay.visible = true;
+                        this.map.addLayer(this.overlays[layerName]);
+                    }
                 }
             }
         });
+    }
+    // Set checkmark status of overlay layer, for streamgages
+    private _streamgageLayerSubject: BehaviorSubject<any> = new BehaviorSubject(true);
+    public setStreamgageLayerStatus(ele: any) {
+        if (ele.nativeElement.id === "Streamgages") {
+            if (ele.nativeElement.checked) {
+                this.streamgageStatus = true;
+                this._streamgageLayerSubject.next(this.streamgageStatus);
+            } else {
+                this.streamgageStatus = false;
+                this._streamgageLayerSubject.next(this.streamgageStatus);
+            }
+        }
+    }
+    public get streamgageLayerStatus(): any {
+        return this._streamgageLayerSubject.asObservable();
     }
 
     //get all active workflow layers and remove active workflow layers depending on selected workflow, toggle active workflow layers
