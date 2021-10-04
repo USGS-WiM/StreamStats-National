@@ -198,7 +198,7 @@ export class MapComponent implements OnInit {
             break;
         }
       } catch (error) {
-        console.error(ml.name + ' layer failed to load', error);
+        this.createMessage(ml.name + ' layer failed to load','error');
       }
     });
   }

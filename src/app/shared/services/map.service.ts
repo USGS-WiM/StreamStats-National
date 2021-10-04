@@ -316,7 +316,7 @@ export class MapService {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
         return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions)
         .pipe(catchError((err: any) => {
-            this.createMessage("Error getting fire perimeters.", 'error');
+            this.createMessage("Error tracing fire perimeters.", 'error');
             this._loaderService.hideFullPageLoad();
             return throwError(err);  
         }))
