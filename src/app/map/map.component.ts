@@ -366,7 +366,7 @@ export class MapComponent implements OnInit {
     // });
   }
   async queryLambdaService(lat, lng) {
-    const parameters = ["i2y30","jantmin","jantmax"] //lc16forest
+    const parameters = ["i2y30","jantmin","jantmax"]; //lc16forest
     for (const parameter in parameters) {
       const url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery?latitude=" + lat + "&longitude=" + lng + "&fcpg_parameter=" + parameter;
       this._http.post(url, {headers: this.authHeader}).subscribe(res => {
@@ -375,8 +375,6 @@ export class MapComponent implements OnInit {
           console.log(error);
       })
     }
-    
-
   };
 
   public queryGeology(basin, basinArea) {
