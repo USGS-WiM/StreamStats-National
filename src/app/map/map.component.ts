@@ -218,7 +218,7 @@ export class MapComponent implements OnInit {
         if (overlay.name === "Streamgages") {
             overlay.visible = false;
         }
-    });
+      });
     }
     if (this.currentZoom >= 8) {
       var bBox = this._mapService.map.getBounds();

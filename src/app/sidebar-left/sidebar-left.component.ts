@@ -23,7 +23,7 @@ export class SidebarLeftComponent implements OnInit {
 	private configSettings: Config;
 	public baselayers = [] as any;
 	public workflowLayers;
-	public overlays = [] as any;
+	public overlayLayers;
 	public currentZoom: number = 4;
 
   	constructor(private _mapService: MapService, private _configService: ConfigService) {
@@ -37,15 +37,6 @@ export class SidebarLeftComponent implements OnInit {
 		for (const baseMap in this.MapService.baseMaps) {
 			this.baselayers.push([baseMap, baseMap.replace(' ','').toLowerCase() + ".jpg"]);
 		}
-		// Set up overlay list
-		for (const overlay in this.MapService.overlays) {
-			this.configSettings.overlays.forEach((layer: any) => {
-			const overlayMinZoom = layer.layerOptions.minZoom;
-				if (overlay === layer.name) {
-					this.overlays.push([overlay, overlayMinZoom]);
-				}
-			});
-		}
 		// Set up workflowLayers list for layers turned on as part of workflow
 		this.MapService.activeWorkflowLayers.subscribe(layer => {
 			this.workflowLayers = layer; 
@@ -54,7 +45,10 @@ export class SidebarLeftComponent implements OnInit {
 		this.MapService.currentZoomLevel.subscribe((zoom: number) => {
 			this.currentZoom = zoom;
 		});
-
+		// Set up overlay layers list
+		this.MapService.overlayLayers.subscribe((layer: any) => {
+			this.overlayLayers = layer;
+		})
 	}
 
 	public SetBaselayer(LayerName: string) {

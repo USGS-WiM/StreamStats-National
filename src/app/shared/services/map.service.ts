@@ -23,7 +23,8 @@ export class MapService {
     public compass: any;
     private configSettings: Config;
     public map!: Map;
-    public overlays: any;
+    public overlays = [];
+    public overlaysSubject = [];
     public streamgageStatus: boolean;
     public activeLayers = [];
     public workflowLayers = [] as any;
@@ -63,13 +64,17 @@ export class MapService {
     
         }
         // TODO: Load overlay layers?
-        this.overlays = new Object();
         if (this.configSettings) {
             this.configSettings.overlays.forEach(ml => {
-                var layer = this.loadLayer(ml);
-                if (layer != null) {
-                    this.overlays[ml["name"]] = layer;
-                }
+                try {
+                    let options;
+                    options = ml["layerOptions"];
+                    options.url = ml["url"];
+                    this.overlays[ml["name"]] = esri.featureLayer(options);
+                    this.setOverlayLayers(ml);
+                } catch (error) {
+                console.error(ml["name"] + ' layer failed to load', error);
+              }
             })
         }
         // Load workflow layers, feeds into map.component.ts's workflowLayers
@@ -250,6 +255,14 @@ export class MapService {
             this.chosenBaseLayerName = layername;
             this.map.addLayer(this.baseMaps[layername]);
         }
+    }
+    private _overlayLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
+    public setOverlayLayers(ml: Array<any>) {
+        this.overlaysSubject.push(ml);
+        this._overlayLayers.next(this.overlaysSubject);
+    }
+    public get overlayLayers(): Observable<Array<any>> {
+        return this._overlayLayers.asObservable();
     }
 
     public zoomLocation(): void {
