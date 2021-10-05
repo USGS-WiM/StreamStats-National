@@ -4,9 +4,19 @@
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
     "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
+    "overlays":[
+        {
+            "name": "Streamgages",
+            "url": "https://streamstats.usgs.gov/gagestatsservices/stations",
+            "layerOptions": {
+                "minZoom": 8
+            },
+            "visible": false
+        }
+    ],
     "workflowLayers":[
     {
-        "name": "NHD",
+        "name": "NHD Flowlines",
         "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
         "type": "agsDynamic",
         "layerOptions": {
