@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added basin delineation workflow
 -   Added fire hydrology workflow
 -   Added trace functionality for query fire perimeters
+-   Added toggleable layers
 
 
 ### Changed
