@@ -114,13 +114,21 @@ export class MapComponent implements OnInit {
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[0].completed) { 
             this.onMouseClickDelineation();
           }
+          if (this.workflowData.title === "Fire Hydrology" && this.workflowData.steps[0].completed) {
+            if (this.workflowData.steps[1].name === "selectFireHydroBasin") {
+              this.onMouseClickFireHydroQueryBasin();
+            }
+            if (this.workflowData.steps[1].name === "selectFireHydroPerimeter") {
+              this.onMouseClickFireHydroQueryFirePerimeter();
+            }
+          }
         }
-        if (this.selectedWorkflow.title == "Fire Hydrology - Query Basin") { 
-          this.onMouseClickFireHydroQueryBasin();
-        }
-        if (this.selectedWorkflow.title == "Fire Hydrology - Query Fire Perimeters") { 
-          this.onMouseClickFireHydroQueryFirePerimeter();
-        }
+        // if (this.selectedWorkflow.title == "Fire Hydrology - Query Basin") { 
+        //   this.onMouseClickFireHydroQueryBasin();
+        // }
+        // if (this.selectedWorkflow.title == "Fire Hydrology - Query Fire Perimeters") { 
+        //   this.onMouseClickFireHydroQueryFirePerimeter();
+        // }
       }
     }) 
     // On map zoom, set current zoom, display gages
@@ -150,7 +158,7 @@ export class MapComponent implements OnInit {
     this._workflowService.formData.subscribe(data => {
       this.workflowData = data;
       if (this.workflowData) {
-        if (this.workflowData.title == "Delineation") {
+        if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
           this.checkAvailableLayers();
         }
       }
@@ -183,22 +191,45 @@ export class MapComponent implements OnInit {
             }
           }
           break;
-        case "Fire Hydrology - Query Basin":
-          this.addLayers('NHD Flowlines');
-          this.addLayers('Archived WildFire Perimeters');
-          this.addLayers('Active WildFire Perimeters');
-          this.addLayers('MTBS Fire Boundaries');
-          this.addLayers('Burn Severity');
+        case "Fire Hydrology":
+          if (!this.activeWorkflowLayers.length) {
+            if (this.workflowData && this.workflowData.steps) {
+              this.workflowData.steps[0].options.forEach(o => {
+                console.log(o)
+                if (o.text === "Query by Basin" && o.selected === true) {
+                  console.log(o.text)
+                  this.addLayers('NHD Flowlines');
+                  this.addLayers('Archived WildFire Perimeters');
+                  this.addLayers('Active WildFire Perimeters');
+                  this.addLayers('MTBS Fire Boundaries');
+                  this.addLayers('Burn Severity');
+                }
+                if (o.text === "Query by Fire Perimeters" && o.selected === true) {
+                  console.log(o.text)
+                  this.addLayers('Archived WildFire Perimeters');
+                  this.addLayers('Active WildFire Perimeters');
+                  this.addLayers('MTBS Fire Boundaries');
+                  this.addLayers('Burn Severity');
+                }
+              })
+            }
+          }
           break;
-        case "Fire Hydrology - Query Fire Perimeters":
-          this.addLayers('Archived WildFire Perimeters');
-          this.addLayers('Active WildFire Perimeters');
-          this.addLayers('MTBS Fire Boundaries');
-          this.addLayers('Burn Severity');
-          break;
+        // case "Fire Hydrology - Query Basin":
+        //   this.addLayers('NHD Flowlines');
+        //   this.addLayers('Archived WildFire Perimeters');
+        //   this.addLayers('Active WildFire Perimeters');
+        //   this.addLayers('MTBS Fire Boundaries');
+        //   this.addLayers('Burn Severity');
+        //   break;
+        // case "Fire Hydrology - Query Fire Perimeters":
+        //   this.addLayers('Archived WildFire Perimeters');
+        //   this.addLayers('Active WildFire Perimeters');
+        //   this.addLayers('MTBS Fire Boundaries');
+        //   this.addLayers('Burn Severity');
+        //   break;
+      }
     }
-    }
-
   }
 
   public addLayers(layerName: string) {
