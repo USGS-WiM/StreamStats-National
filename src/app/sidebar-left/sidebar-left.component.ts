@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MapService } from 'src/app/shared/services/map.service';
 declare let search_api: any;
 import * as L from 'leaflet';
+import { ConfigService } from '../shared/config/config.service';
+import { Config } from '../shared/interfaces/config/config';
 // import { ConsoleReporter } from 'jasmine';
 
 @Component({
@@ -11,15 +13,22 @@ import * as L from 'leaflet';
 })
 export class SidebarLeftComponent implements OnInit {
 
+	@ViewChildren("overlayCheckbox") overlayCheckbox: any;
+
 	popout = '';
+	popoutLayers = '';
 	discoverTab = '';
 	title = 'StreamStats-National';
 	private MapService: MapService;
+	private configSettings: Config;
 	public baselayers = [] as any;
-	public overlays = [] as any;
+	public workflowLayers;
+	public overlayLayers;
+	public currentZoom: number = 4;
 
-  	constructor(private _mapService: MapService) {
+  	constructor(private _mapService: MapService, private _configService: ConfigService) {
 		this.MapService = _mapService;
+		this.configSettings = this._configService.getConfiguration();
 	  }
 
 	ngOnInit(): void {
@@ -28,10 +37,35 @@ export class SidebarLeftComponent implements OnInit {
 		for (const baseMap in this.MapService.baseMaps) {
 			this.baselayers.push([baseMap, baseMap.replace(' ','').toLowerCase() + ".jpg"]);
 		}
+		// Set up workflowLayers list for layers turned on as part of workflow
+		this.MapService.activeWorkflowLayers.subscribe(layer => {
+			this.workflowLayers = layer; 
+		});
+		// Get current zoom level
+		this.MapService.currentZoomLevel.subscribe((zoom: number) => {
+			this.currentZoom = zoom;
+		});
+		// Set up overlay layers list
+		this.MapService.overlayLayers.subscribe((layer: any) => {
+			this.overlayLayers = layer;
+		})
 	}
 
 	public SetBaselayer(LayerName: string) {
 		this.MapService.SetBaselayer(LayerName);
+	}
+
+	public setOverlayLayer(layerName: string) {
+		this.MapService.setOverlayLayer(layerName)
+		this.overlayCheckbox.toArray().map((element: { nativeElement: { id: string; }; }) => {
+			if(element.nativeElement.id === layerName) {
+				this.MapService.setStreamgageLayerStatus(element)
+			}
+		});
+	}
+
+	public updateActiveLayer(layerName: string) {
+		this.MapService.toggleWorkflowLayers(layerName);
 	}
 
 	public geosearch(): void {

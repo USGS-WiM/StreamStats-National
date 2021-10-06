@@ -3,9 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Map } from 'leaflet';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
-import { Subject } from 'rxjs';
+import { Subject, throwError, BehaviorSubject, Observable } from 'rxjs';
 import { AppService } from './app.service';
 import { MapLayer } from '../interfaces/maplayer';
+import { LoaderService } from './loader.service';
+import { IndividualConfig, ToastrService } from 'ngx-toastr';
+import * as messageType from '../../shared/messageType';
+import {catchError} from 'rxjs/operators';
+import * as esri from 'esri-leaflet';
 
 declare const L: any;
 // import 'leaflet-compass';
@@ -14,6 +19,7 @@ declare const L: any;
     providedIn: 'root'
 })
 export class MapService {
+    private messager: ToastrService;
     public authHeader: HttpHeaders;
     public jsonHeader: HttpHeaders
     public baseMaps: any;
@@ -22,12 +28,19 @@ export class MapService {
     public compass: any;
     private configSettings: Config;
     public map!: Map;
-    public overlays: any;
+    public overlays = [];
+    public overlaysSubject = [];
+    public streamgageStatus: boolean;
+    public activeLayers = [];
+    public workflowLayers = [] as any;
+    public streamgageLayer: any;
     public scale: any;
     public textBox: any;
     public zoomHome: any;
+    public currentZoom: number = 4;
 
-    constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService) {
+    constructor(private _http: HttpClient, private _configService: ConfigService, private _appService: AppService, private _loaderService: LoaderService,public toastr: ToastrService) {
+        this.messager = toastr;
         
         this.authHeader = new HttpHeaders({
             'Content-Type': 'application/json',
@@ -56,9 +69,45 @@ export class MapService {
             });
     
         }
-        
         // TODO: Load overlay layers?
-        this.overlays = new Object();
+        if (this.configSettings) {
+            this.configSettings.overlays.forEach(ml => {
+                try {
+                    let options;
+                    options = ml["layerOptions"];
+                    options.url = ml["url"];
+                    this.overlays[ml["name"]] = esri.featureLayer(options);
+                    this.setOverlayLayers(ml);
+                } catch (error) {
+                console.error(ml["name"] + ' layer failed to load', error);
+              }
+            })
+        }
+        // Load workflow layers, feeds into map.component.ts's workflowLayers
+        if (this.configSettings) {
+            this.configSettings.workflowLayers.forEach(ml => {
+              try {
+                let options;
+                switch (ml["type"]) {
+                  case "agsDynamic":
+                    options = ml["layerOptions"];
+                    options.url = ml["url"];
+                    this.workflowLayers[ml["name"]] = esri.dynamicMapLayer(options);
+                    break;
+                  case "agsFeature":
+                    options = ml["layerOptions"];
+                    options.url = ml["url"];
+                    this.workflowLayers[ml["name"]] = esri.featureLayer(options);
+                    if (this.configSettings["symbols"][ml["name"]]) { 
+                      this.workflowLayers[ml["name"]].setStyle(this.configSettings["symbols"][ml["name"]]); 
+                    }
+                    break;
+                }
+              } catch (error) {
+                console.error(ml["name"] + ' layer failed to load', error);
+              }
+            });
+          }
 
         // Scalebar
         this.scale = L.control.scale();
@@ -146,7 +195,7 @@ export class MapService {
             onAdd: function (map: Map) {
                 var text = L.DomUtil.create('div');
                 text.id = "info_text";
-                var scaleNumber;
+                var scaleNumber: string;
                 switch (map.getZoom()) {
                     case 19: scaleNumber = '1,128'; break;
                     case 18: scaleNumber = '2,256'; break;
@@ -213,6 +262,14 @@ export class MapService {
             this.map.addLayer(this.baseMaps[layername]);
         }
     }
+    private _overlayLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
+    public setOverlayLayers(ml: Array<any>) {
+        this.overlaysSubject.push(ml);
+        this._overlayLayers.next(this.overlaysSubject);
+    }
+    public get overlayLayers(): Observable<Array<any>> {
+        return this._overlayLayers.asObservable();
+    }
 
     public zoomLocation(): void {
         var locationMarker = new L.CircleMarker([0, 0]).addTo(this.map);
@@ -224,6 +281,15 @@ export class MapService {
             .on('locationerror', function (e) {
                 alert("Location error");
             })
+    }
+
+    // Setting current zoom level
+    private _zoomLevelSubject: Subject<any> = new Subject<any>();
+    public setCurrentZoomLevel(level: number) {
+        this._zoomLevelSubject.next(level);
+    }
+    public get currentZoomLevel(): any {
+        return this._zoomLevelSubject.asObservable();
     }
 
     // Get user map click
@@ -243,11 +309,20 @@ export class MapService {
             var streamgageLayer = res;
             this._streamgages.next(streamgageLayer);
         }, error => {
-            console.log(error);
+            this.createMessage("Error retrieving streamgages.", 'error');
         })
     }
     public get streamgages(): any {
         return this._streamgages.asObservable();
+    }
+    // Setting current streamgages layer
+    private _streamgageSubject: Subject<any> = new Subject<any>();
+    public setStreamgagesLayer(layer: any) {
+        this.streamgageLayer = layer;
+        this._streamgageSubject.next(layer);
+    }
+    public get streamgagesLayer(): any {
+        return this._streamgageSubject.asObservable();
     }
 
     //Get water service data - current discharge
@@ -262,7 +337,7 @@ export class MapService {
             if (parsedString[2][4]) { this._waterServiceData.next(parsedString[2][4] + " @ " + parsedString[2][2]);
             } else this._waterServiceData.next("No Data");
         }, error => {
-            console.log(error);
+            this.createMessage("Error retrieving data.", 'error');
         })
     }
     public get waterData(): any {
@@ -293,10 +368,13 @@ export class MapService {
             }
         ]
         }
-        return this._http.post(url, post, options).subscribe(resp => {
-        this._delineationSubject.next(resp.body);
-        return resp.body;
-        });
+        return this._http.post(url, post, options)
+        .subscribe(resp => {
+            this._delineationSubject.next(resp.body);
+        }, error => {
+            this.createMessage("Error delineating basin.", 'error');
+            this._loaderService.hideFullPageLoad();
+        })
     };
     public get delineationPolygon(): any {
         return this._delineationSubject.asObservable();
@@ -305,8 +383,14 @@ export class MapService {
     // Query Fire Perimeters
     public trace(geojson: any) {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
-        return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions);
+        return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions)
+        .pipe(catchError((err: any) => {
+            this.createMessage("Error tracing fire perimeters.", 'error');
+            this._loaderService.hideFullPageLoad();
+            return throwError(err);  
+        }))
     }
+
     // Get selected Fire Perimeters
     private _selectedPerimeters: Subject<any> = new Subject<any>();
     public setSelectedPerimeters(array) {
@@ -315,4 +399,83 @@ export class MapService {
     public get selectedPerimeters(): any {
         return this._selectedPerimeters.asObservable();
     }
+
+    private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
+        try {
+          let options: Partial<IndividualConfig> = null;
+          if (timeout) { options = { timeOut: timeout }; }
+          this.messager.show(msg, title, options, mType);
+        } catch (e) {
+        }
+    }
+    
+    // Set overlay visibilty including streamgages, add/remove from map
+    public setOverlayLayer(layerName: string) {
+        this.configSettings.overlays.forEach((overlay: any) => {
+            if (overlay.name === layerName) {
+                if (layerName === "Streamgages") {
+                    if (overlay.visible) { // if layer is off, toggle on 
+                        overlay.visible = false;
+                        this.map.removeLayer(this.streamgageLayer);
+                    }  else { // if layer is on, toggle off
+                        overlay.visible = true;
+                        this.map.addLayer(this.streamgageLayer);
+                    }
+                } else {
+                    if (overlay.visible) { // if layer is off, toggle on 
+                        overlay.visible = false;
+                        this.map.removeLayer(this.overlays[layerName]);
+                    }  else { // if layer is on, toggle off
+                        overlay.visible = true;
+                        this.map.addLayer(this.overlays[layerName]);
+                    }
+                }
+            }
+        });
+    }
+    // Set checkmark status of overlay layer, for streamgages
+    private _streamgageLayerSubject: BehaviorSubject<any> = new BehaviorSubject(true);
+    public setStreamgageLayerStatus(ele: any) {
+        if (ele.nativeElement.id === "Streamgages") {
+            if (ele.nativeElement.checked) {
+                this.streamgageStatus = true;
+                this._streamgageLayerSubject.next(this.streamgageStatus);
+            } else {
+                this.streamgageStatus = false;
+                this._streamgageLayerSubject.next(this.streamgageStatus);
+            }
+        }
+    }
+    public get streamgageLayerStatus(): any {
+        return this._streamgageLayerSubject.asObservable();
+    }
+
+    //get all active workflow layers and remove active workflow layers depending on selected workflow, toggle active workflow layers
+    private _workflowLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
+    public setWorkflowLayers(ml: Array<any>) {
+        this.activeLayers.push(ml);
+        this._workflowLayers.next(this.activeLayers);
+    }
+    public get activeWorkflowLayers(): Observable<Array<any>> {
+        return this._workflowLayers.asObservable();
+    }
+    public removeWorkflowLayers(layerName: string) {
+        const findLayer = this.activeLayers.find(ele => ele.name === layerName);
+        const index = this.activeLayers.indexOf(findLayer);
+        this.activeLayers.splice(index, 1);
+    }
+    public toggleWorkflowLayers(layerName: string) {
+        this.activeLayers.forEach(layer => {
+            if (layer.name === layerName) {
+                if (layer.visible) { // if layer is on, toggle off
+                    layer.visible = false;
+                    this.map.removeLayer(this.workflowLayers[layerName]);
+                } else { // if layer is off, toggle on 
+                    layer.visible = true;
+                    this.map.addLayer(this.workflowLayers[layerName]);
+                }
+            }
+        });     
+    }
+
 }
