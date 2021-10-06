@@ -1,8 +1,8 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppService } from '../shared/services/app.service';
-
 import { SidebarLeftComponent } from './sidebar-left.component';
+import { ToastrModule } from 'ngx-toastr';
 
 describe('SidebarLeftComponent', () => {
   let component: SidebarLeftComponent;
@@ -11,7 +11,8 @@ describe('SidebarLeftComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        ToastrModule.forRoot()
       ],
       declarations: [ SidebarLeftComponent ],
       providers: [
