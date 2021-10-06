@@ -61,7 +61,7 @@ export class WorkflowComponent implements OnInit {
     this.numberOfSteps = this.stepsArray.value.length;
   }
 
-  public addSteps(optionSelection) {
+  public addSteps(optionSelection: string) {
     this.workflow.steps.forEach(step => {
       step.options?.forEach(opt => {
         if (opt.text === optionSelection) {
@@ -124,14 +124,6 @@ export class WorkflowComponent implements OnInit {
           this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;  
         }
         break;
-      // case "Fire Hydrology - Query Basin":
-      //   this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-      //   this.workflowForm.value.steps[i].polygon = 'polygon';   
-      //   break;
-      // case "Fire Hydrology - Query Fire Perimeters":
-      //   this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-      //   this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;   
-      //   break;
     }
   }
 

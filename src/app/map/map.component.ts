@@ -123,12 +123,6 @@ export class MapComponent implements OnInit {
             }
           }
         }
-        // if (this.selectedWorkflow.title == "Fire Hydrology - Query Basin") { 
-        //   this.onMouseClickFireHydroQueryBasin();
-        // }
-        // if (this.selectedWorkflow.title == "Fire Hydrology - Query Fire Perimeters") { 
-        //   this.onMouseClickFireHydroQueryFirePerimeter();
-        // }
       }
     }) 
     // On map zoom, set current zoom, display gages
@@ -194,10 +188,8 @@ export class MapComponent implements OnInit {
         case "Fire Hydrology":
           if (!this.activeWorkflowLayers.length) {
             if (this.workflowData && this.workflowData.steps) {
-              this.workflowData.steps[0].options.forEach(o => {
-                console.log(o)
+              this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
                 if (o.text === "Query by Basin" && o.selected === true) {
-                  console.log(o.text)
                   this.addLayers('NHD Flowlines');
                   this.addLayers('Archived WildFire Perimeters');
                   this.addLayers('Active WildFire Perimeters');
@@ -205,7 +197,6 @@ export class MapComponent implements OnInit {
                   this.addLayers('Burn Severity');
                 }
                 if (o.text === "Query by Fire Perimeters" && o.selected === true) {
-                  console.log(o.text)
                   this.addLayers('Archived WildFire Perimeters');
                   this.addLayers('Active WildFire Perimeters');
                   this.addLayers('MTBS Fire Boundaries');
@@ -215,19 +206,6 @@ export class MapComponent implements OnInit {
             }
           }
           break;
-        // case "Fire Hydrology - Query Basin":
-        //   this.addLayers('NHD Flowlines');
-        //   this.addLayers('Archived WildFire Perimeters');
-        //   this.addLayers('Active WildFire Perimeters');
-        //   this.addLayers('MTBS Fire Boundaries');
-        //   this.addLayers('Burn Severity');
-        //   break;
-        // case "Fire Hydrology - Query Fire Perimeters":
-        //   this.addLayers('Archived WildFire Perimeters');
-        //   this.addLayers('Active WildFire Perimeters');
-        //   this.addLayers('MTBS Fire Boundaries');
-        //   this.addLayers('Burn Severity');
-        //   break;
       }
     }
   }
