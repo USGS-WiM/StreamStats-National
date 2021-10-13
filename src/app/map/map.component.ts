@@ -214,7 +214,7 @@ export class MapComponent implements OnInit {
         let options;
         let url;
         switch (ml.type) {
-          case "geoServer":
+          case "WMS":
             options = ml.layerOptions;
             url = ml.url;
             this.workflowLayers[ml.name] = L.tileLayer.wms(url, options);
