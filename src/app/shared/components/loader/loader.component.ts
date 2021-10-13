@@ -1,18 +1,25 @@
-// Shared component: component that will sit in mapview.component/app.component, 
-// loading div that can cover page until something can be displayed (geojson, etc.)
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
-  selector: 'app-loader',
-  templateUrl: './loader.component.html',
-  styleUrls: ['./loader.component.scss']
+    selector: 'app-loading-screen',
+    templateUrl: 'loader.component.html',
+    styleUrls: ['loader.component.scss']
 })
-export class LoaderComponent implements OnInit {
+export class LoaderComponent implements OnInit, OnDestroy {
+    public show = false; // start
+    private subscription: Subscription;
 
-  constructor() { }
+    constructor(private _loaderService: LoaderService) {}
 
-  ngOnInit(): void {
-  }
+    ngOnInit() {
+      this.subscription = this._loaderService.loaderState.subscribe((state: boolean) => {
+        this.show = state;
+      });
+    }
 
+    ngOnDestroy() {
+      this.subscription.unsubscribe();
+    }
 }

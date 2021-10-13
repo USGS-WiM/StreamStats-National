@@ -1,5 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ToastrModule } from 'ngx-toastr';
 import { SidebarRightComponent } from './sidebar-right.component';
 
 describe('SidebarRightComponent', () => {
@@ -9,7 +10,8 @@ describe('SidebarRightComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        ToastrModule.forRoot()
       ],
       declarations: [ SidebarRightComponent ]
     })

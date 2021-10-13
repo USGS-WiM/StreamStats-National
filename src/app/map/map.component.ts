@@ -10,6 +10,7 @@ import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import * as messageType from '../shared/messageType';
 import * as esri from 'esri-leaflet';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
+import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
 
 @Component({
@@ -32,7 +33,7 @@ export class MapComponent implements OnInit {
   public traceLayer;
   public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
-  public loader: boolean = false;
+  public loader: boolean;
   public selectedPopup: any;
   public selectedSite: any
   public streamgageLayer: any;
@@ -40,7 +41,7 @@ export class MapComponent implements OnInit {
   public workflowData: any;
   public count: number = 0;
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _appService: AppService) { 
+     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -161,6 +162,12 @@ export class MapComponent implements OnInit {
       } 
     });
 
+    //Subscribe to loader state
+    this._loaderService.loaderState.subscribe((state: boolean) => {
+      this.loader = state;
+    });
+
+    this.loadLayers();
   }
 
   public removeWorkFlowLayers(){
@@ -208,6 +215,31 @@ export class MapComponent implements OnInit {
           break;
       }
     }
+  }
+
+  private loadLayers() {
+    this.configSettings.workflowLayers.forEach(ml => {
+      try {
+        let options;
+        switch (ml.type) {
+          case "agsDynamic":
+            options = ml.layerOptions;
+            options.url = ml.url;
+            this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
+            break;
+          case "agsFeature":
+            options = ml.layerOptions;
+            options.url = ml.url;
+            this.workflowLayers[ml.name] = esri.featureLayer(options);
+            if (this.configSettings.symbols[ml.name]) { 
+              this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
+            }
+            break;
+        }
+      } catch (error) {
+        this.createMessage(ml.name + ' layer failed to load','error');
+      }
+    });
   }
 
   public addLayers(layerName: string) {
@@ -293,8 +325,8 @@ export class MapComponent implements OnInit {
     this.removeLayer(this.splitCatchmentLayer);
     this.addPoint(this.clickPoint);
     this.marker.openPopup();
-    this.loader = true;
-    this.createMessage("Delineating Basin. Please wait.");
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Delineating basin. Please wait.");
     this._mapService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
     this._mapService.delineationPolygon.subscribe((poly: any) => {
       this.basin = poly.outputs;
@@ -304,7 +336,7 @@ export class MapComponent implements OnInit {
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
       }
-      this.loader = false;
+      this._loaderService.hideFullPageLoad();
     });
   }
 
@@ -313,9 +345,9 @@ export class MapComponent implements OnInit {
   }
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
-    this.loader = true;
+    this._loaderService.showFullPageLoad();
     this.count = 0;
-    this.createMessage('Querying layers, please wait...');
+    this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
@@ -339,8 +371,8 @@ export class MapComponent implements OnInit {
     let layer;
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
     if (error) {
-      this.createMessage('Error occurred, check console','error');
-      this.loader = false;
+      this.createMessage('Error occurred.','error');
+      this._loaderService.hideFullPageLoad();
     } 
     if (results && results.features.length > 0) {
       results.features.forEach(feat => {
@@ -381,14 +413,14 @@ export class MapComponent implements OnInit {
     this.traceLayer = L.geoJSON(data);
     this.traceLayer.addTo(this._mapService.map);
     this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
-    this.loader = false;
+    this._loaderService.hideFullPageLoad();
   }
 
   public checkCount(count, goal) {
     if (count === goal) {
       if (this.loader == true) {
-        this.loader = false;
-        this.createMessage('Must select a fire perimeter','error','',0);
+        this._loaderService.hideFullPageLoad();
+        this.createMessage('Must select a fire perimeter.','error');
       }
     }
   }
