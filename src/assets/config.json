@@ -22,6 +22,7 @@
         "layerOptions": {
             "layers": "wmadata:nhdflowline_network",
             "minZoom": 13,
+            "maxZoom": 19,
             "zIndex": 9999,
             "format": "image/png",
             "transparent": "true"
