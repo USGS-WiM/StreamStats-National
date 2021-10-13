@@ -10,7 +10,7 @@
                 "label": "Select Your Favorite Color",
                 "name": "selectColor",
                 "type": "radio",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
@@ -34,7 +34,7 @@
                 "label":"Type Something",
                 "name": "selectPoints",
                 "type": "text",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
@@ -76,7 +76,7 @@
                 "label":"Select Delineation Point",
                 "name": "selectDelineationPoint",
                 "type": "subscription",
-                "validotors": 
+                "validators": 
                 {
                     "required": true
                 },
@@ -97,21 +97,71 @@
         }
     },
     {
-        "title": "FireHydro",
+        "title": "Fire Hydrology - Query Basin",
         "description": "Description Here.",
         "functionality": "Core",
-        "icon": "far fa-chart-area",
+        "icon": "far fa-fire-alt",
         "disable": true,
         "steps":
         [
             {
-                "label": "",
-                "name": "",
-                "type": "",
+                "label":"Select a Point",
+                "name": "selectFireHydroPoint",
+                "type": "subscription",
+                "validators": 
+                {
+                    "required": true
+                },
                 "options":
                 [
                     {
-                        "text": "",
+                        "text":"Click on the map",
+                        "selected": false
+                    }
+                ]
+            },
+            {
+                "label":"Burn Area Year Range",
+                "name": "burnAreaStartYear",
+                "type": "text",
+                "validators": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "textLabel":"Start Year",
+                        "text":"2021"
+                    },
+                    {
+                        "textLabel":"End Year",
+                        "text":"2021"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Fire Hydrology - Query Fire Perimeters",
+        "description": "Description Here.",
+        "functionality": "Core",
+        "icon": "far fa-fire-alt",
+        "disable": true,
+        "steps":
+        [
+            {
+                "label":"Select a Fire Perimeter",
+                "name": "selectFireHydroPoint",
+                "type": "subscription",
+                "validators": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Click on the map",
                         "selected": false
                     }
                 ]
