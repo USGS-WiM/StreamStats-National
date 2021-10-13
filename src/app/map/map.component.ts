@@ -12,7 +12,6 @@ import * as esri from 'esri-leaflet';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
-import { WMSOptions } from 'leaflet';
 
 @Component({
   selector: 'app-map',
@@ -216,9 +215,9 @@ export class MapComponent implements OnInit {
         let url;
         switch (ml.type) {
           case "geoServer":
-            options = ml.layerOptions as WMSOptions;
+            options = ml.layerOptions;
             url = ml.url;
-            this.workflowLayers[ml.name] = L.tileLayer.wms(url, options)
+            this.workflowLayers[ml.name] = L.tileLayer.wms(url, options);
             break;
           case "agsDynamic":
             options = ml.layerOptions;
@@ -241,7 +240,6 @@ export class MapComponent implements OnInit {
   }
 
   public addLayers(layerName: string) {
-    console.log(layerName)
     this.configSettings.workflowLayers.forEach((layer: any) => {
       if (layer.name === layerName) {
         layer.visible = true;
