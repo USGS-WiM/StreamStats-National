@@ -17,14 +17,17 @@
     ],
     "workflowLayers":[
         {
-            "name": "NHD Flowlines",
-            "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
-            "type": "agsDynamic",
-            "layerOptions": {
-                "zIndex": 9999,
-                "layers": [5,6],
-                "minZoom": 8
-            }
+        "name": "NHD Flowlines",
+        "url": "https://labs.waterdata.usgs.gov/geoserver/gwc/service/",
+        "type": "WMS",
+        "layerOptions": {
+            "layers": "wmadata:nhdflowline_network",
+            "minZoom": 13,
+            "maxZoom": 19,
+            "zIndex": 9999,
+            "format": "image/png",
+            "transparent": "true"
+        }
         },
         {
             "name": "Active WildFire Perimeters",
