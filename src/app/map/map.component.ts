@@ -413,7 +413,7 @@ export class MapComponent implements OnInit {
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
         // this.queryNIFC(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
-        // this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
+        this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
         this._loaderService.hideFullPageLoad();
       } else {
         this._loaderService.hideFullPageLoad();
@@ -422,51 +422,117 @@ export class MapComponent implements OnInit {
     });
   }
 
-  public queryGeology(basin, basinArea) {
+  // private getInputGeometryString(basin) {
+  //   // console.log(basin.coordinates);
+  //   // console.log(basin.coordinates[0]);
+  //   // let coordinates = basin.coordinates;
+  //   // var inputGeometry = '{"rings":[[' + basin.coordinates + ']],"spatialReference":{"wkid":4326}}';
+  //   var inputGeometry = '%7B%22rings%22%3A%5B%5B';
+  //   // console.log(basin.coordinates.length);
+  //   basin.coordinates[0].forEach((coordinate, index) => {
+
+  //     // console.log(coordinate);
+  //     inputGeometry += '%5B';
+  //     inputGeometry += coordinate[0];
+  //     inputGeometry += '%2C';
+  //     inputGeometry += coordinate[1];
+  //     inputGeometry += '%5D';
+  //     if (index != basin.coordinates[0].length - 1) {
+  //       inputGeometry += '%2C';
+  //     }
+  //   });
+  //   inputGeometry += '%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D';
+  //   // console.log(basin.coordinates);
+  //   // inputGeometry = inputGeometry.replace('{','%7B');
+  //   // inputGeometry = inputGeometry.replace('}','%7D');
+  //   // inputGeometry = inputGeometry.replace('[','%5B');
+  //   // inputGeometry = inputGeometry.replace(']','%5D');
+  //   // inputGeometry = inputGeometry.replace('','');
+  //   return inputGeometry;
+  //   // '%7B"rings":%5B%5B%5B%5B%5B-78.698945,35.794525%5D,%5B-78.699168,35.795294%5D,%5B-78.697522,35.797565%5D,%5B-78.69396,35.798232%5D,%5B-78.692534,35.800051%5D,%5B-78.69033,35.799788%5D,%5B-78.688686,35.797636%5D,%5B-78.688122,35.795078%5D,%5B-78.68604,35.793312%5D,%5B-78.687609,35.788147%5D,%5B-78.690703,35.788958%5D,%5B-78.693547,35.788423%5D,%5B-78.69352,35.792311%5D,%5B-78.696379,35.794101%5D,%5B-78.697763,35.793793%5D,%5B-78.698945,35.794525%5D%5D%5D%5D%5D,"spatialReference":%7B"wkid":4326%7D%7D';
+  // }
+
+  public  queryGeology(basin, basinArea) {
     this._loaderService.showFullPageLoad();
     this.createMessage("Analyzing Geology. Please wait.");
+    // console.log(basin.coordinates);
+    // console.log({"rings":[
+    //   [
+    //     basin.coordinates
+    //   ]
+    // ],"spatialReference":{"wkid":4326}});
+    // var inputGeometryString = this.getInputGeometryString(basin);
+
+    // var url2 = 'https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3/query?where=1%3D1&text=&objectIds=&time=&geometry='
+    // + inputGeometryString
+    // + 'https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3/query?where=1%3D1&text=&objectIds=&time=&geometry=%7B%22rings%22%3A%5B%5B%5B-78.631313%2C35.767104%5D%2C%5B-78.631933%2C35.767647%5D%2C%5B-78.631393%2C35.768274%5D%2C%5B-78.630754%2C35.767709%5D%2C%5B-78.631313%2C35.767104%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D  &geometryType=esriGeometryPolygon&inSR=4326&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=true&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=html';
+    
+    // let queryString = 'where=1%3D1&text=&objectIds=&time=&geometry=%7B%22rings%22%3A%5B%5B%5B-78.631313%2C35.767104%5D%2C%5B-78.631933%2C35.767647%5D%2C%5B-78.631393%2C35.768274%5D%2C%5B-78.630754%2C35.767709%5D%2C%5B-78.631313%2C35.767104%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D  &geometryType=esriGeometryPolygon&inSR=4326&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=true&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=html';
+    
+    var geology_ids;
     let geologyUnion;
     let queryString = "1=1";
-    var url = this.configSettings.geologyURL;
-    this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
-    .run((error: any, results: any) => {
+    let url = this.configSettings.geologyURL;
+    let context = this;
+    let geology_dictionary = {};
+    this.workflowLayers["GeologyFeatures"].query().intersects(basin).ids(function (error, ids) {
+      // if there is an error with the query, you can handle it here
       if (error) {
-        console.log("error");
-      }
-
-      let geology_dictionary = {};
-      if (results && results.features.length > 0) {
-        if (results.features.length > 999) {
-              // issue when there are more than 1000 features returned!
-            console.log("Warning: Geology results may be incorrect due to map server limitations.");
+        console.log('Error with query: ' + error);
+      } else if (ids) {
+        console.log(ids);
+        geology_ids = ids;
+        let number_of_queries = Math.round(geology_ids.length / 200);
+        for (let i=0; i<number_of_queries;i++) {
+          let short_geology_ids = geology_ids.slice(i*200,200);
         }
-        let intersectArea;
-        geologyUnion = results.features[0];
-        for (let i = 0; i < results.features.length; i++) {
-            const nextFeature = results.features[i];
-            if (nextFeature) {
-              geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-              const intersectPolygons = intersect(results.features[i], basin);
-              intersectArea = area(intersectPolygons) / 1000000;
-              if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-              } else {
-                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-              }
+        
+        console.log(short_geology_ids);
+        context.workflowLayers["GeologyFeatures"].query().featureIds(short_geology_ids).returnGeometry(true)
+        .run((error: any, results: any) => {
+          if (error) {
+            console.log("error");
+          }
+          console.log(results);
+
+          
+          if (results && results.features.length > 0) {
+            if (results.features.length > 999) {
+                  // issue when there are more than 1000 features returned!
+                console.log("Warning: Geology results may be incorrect due to map server limitations.");
             }
-        }
+            let intersectArea;
+            geologyUnion = results.features[0];
+            for (let i = 0; i < results.features.length; i++) {
+                const nextFeature = results.features[i];
+                if (nextFeature) {
+                  geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+                  const intersectPolygons = intersect(results.features[i], basin);
+                  intersectArea = area(intersectPolygons) / 1000000;
+                  if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                    geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+                  } else {
+                    geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                  }
+                }
+            }
 
-        console.log("Geology results:")
-        Object.keys(geology_dictionary).forEach(function(key) {
-          console.log(key + ": ");
-          console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
-        });
-        
-      this._loaderService.hideFullPageLoad();
+            console.log("Geology results:")
+            Object.keys(geology_dictionary).forEach(function(key) {
+              console.log(key + ": ");
+              console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
+            });
+            
+            context._loaderService.hideFullPageLoad();
 
-        
-        }
-      });
+            
+            }
+          });
+      }
+    });
+
+    
+    
       
   }
 
