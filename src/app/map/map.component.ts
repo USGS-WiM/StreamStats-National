@@ -454,7 +454,6 @@ export class MapComponent implements OnInit {
 
   public  queryGeology(basin, basinArea) {
     this._loaderService.showFullPageLoad();
-    this.createMessage("Analyzing Geology. Please wait.");
     // console.log(basin.coordinates);
     // console.log({"rings":[
     //   [
@@ -478,56 +477,59 @@ export class MapComponent implements OnInit {
     this.workflowLayers["GeologyFeatures"].query().intersects(basin).ids(function (error, ids) {
       // if there is an error with the query, you can handle it here
       if (error) {
-        console.log('Error with query: ' + error);
+        context._loaderService.hideFullPageLoad();
+        context.createMessage("ScienceBase is currently unavailable. Geology cannot be analyzed.");
       } else if (ids) {
+      this.createMessage("Analyzing geology. Please wait.");
         console.log(ids);
         geology_ids = ids;
         let number_of_queries = Math.round(geology_ids.length / 200);
         for (let i=0; i<number_of_queries;i++) {
           let short_geology_ids = geology_ids.slice(i*200,200);
+          console.log(short_geology_ids);
         }
         
-        console.log(short_geology_ids);
-        context.workflowLayers["GeologyFeatures"].query().featureIds(short_geology_ids).returnGeometry(true)
-        .run((error: any, results: any) => {
-          if (error) {
-            console.log("error");
-          }
-          console.log(results);
+        // console.log(short_geology_ids);
+        // context.workflowLayers["GeologyFeatures"].query().featureIds(short_geology_ids).returnGeometry(true)
+        // .run((error: any, results: any) => {
+        //   if (error) {
+        //     console.log("error");
+        //   }
+        //   console.log(results);
 
           
-          if (results && results.features.length > 0) {
-            if (results.features.length > 999) {
-                  // issue when there are more than 1000 features returned!
-                console.log("Warning: Geology results may be incorrect due to map server limitations.");
-            }
-            let intersectArea;
-            geologyUnion = results.features[0];
-            for (let i = 0; i < results.features.length; i++) {
-                const nextFeature = results.features[i];
-                if (nextFeature) {
-                  geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-                  const intersectPolygons = intersect(results.features[i], basin);
-                  intersectArea = area(intersectPolygons) / 1000000;
-                  if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-                    geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-                  } else {
-                    geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-                  }
-                }
-            }
+        //   if (results && results.features.length > 0) {
+        //     if (results.features.length > 999) {
+        //           // issue when there are more than 1000 features returned!
+        //         console.log("Warning: Geology results may be incorrect due to map server limitations.");
+        //     }
+        //     let intersectArea;
+        //     geologyUnion = results.features[0];
+        //     for (let i = 0; i < results.features.length; i++) {
+        //         const nextFeature = results.features[i];
+        //         if (nextFeature) {
+        //           geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+        //           const intersectPolygons = intersect(results.features[i], basin);
+        //           intersectArea = area(intersectPolygons) / 1000000;
+        //           if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+        //             geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+        //           } else {
+        //             geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+        //           }
+        //         }
+        //     }
 
-            console.log("Geology results:")
-            Object.keys(geology_dictionary).forEach(function(key) {
-              console.log(key + ": ");
-              console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
-            });
+        //     console.log("Geology results:")
+        //     Object.keys(geology_dictionary).forEach(function(key) {
+        //       console.log(key + ": ");
+        //       console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
+        //     });
             
-            context._loaderService.hideFullPageLoad();
+        //     context._loaderService.hideFullPageLoad();
 
             
-            }
-          });
+        //     }
+        //   });
       }
     });
 
