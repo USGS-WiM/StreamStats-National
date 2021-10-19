@@ -468,73 +468,58 @@ export class MapComponent implements OnInit {
     
     // let queryString = 'where=1%3D1&text=&objectIds=&time=&geometry=%7B%22rings%22%3A%5B%5B%5B-78.631313%2C35.767104%5D%2C%5B-78.631933%2C35.767647%5D%2C%5B-78.631393%2C35.768274%5D%2C%5B-78.630754%2C35.767709%5D%2C%5B-78.631313%2C35.767104%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D  &geometryType=esriGeometryPolygon&inSR=4326&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=true&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=html';
     
-    var geology_ids;
-    let geologyUnion;
-    let queryString = "1=1";
-    let url = this.configSettings.geologyURL;
+    // var geology_ids;
+    // let geologyUnion;
+    // let queryString = "1=1";
+    // let url = this.configSettings.geologyURL;
     let context = this;
     let geology_dictionary = {};
-    this.workflowLayers["GeologyFeatures"].query().intersects(basin).ids(function (error, ids) {
+    // let intersectArea;
+    this.workflowLayers["GeologyFeatures"].query().intersects(basin).ids(function (error, geology_ids) {
       // if there is an error with the query, you can handle it here
       if (error) {
         context._loaderService.hideFullPageLoad();
         context.createMessage("ScienceBase is currently unavailable. Geology cannot be analyzed.");
-      } else if (ids) {
-      this.createMessage("Analyzing geology. Please wait.");
-        console.log(ids);
-        geology_ids = ids;
+      } else if (console) {
+        this.createMessage("Analyzing geology. Please wait.");
+        console.log(console);
         let number_of_queries = Math.round(geology_ids.length / 200);
         for (let i=0; i<number_of_queries;i++) {
-          let short_geology_ids = geology_ids.slice(i*200,200);
-          console.log(short_geology_ids);
+          let geology_ids_shortlist = geology_ids.slice(i*200,200);
+          console.log(geology_ids_shortlist);
+
+          context.workflowLayers["GeologyFeatures"].query().featureIds(geology_ids_shortlist).returnGeometry(true)
+            .run((error: any, results: any) => {
+              if (error) {
+                context.createMessage("Error. Geology cannot be analyzed.");
+                context._loaderService.hideFullPageLoad();
+              } else if (results && results.features.length > 0) {
+                let geologyUnion = results.features[0];
+                for (let i = 0; i < results.features.length; i++) {
+                    let nextFeature = results.features[i];
+                    if (nextFeature) {
+                      geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+                      let intersectPolygons = intersect(results.features[i], basin);
+                      let intersectArea = area(intersectPolygons) / 1000000;
+                      if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+                      } else {
+                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                      }
+                    }
+                }
+              }
+            });
         }
-        
-        // console.log(short_geology_ids);
-        // context.workflowLayers["GeologyFeatures"].query().featureIds(short_geology_ids).returnGeometry(true)
-        // .run((error: any, results: any) => {
-        //   if (error) {
-        //     console.log("error");
-        //   }
-        //   console.log(results);
 
-          
-        //   if (results && results.features.length > 0) {
-        //     if (results.features.length > 999) {
-        //           // issue when there are more than 1000 features returned!
-        //         console.log("Warning: Geology results may be incorrect due to map server limitations.");
-        //     }
-        //     let intersectArea;
-        //     geologyUnion = results.features[0];
-        //     for (let i = 0; i < results.features.length; i++) {
-        //         const nextFeature = results.features[i];
-        //         if (nextFeature) {
-        //           geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-        //           const intersectPolygons = intersect(results.features[i], basin);
-        //           intersectArea = area(intersectPolygons) / 1000000;
-        //           if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-        //             geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-        //           } else {
-        //             geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-        //           }
-        //         }
-        //     }
-
-        //     console.log("Geology results:")
-        //     Object.keys(geology_dictionary).forEach(function(key) {
-        //       console.log(key + ": ");
-        //       console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
-        //     });
-            
-        //     context._loaderService.hideFullPageLoad();
-
-            
-        //     }
-        //   });
+        console.log("Geology results:")
+        Object.keys(geology_dictionary).forEach(function(key) {
+          console.log(key + ": ");
+          console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
+        });
+        context._loaderService.hideFullPageLoad();
       }
     });
-
-    
-    
       
   }
 
