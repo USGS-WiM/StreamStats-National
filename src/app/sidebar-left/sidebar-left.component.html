@@ -133,8 +133,9 @@
 		
 		<!-- Report Builder window -->
 		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'reportBuilder'">
-			<h3 class="sidebar-popout-header">Choose Your Workflows</h3>
-			<app-center-bottom-content></app-center-bottom-content>
+			<h3 class="sidebar-popout-header" *ngIf="!selectedWorkflow">Choose Your Workflow</h3>
+			<h3 class="sidebar-popout-header" *ngIf="selectedWorkflow">Build Your Report</h3>
+			<app-center-bottom-content [selectedWorkflow]="selectedWorkflow"></app-center-bottom-content>
 		</div>
 	</div>
 

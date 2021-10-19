@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChildren } from '@angular/core';
 import { MapService } from 'src/app/shared/services/map.service';
 declare let search_api: any;
 import * as L from 'leaflet';
 import { ConfigService } from '../shared/config/config.service';
 import { Config } from '../shared/interfaces/config/config';
+import { WorkflowService } from '../shared/services/workflow.service';
 // import { ConsoleReporter } from 'jasmine';
 
 @Component({
@@ -25,8 +26,9 @@ export class SidebarLeftComponent implements OnInit {
 	public workflowLayers;
 	public overlayLayers;
 	public currentZoom: number = 4;
+	public selectedWorkflow: any;
 
-  	constructor(private _mapService: MapService, private _configService: ConfigService) {
+  	constructor(private _mapService: MapService, private _configService: ConfigService, private _workflowService: WorkflowService) {
 		this.MapService = _mapService;
 		this.configSettings = this._configService.getConfiguration();
 	  }
@@ -49,6 +51,11 @@ export class SidebarLeftComponent implements OnInit {
 		this.MapService.overlayLayers.subscribe((layer: any) => {
 			this.overlayLayers = layer;
 		})
+		// Get current workflow
+		this._workflowService.selectedWorkflow.subscribe(res => {
+			this.selectedWorkflow = res;
+		})
+
 	}
 
 	public SetBaselayer(LayerName: string) {

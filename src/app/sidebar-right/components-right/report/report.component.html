@@ -9,7 +9,7 @@
                     <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
                     <!-- Delineation -->
                     <li *ngIf="step.label == 'Select Delineation Point'">({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
-                    <li *ngIf="step.label == 'Select Delineation Point'">{{step.polygon}}</li>
+                    <li *ngIf="step.label == 'Select Delineation Point'">{{step.output}}</li>
                     <!-- Query Fire Perimeter -->
                     <li *ngIf="step.label == 'Select a Fire Perimeter'">Point Clicked: ({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
                     <li *ngIf="step.label == 'Select a Fire Perimeter'">Fire perimeters selected: 

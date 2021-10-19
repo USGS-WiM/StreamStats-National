@@ -44,7 +44,7 @@ export class WorkflowService {
   }
 
   //get all completed current workflow form data
-  private _formData: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
+  private _formData: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>(null);
   public setFormData(obj: Array<any>) {
     this._formData.next(obj);
   }

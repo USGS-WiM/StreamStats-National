@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 // interfaces
-import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { WorkflowService } from '../shared/services/workflow.service';
 
 @Component({
@@ -10,20 +9,32 @@ import { WorkflowService } from '../shared/services/workflow.service';
   styleUrls: ['./center-bottom-content.component.scss']
 })
 export class CenterBottomContentComponent {
-  public selectedWorkflow: Workflow = null;
+
+  @Input() selectedWorkflow: any;
+
   public reportBuilderTab ='selection';
+  public formData: any;
 
   constructor(private _workflowService: WorkflowService) { 
   }
 
   ngOnInit(): void {
-    this._workflowService.selectedWorkflow.subscribe((res) => {
-      this.selectedWorkflow = res;
-    });
+
+    if (!this.selectedWorkflow) {
+      this._workflowService.selectedWorkflow.subscribe((res) => {
+        this.selectedWorkflow = res;
+      });
+    }
+
+    this._workflowService.formData.subscribe(data => {
+      this.formData = data;
+    })
+    
   }
 
   public addFormData(formData: any) {
-    this._workflowService.setFormData(formData);
+    //this._workflowService.setFormData(formData);
+    //console.log(formData)
   }
 
   public removeWorkFlow() {

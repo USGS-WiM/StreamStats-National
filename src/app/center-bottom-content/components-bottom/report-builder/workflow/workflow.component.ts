@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
@@ -12,7 +12,8 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
 export class WorkflowComponent implements OnInit {
 
   @Input() workflow!: Workflow;
-  @Output() onFormCompletion: EventEmitter<any> = new EventEmitter();
+  @Input() formData: any;
+  //@Output() onFormCompletion: EventEmitter<any> = new EventEmitter();
 
   public workflowForm: FormGroup;
   public stepsArray: FormArray;
@@ -31,7 +32,14 @@ export class WorkflowComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setSteps();
+
+    if (this.formData === null) {
+      this.setSteps();
+    } else {
+      this.populateForm();
+    }
+  
+    //this.setSteps();
 
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
@@ -55,6 +63,9 @@ export class WorkflowComponent implements OnInit {
         label: step.label,
         name: step.name,
         type: step.type,
+        completed: [],
+        clickPoint: [],
+        output: [],
         options: this.setOptions(step)
       }))
     })
@@ -68,12 +79,13 @@ export class WorkflowComponent implements OnInit {
     return form.controls.options.controls;
   }
 
-  public setOptions(step: any) {        
+  public setOptions(step: any) {
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
       arr.push(this._fb.group({
         text: opt.text,
-        selected: opt.selected
+        //label: opt.label,
+        selected: []
       })
       )
     })
@@ -81,7 +93,8 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onContinue(formValue: any) {
-    this.onFormCompletion.emit(formValue);
+    this._workflowService.setFormData(formValue);
+    //this.onFormCompletion.emit(formValue);
   }
 
   public radio(i) {
@@ -94,11 +107,11 @@ export class WorkflowComponent implements OnInit {
     switch (this.workflowForm.value.title) {
       case "Delineation":
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
-        this.workflowForm.value.steps[i].polygon = 'polygon';   
+        this.workflowForm.value.steps[i].output = 'polygon';   
         break;
       case "Fire Hydrology - Query Basin":
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-        this.workflowForm.value.steps[i].polygon = 'polygon';   
+        this.workflowForm.value.steps[i].output = 'polygon';   
         break;
       case "Fire Hydrology - Query Fire Perimeters":
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
@@ -124,11 +137,14 @@ export class WorkflowComponent implements OnInit {
 
   public finishedWorkflow(formValue: any) {
     this._workflowService.setCompletedData(formValue);
+    //console.log(formValue)
     this._workflowService.setSelectedWorkflow(null);
     this._workflowService.setFormData(null);
   }
 
   public onRadioChange(option, step) {
+    //console.log(option)
+    //console.log(step)
     step.options.forEach( opt => {
       if (opt.text == option.text) {
         option.selected = true;
@@ -137,4 +153,27 @@ export class WorkflowComponent implements OnInit {
       }
     });
   }
+
+  public populateForm() {
+    this.setSteps();
+
+    console.log(this.formData)
+    //this.workflowForm.patchValue(this.formData);
+    this.workflowForm.setValue(this.formData);
+    //console.log(this.workflowForm.value)
+
+    this.formData.steps.forEach((storedStep: any, index: any) => {
+      //console.log(storedStep)
+      //console.log(index)
+      if (storedStep.completed) {
+        this.nextStep(index, storedStep.type);
+        //console.log(this.workflowForm.controls)
+        //this.workflowForm.controls
+      }
+    })
+
+    console.log(this.workflowForm.value)
+  }
+
+
 }
