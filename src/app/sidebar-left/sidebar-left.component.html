@@ -26,7 +26,8 @@
 				<div *ngFor="let item of baselayers" class="basemap-selector"> 
 					<label class="basemap-option">
 						<input type="radio" name="basemap" value="item[0]" (click)="SetBaselayer(item[0])">
-						<img src="assets/images/{{item[1]}}"> {{item[0]}}
+						<img src="assets/images/{{item[1]}}"> 
+						<span>{{item[0]}}</span>
 					</label>
 				</div>
 			</div>
@@ -50,18 +51,23 @@
 			<div class="sidebar-popout-content">
 
 				<!-- Section for layers that load automatically/not part of an active workflow  -->
-				<div  *ngIf="overlayLayers.length">
+				<div  *ngIf="overlayLayers.length" class="map-layers-group">
 					<h4>Application Layers</h4>
 					<div *ngFor="let overlay of overlayLayers">
-						<div>
-							<input #overlayCheckbox type="checkbox" id="{{overlay.name}}" (change)="setOverlayLayer(overlay.name)" [checked]="overlay.visible" 
-							[disabled]="overlay.layerOptions.minZoom > currentZoom">&nbsp;
-							<label for="{{overlay.name}}">{{overlay.name}}</label>	
+
+						<div class="usa-checkbox">
+							<input
+							  class="usa-checkbox__input"
+							  #overlayCheckbox type="checkbox" id="{{overlay.name}}" (change)="setOverlayLayer(overlay.name)" [checked]="overlay.visible" 
+							[disabled]="overlay.layerOptions.minZoom > currentZoom"
+							/>
+							<label class="usa-checkbox__label" for="{{overlay.name}}">{{overlay.name}}</label>
 						</div>
+						
 					</div>
 				</div>
 				<!-- Section for layers that part of the active workflow  -->
-				<div *ngIf="workflowLayers.length">
+				<div *ngIf="workflowLayers.length" class="map-layers-group">
 					<h4>Active Workflow Layers</h4>
 					<div *ngFor="let layer of workflowLayers">
 						<input type="checkbox" id="{{layer.name}}" (change)="updateActiveLayer(layer.name)" [checked]="layer.visible"
@@ -123,7 +129,7 @@
 	</div>
 
 	<!-- Spacer - stretches to fill gap -->
-	<div class="sidebar-spacer"></div>
+	<div class="sidebar-spacer">&nbsp;</div>
 
 	<!-- Report Builder -->
 	<div class="sidebar-group">
@@ -165,3 +171,6 @@
 		</div>
 	</div>
 </div>
+
+
+

@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { MapService } from './shared/services/map.service';
 
+// Import USWDS
+import USWDS from "../../node_modules/uswds/src/js/components";
+const { modal } = USWDS;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,8 +13,18 @@ import { MapService } from './shared/services/map.service';
 export class AppComponent{
   title = 'StreamStats-National';
 
-  constructor(public mapService: MapService) {}
+	constructor(public mapService: MapService) {
 
-  ngOnInit() {
+	}
+
+  	ngOnInit() {
+
+		// initialize USWDS components
+		modal.on(true);
+	}
+
+  // remove event listeners when component un-mounts.
+  ngOnDestroy() {
+	modal.off();
   }
 }
