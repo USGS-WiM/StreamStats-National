@@ -69,6 +69,7 @@ export class WorkflowComponent implements OnInit {
     this.stepsArray.clear();
     this.stepsArray.push(primaryStep);
     this.stepsCompleted = 0; // reset steps completed counter
+    this.finalStep = false; // reset final step boolean
 
     //Add nested steps depending on prior step selection
     this.workflow.steps.forEach(step => {
