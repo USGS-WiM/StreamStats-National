@@ -5,6 +5,26 @@
 <div *ngFor="let data of workflowData; let i = index"> 
     <p>{{data.title}}</p>
     <div id="{{ 'reportMap' + i }}" class="reportMap"></div>
+    <div *ngFor="let output of data.outputs | keyvalue">
+        <li *ngIf="output.key=='typeOfDelineation'">{{output.value}}</li>
+        <li *ngIf="output.key=='Lat/Lng'">Lat/Long: {{output.value}}</li>
+        <li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
+            <div *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
+                <b>{{perimeter.Key}}:</b>
+                <div *ngFor="let feat of perimeter.Data.features; let k = index">
+                    Feature {{k+1}}
+                    <span *ngFor="let prop of feat.properties | keyvalue">
+                        <ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+                            {{prop.key}}: {{prop.value}}
+                        </ul>
+                    </span> 
+                </div>
+            </div>
+
+        </li>
+
+    </div>
+
     <!-- <div *ngFor="let step of data.steps">
         <ul>
             <li>{{step.label}}

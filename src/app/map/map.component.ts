@@ -41,6 +41,7 @@ export class MapComponent implements OnInit {
   public workflowData: any;
   public count: number = 0;
   public firePerimeterLayer;
+  public selectedPerimeters = [];
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
      HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
@@ -346,6 +347,7 @@ export class MapComponent implements OnInit {
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this._loaderService.showFullPageLoad();
     this.count = 0;
+    this.selectedPerimeters = [];
     this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
@@ -366,7 +368,6 @@ export class MapComponent implements OnInit {
 
   public async findFeatures(error,results,layerName) {
     let popupcontent;
-    let selectedPerimeters = [];
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
     if (error) {
       this.createMessage('Error occurred.','error');
@@ -398,11 +399,11 @@ export class MapComponent implements OnInit {
         this.firePerimeterLayer.addTo(this._mapService.map);
         this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
       });
-      selectedPerimeters.push({ 'Key': layerName, 'Data': results})
+      this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
       const data = await this._mapService.trace(results).toPromise();
       this.addTraceLayer(data);
     }
-    this._mapService.setSelectedPerimeters(selectedPerimeters);
+    this._mapService.setSelectedPerimeters(this.selectedPerimeters);
     this.count ++;
     this.checkCount(this.count, 3);
   }

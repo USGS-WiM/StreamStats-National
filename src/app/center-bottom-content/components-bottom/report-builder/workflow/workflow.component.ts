@@ -37,6 +37,7 @@ export class WorkflowComponent implements OnInit {
     //Get click point
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
+      this.clickedPoint= this.clickedPoint.lat.toFixed(5).toString() +', '+ this.clickedPoint.lng.toFixed(5).toString()
     });
     //Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeters) => {
@@ -106,13 +107,13 @@ export class WorkflowComponent implements OnInit {
   public subscription(i) {
     switch (this.workflowForm.value.title) {
       case "Delineation":
-        this.workflowForm.value.outputs = {'lat/long': this.clickedPoint, 'layers': [this.splitCatchmentLayer]};      
+        this.workflowForm.value.outputs = {'Lat/Lng': this.clickedPoint, 'typeOfDelineation': 'NLDI Delineation','layers': [this.splitCatchmentLayer]};      
         break;
       case "Fire Hydrology - Query Basin":
-        this.workflowForm.value.outputs = {'lat/long': this.clickedPoint};        
+        this.workflowForm.value.outputs = {'Lat/Lng': this.clickedPoint};        
         break;
       case "Fire Hydrology - Query Fire Perimeters":
-        this.workflowForm.value.outputs = {'lat/long': this.clickedPoint, 'selectedPerimeters': this.selectedPerimeters, 'layers':this.firePerimetersLayers};      
+        this.workflowForm.value.outputs = {'Lat/Lng': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers':this.firePerimetersLayers};      
         break;
     }
   }
