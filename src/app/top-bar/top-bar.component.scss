@@ -18,8 +18,9 @@
 	max-width: none;
 
 	// Set padding on sides to match width of left/right sidebars
-	padding-left: 60px;
-	padding-right: 60px;
+	padding-left: 15px;
+	padding-right: 0px;
+	border-bottom: 1px solid var(--border);
 }
 
 .usa-navbar{
