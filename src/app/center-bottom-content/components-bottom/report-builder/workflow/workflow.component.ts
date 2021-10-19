@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import * as L from 'leaflet';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
@@ -21,7 +22,8 @@ export class WorkflowComponent implements OnInit {
   public finalStep: boolean = false;
   public clickedPoint;
   public selectedPerimeters;
-
+  public splitCatchmentLayer;
+  public firePerimetersLayers;
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
       title: [],
@@ -32,14 +34,25 @@ export class WorkflowComponent implements OnInit {
 
   ngOnInit(): void {
     this.setSteps();
-
+    //Get click point
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
-    })
-
+    });
+    //Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeters) => {
       this.selectedPerimeters = perimeters;
-    })
+    });
+    //Get selected fire perimeters
+    this._mapService.firePerimetersLayers.subscribe((layers) => {
+      this.firePerimetersLayers = layers;
+    });
+    //Get delineation
+    this._mapService.delineationPolygon.subscribe((poly: any) => {
+      var basin = poly.outputs;
+      if (basin) {  
+        this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
+      }
+    });
   }
 
   public setTitle() {
@@ -93,16 +106,13 @@ export class WorkflowComponent implements OnInit {
   public subscription(i) {
     switch (this.workflowForm.value.title) {
       case "Delineation":
-        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
-        this.workflowForm.value.steps[i].polygon = 'polygon';   
+        this.workflowForm.value.outputs = {'lat/long': this.clickedPoint, 'layers': [this.splitCatchmentLayer]};      
         break;
       case "Fire Hydrology - Query Basin":
-        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-        this.workflowForm.value.steps[i].polygon = 'polygon';   
+        this.workflowForm.value.outputs = {'lat/long': this.clickedPoint};        
         break;
       case "Fire Hydrology - Query Fire Perimeters":
-        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-        this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;   
+        this.workflowForm.value.outputs = {'lat/long': this.clickedPoint, 'selectedPerimeters': this.selectedPerimeters, 'layers':this.firePerimetersLayers};      
         break;
     }
   }

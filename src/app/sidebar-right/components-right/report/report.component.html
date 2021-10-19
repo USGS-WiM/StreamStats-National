@@ -2,26 +2,24 @@
 
 <h4>Completed workflows:</h4>
 
-<div *ngFor="let data of workflowData"> 
+<div *ngFor="let data of workflowData; let i = index"> 
     <p>{{data.title}}</p>
-    <div id="reportMap" class="reportMap"></div>
-    <div *ngFor="let step of data.steps">
+    <div id="{{ 'reportMap' + i }}" class="reportMap"></div>
+    <!-- <div *ngFor="let step of data.steps">
         <ul>
             <li>{{step.label}}
                 <ul *ngFor="let option of step.options">
                     <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
-                    <!-- Delineation -->
                     <div *ngIf="step.label == 'Select Delineation Point'">
                         <li>({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
                         <li>{{step.polygon}}</li>
                     </div>
-                    <!-- Query Fire Perimeter -->
                     <div *ngIf="step.label == 'Select a Fire Perimeter'">
                         <li>Point Clicked: ({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
                         <li>Fire perimeters selected: 
                             <div *ngFor="let perimeter of step.selectedPerimeters">
                                 <b>{{perimeter.Key}}:</b>
-                                <div *ngFor="let feat of perimeter.Data.features; let k = index">
+                                <div *ngFor="let feat of perimeter.Data.features">
                                     Feature {{k+1}}
                                     <div *ngFor="let prop of feat.properties | keyvalue">
                                         <ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
@@ -35,5 +33,5 @@
                 </ul>
             </li>
         </ul>
-    </div>
+    </div> -->
 </div>

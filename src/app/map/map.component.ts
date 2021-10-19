@@ -40,6 +40,8 @@ export class MapComponent implements OnInit {
   public streamgageLayerStatus: boolean;
   public workflowData: any;
   public count: number = 0;
+  public firePerimeterLayer;
+
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
      HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
     this.configSettings = this._configService.getConfiguration();
@@ -365,7 +367,6 @@ export class MapComponent implements OnInit {
   public async findFeatures(error,results,layerName) {
     let popupcontent;
     let selectedPerimeters = [];
-    let layer;
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
     if (error) {
       this.createMessage('Error occurred.','error');
@@ -389,13 +390,13 @@ export class MapComponent implements OnInit {
         });
         popupcontent += '<br>';
         if (layerName === 'MTBS Fire Boundaries') {
-          layer = L.geoJSON(feat.geometry);
+          this.firePerimeterLayer = L.geoJSON(feat.geometry);
         } else if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
           const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
-          layer = L.geoJSON(feat.geometry, {style: {color: col}});
+          this.firePerimeterLayer = L.geoJSON(feat.geometry, {style: {color: col}});
         }
-        layer.addTo(this._mapService.map);
-        this.addBurnPoint(layer.getBounds().getCenter(), popupcontent);
+        this.firePerimeterLayer.addTo(this._mapService.map);
+        this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
       });
       selectedPerimeters.push({ 'Key': layerName, 'Data': results})
       const data = await this._mapService.trace(results).toPromise();
@@ -408,6 +409,7 @@ export class MapComponent implements OnInit {
 
   public addTraceLayer(data) {
     this.traceLayer = L.geoJSON(data);
+    this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
     this.traceLayer.addTo(this._mapService.map);
     this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
     this._loaderService.hideFullPageLoad();
