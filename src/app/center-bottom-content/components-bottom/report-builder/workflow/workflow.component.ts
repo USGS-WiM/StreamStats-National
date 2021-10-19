@@ -61,16 +61,25 @@ export class WorkflowComponent implements OnInit {
     this.numberOfSteps = this.stepsArray.value.length;
   }
 
-  public addSteps(optionSelection: string) {
+  public addSteps(optionSelection: string, step: any) {
+    // If prior selection was made on a nested step workflow, 
+    // keep only that step then overwrite the other steps.
+    let stepIndex = this.stepsArray.value.indexOf(step);
+    const primaryStep = this.stepsArray.at(stepIndex);
+    this.stepsArray.clear();
+    this.stepsArray.push(primaryStep);
+    this.stepsCompleted = 0; // reset steps completed counter
+
+    //Add nested steps depending on prior step selection
     this.workflow.steps.forEach(step => {
       step.options?.forEach(opt => {
         if (opt.text === optionSelection) {
-          opt.nestedSteps.forEach(ss => {
+          opt.nestedSteps.forEach(s => {
             this.stepsArray.push(this._fb.group({
-              label: ss.label,
-              name: ss.name,
-              type: ss.type,
-              options: this.setOptions(ss)
+              label: s.label,
+              name: s.name,
+              type: s.type,
+              options: this.setOptions(s)
             }))
           })
         }
@@ -156,7 +165,7 @@ export class WorkflowComponent implements OnInit {
         // TODO: Update this once delineation has more routes/branches/paths to take with in the workflow
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
         if (step.name === "selectFireHydroProcess") {
-          this.addSteps(opt.text)
+          this.addSteps(opt.text, step)
         }
       } else {
         opt.selected = false;
