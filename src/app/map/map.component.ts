@@ -203,7 +203,7 @@ export class MapComponent implements OnInit {
             // console.log(this.workflowData.steps[1].options[1].text);
             let startyear = this.workflowData.steps[1].options[0].text;
             let endyear = this.workflowData.steps[1].options[1].text;
-            this.queryNIFC(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
+            this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
             this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
             
             // this._loaderService.hideFullPageLoad();
@@ -387,6 +387,8 @@ export class MapComponent implements OnInit {
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+      } else {
+        this.createMessage("Error. Basin cannot be delineated.");
       }
       this._loaderService.hideFullPageLoad();
     });
@@ -395,11 +397,11 @@ export class MapComponent implements OnInit {
   public onMouseClickFireHydroQueryBasin() { 
     // console.log(startyear);
     // console.log(endyear);
-    this._loaderService.showFullPageLoad();
-    this.createMessage("Delineating basin. Please wait.");
     this.removeLayer(this.splitCatchmentLayer);
     this.addPoint(this.clickPoint);
     this.marker.openPopup();
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Delineating basin. Please wait.");
     this._mapService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
     this._mapService.delineationPolygon.subscribe((poly: any) => {
       this.basin = poly.outputs;
@@ -412,13 +414,12 @@ export class MapComponent implements OnInit {
         console.log((area(this.basin.features[1]) / 1000000).toPrecision(3) + " sq mi");
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
-        // this.queryNIFC(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
-        this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
-        this._loaderService.hideFullPageLoad();
+        // this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
+        // this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
       } else {
-        this._loaderService.hideFullPageLoad();
+        this.createMessage("Error. Basin cannot be delineated.");
       }
-      
+      this._loaderService.hideFullPageLoad();
     });
   }
 
@@ -520,17 +521,17 @@ export class MapComponent implements OnInit {
         context._loaderService.hideFullPageLoad();
       }
     });
-      
   }
 
-  public queryNIFC(basin, basinArea, startYear, endYear) {
-    // this._loaderService.showFullPageLoad();
+  public queryBurnedArea(basin, basinArea, startYear, endYear) {
+    this._loaderService.showFullPageLoad();
     this.createMessage("Calculating Burned Area. Please wait.");
     let count = 0;
     let fireUnion;
     let intArea = 0;
+
+    
     Object.keys(this.workflowLayers).forEach(workflowLayer => {
-      // console.log(workflowLayer);
       let queryString;
       if (workflowLayer == "Archived WildFire Perimeters" || workflowLayer == "Active WildFire Perimeters") {
         if (workflowLayer == "Archived WildFire Perimeters") {
@@ -546,15 +547,11 @@ export class MapComponent implements OnInit {
           }
           queryString = '1=1';
         }
-        // console.log(queryString);
-        // console.log(this.workflowLayers[workflowLayer].query());
         this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
           .run((error: any, results: any) => {
             if (error) {
-                // this.messanger.clear();
-                // this.sm('Error occurred, check console', 'Error');
-                console.log("error");
-            }
+                console.log("Error calculating burned area.");
+            } 
   
             if (results && results.features.length > 0) {
             // unionize response
@@ -572,6 +569,7 @@ export class MapComponent implements OnInit {
                       fireUnion = union(fireUnion, nextFeature);
                   }
               }
+              this._loaderService.hideFullPageLoad();
             }
             count ++;
             if (count === 2) {
@@ -598,11 +596,12 @@ export class MapComponent implements OnInit {
                 // popup.setContent(popupContent);
                 // popup.update();
                 // this.marker.openPopup(); 
+                
+                
             }
         });
       }
     });
-    // this._loaderService.hideFullPageLoad();
   }
 
   public onMouseClickFireHydroQueryFirePerimeter() { 
