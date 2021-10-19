@@ -221,7 +221,13 @@ export class MapComponent implements OnInit {
     this.configSettings.workflowLayers.forEach(ml => {
       try {
         let options;
+        let url;
         switch (ml.type) {
+          case "WMS":
+            options = ml.layerOptions;
+            url = ml.url;
+            this.workflowLayers[ml.name] = L.tileLayer.wms(url, options);
+            break;
           case "agsDynamic":
             options = ml.layerOptions;
             options.url = ml.url;
@@ -257,7 +263,7 @@ export class MapComponent implements OnInit {
       this._mapService.map.removeLayer(this.streamgageLayer);
       this.configSettings.overlays.forEach((overlay: any) => {
         if (overlay.name === "Streamgages") {
-            overlay.visible = false;
+          overlay.visible = false;
         }
       });
     }
