@@ -1,5 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { ToastrModule } from 'ngx-toastr';
 import { MapService } from './map.service';
 
 describe('MapService', () => {
@@ -11,7 +12,8 @@ describe('MapService', () => {
         MapService
       ],
       imports: [
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        ToastrModule.forRoot()
       ]
     });
     service = TestBed.inject(MapService);
