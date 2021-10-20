@@ -24,6 +24,8 @@ export class WorkflowComponent implements OnInit {
   public selectedPerimeters;
   public splitCatchmentLayer;
   public firePerimetersLayers;
+  public output:any = {};
+
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
       title: [],
@@ -58,7 +60,7 @@ export class WorkflowComponent implements OnInit {
   public setTitle() {
     this.workflowForm.patchValue({
       title: this.workflow.title
-    })
+    });
   }
 
   public setSteps() {
@@ -69,7 +71,7 @@ export class WorkflowComponent implements OnInit {
         name: step.name,
         type: step.type,
         options: this.setOptions(step)
-      }))
+      }));
     })
     this.numberOfSteps = this.stepsArray.value.length;
   }
@@ -98,36 +100,34 @@ export class WorkflowComponent implements OnInit {
   }
 
   public fillOutputs() {
-    var output:any = {};
+    this.output = {};
     switch (this.workflowForm.value.title) {
       case "Example Workflow":
-        this.workflowForm.value.steps.forEach(step => {
-          step.options.forEach(option => {
-            if (option.selected === true || option.selected === null) {
-              output[step.name] = option.text
-            }
-          })
-        });
+        this.getOutputs();
         break;
       case "Delineation":
-        this.workflowForm.value.steps.forEach(step => {
-          step.options.forEach(option => {
-            if (option.selected === true || option.selected === null) {
-              output[step.name] = option.text
-            }
-          })
-        });
-        output.clickPoint = this.clickedPoint;
-        output.layers = [this.splitCatchmentLayer];
+        this.getOutputs();
+        this.output.clickPoint = this.clickedPoint;
+        this.output.layers = [this.splitCatchmentLayer];
         break;
       case "Fire Hydrology - Query Basin":
-        output = {'clickPoint': this.clickedPoint}
+        this.output = {'clickPoint': this.clickedPoint};
         break;
       case "Fire Hydrology - Query Fire Perimeters":
-        output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers':this.firePerimetersLayers}
+        this.output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers':this.firePerimetersLayers};
         break;
     }
-    this.workflowForm.value.outputs = output; 
+    this.workflowForm.value.outputs = this.output; 
+  }
+
+  public getOutputs(){
+    this.workflowForm.value.steps.forEach(step => {
+      step.options.forEach(option => {
+        if (option.selected === true || option.selected === null) {
+          this.output[step.name] = option.text;
+        }
+      });
+    });
   }
 
   public nextStep(step) {
