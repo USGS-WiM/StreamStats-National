@@ -64,25 +64,9 @@ describe('WorkflowComponent', () => {
     expect(component.workflowForm.value).toBeTruthy();
   });
 
-  it('#subscription should allow for clickedPoint', () => {
-    const form = component.workflowForm;
-    const title = form.controls.title;
-    title.setValue("Delineation");
-    const i = 0;
-    component.subscription(i);
-    expect(form.value.title).toEqual("Delineation")
-  });
-
   it('#nextStep should count completed steps and determine step type', () => {
     const step = 0;
-    const valueOne = "radio";
-    const valueTwo = "subscription";
-    const valueThree = "text";
-    component.nextStep(step, valueOne);
-    expect(step).toBe(0);
-    component.nextStep(step, valueTwo);
-    expect(step).toBe(0);
-    component.nextStep(step, valueThree);
+    component.nextStep(step);
     expect(step).toBe(0);
   });
 

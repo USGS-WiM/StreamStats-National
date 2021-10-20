@@ -37,7 +37,6 @@ export class WorkflowComponent implements OnInit {
     //Get click point
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
-      this.clickedPoint= this.clickedPoint.lat.toFixed(5).toString() +', '+ this.clickedPoint.lng.toFixed(5).toString()
     });
     //Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeters) => {
@@ -98,39 +97,46 @@ export class WorkflowComponent implements OnInit {
     this.onFormCompletion.emit(formValue);
   }
 
-  public radio(i) {
-  }
-
-  public text(i) {
-  }
-
-  public subscription(i) {
+  public fillOutputs() {
+    var output:any = {};
     switch (this.workflowForm.value.title) {
+      case "Example Workflow":
+        this.workflowForm.value.steps.forEach(step => {
+          step.options.forEach(option => {
+            if (option.selected === true || option.selected === null) {
+              output[step.name] = option.text
+            }
+          })
+        });
+        break;
       case "Delineation":
-        this.workflowForm.value.outputs = {'Lat/Lng': this.clickedPoint, 'typeOfDelineation': 'NLDI Delineation','layers': [this.splitCatchmentLayer]};      
+        this.workflowForm.value.steps.forEach(step => {
+          step.options.forEach(option => {
+            if (option.selected === true || option.selected === null) {
+              output[step.name] = option.text
+            }
+          })
+        });
+        output.clickPoint = this.clickedPoint;
+        output.layers = [this.splitCatchmentLayer];
         break;
       case "Fire Hydrology - Query Basin":
-        this.workflowForm.value.outputs = {'Lat/Lng': this.clickedPoint};        
+        output = {'clickPoint': this.clickedPoint}
         break;
       case "Fire Hydrology - Query Fire Perimeters":
-        this.workflowForm.value.outputs = {'Lat/Lng': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers':this.firePerimetersLayers};      
+        output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers':this.firePerimetersLayers}
         break;
     }
+    this.workflowForm.value.outputs = output; 
   }
 
-  public nextStep(step, value) {
+  public nextStep(step) {
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
+      this.fillOutputs();
     } 
-    if (value == "radio") {
-      this.radio(step);
-    } else if (value == "subscription") {
-      this.subscription(step);
-    } else if (value == "text") {
-      this.text(step);
-    }
   }
 
   public finishedWorkflow(formValue: any) {
