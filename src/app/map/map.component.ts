@@ -203,8 +203,8 @@ export class MapComponent implements OnInit {
             // console.log(this.workflowData.steps[1].options[1].text);
             let startyear = this.workflowData.steps[1].options[0].text;
             let endyear = this.workflowData.steps[1].options[1].text;
-            this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
-            this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
+            // this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
+            // this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
             
             // this._loaderService.hideFullPageLoad();
           }
@@ -414,6 +414,7 @@ export class MapComponent implements OnInit {
         console.log((area(this.basin.features[1]) / 1000000).toPrecision(3) + " sq mi");
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+        this.queryLambdaService(this.clickPoint.lat, this.clickPoint.lng);
         // this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
         // this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
       } else {
@@ -422,6 +423,23 @@ export class MapComponent implements OnInit {
       this._loaderService.hideFullPageLoad();
     });
   }
+
+  auth = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': "*"
+  });
+
+  async queryLambdaService(lat, lng) {
+    const parameters = ["i2y30","jantmin","jantmax"]; //lc16forest
+    parameters.forEach(parameter => {
+      const url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + lat + "&longitude=" + lng + "&fcpg_parameter=" + parameter;
+      this._http.post(url, {headers: this.authHeader}).subscribe(res => {
+        console.log(res);
+      }, error => {
+          console.log(error);
+      })
+    });
+  };
 
   // private getInputGeometryString(basin) {
   //   // console.log(basin.coordinates);
