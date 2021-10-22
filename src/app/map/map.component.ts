@@ -424,11 +424,6 @@ export class MapComponent implements OnInit {
     });
   }
 
-  auth = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': "*"
-  });
-
   async queryLambdaService(lat, lng) {
     const parameters = ["i2y30","jantmin","jantmax"]; //lc16forest
     parameters.forEach(parameter => {
