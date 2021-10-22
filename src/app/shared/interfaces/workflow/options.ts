@@ -1,4 +1,7 @@
+import { NestedSteps } from "./nestedsteps";
+
 export interface Options {
     text: string;
-    selected: boolean
+    selected: boolean;
+    nestedSteps?: Array<NestedSteps>;
 }

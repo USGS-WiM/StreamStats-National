@@ -61,6 +61,34 @@ export class WorkflowComponent implements OnInit {
     this.numberOfSteps = this.stepsArray.value.length;
   }
 
+  public addSteps(optionSelection: string, step: any) {
+    // If prior selection was made on a nested step workflow, 
+    // keep only that step then overwrite the other steps.
+    let stepIndex = this.stepsArray.value.indexOf(step);
+    const primaryStep = this.stepsArray.at(stepIndex);
+    this.stepsArray.clear();
+    this.stepsArray.push(primaryStep);
+    this.stepsCompleted = 0; // reset steps completed counter
+    this.finalStep = false; // reset final step boolean
+
+    //Add nested steps depending on prior step selection
+    this.workflow.steps.forEach(step => {
+      step.options?.forEach(opt => {
+        if (opt.text === optionSelection) {
+          opt.nestedSteps.forEach(s => {
+            this.stepsArray.push(this._fb.group({
+              label: s.label,
+              name: s.name,
+              type: s.type,
+              options: this.setOptions(s)
+            }))
+          })
+        }
+      })
+    })
+    this.numberOfSteps = this.stepsArray.value.length;
+  }
+
   public getSteps(form: any) {
     return form.controls.steps.controls;
   }
@@ -96,13 +124,15 @@ export class WorkflowComponent implements OnInit {
         this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
         this.workflowForm.value.steps[i].polygon = 'polygon';   
         break;
-      case "Fire Hydrology - Query Basin":
-        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-        this.workflowForm.value.steps[i].polygon = 'polygon';   
-        break;
-      case "Fire Hydrology - Query Fire Perimeters":
-        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-        this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;   
+      case "Fire Hydrology":
+        if (this.workflowForm.value.steps[i].name === "selectFireHydroBasin") {
+          this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
+          this.workflowForm.value.steps[i].polygon = 'polygon'; 
+        }
+        if (this.workflowForm.value.steps[i].name === "selectFireHydroPerimeter") {
+          this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
+          this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;  
+        }
         break;
     }
   }
@@ -132,6 +162,12 @@ export class WorkflowComponent implements OnInit {
     step.options.forEach( opt => {
       if (opt.text == option.text) {
         option.selected = true;
+
+        // TODO: Update this once delineation has more routes/branches/paths to take with in the workflow
+        // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
+        if (step.name === "selectFireHydroProcess") {
+          this.addSteps(opt.text, step)
+        }
       } else {
         opt.selected = false;
       }
