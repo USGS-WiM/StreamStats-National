@@ -204,12 +204,8 @@ export class MapComponent implements OnInit {
               let burnEndYear = this.workflowData.steps[2].options[1].text;
               // let burnedArea = this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
               // console.log(burnedArea);
-              // this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
-              // this.queryLambdaService(this.clickPoint.lat, this.clickPoint.lng, (area(this.basin.features[1]) / 1000000), burnedArea);
-
-              //
               this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
-              this.calculateStreamflowEstimates();
+              this.calculateStreamflowEstimates(); //unfinished
               
             // }
             
@@ -452,6 +448,7 @@ export class MapComponent implements OnInit {
     });
     console.log(parameter_dictionary);
 
+    /// The code in this function below this line should go into the calculateStreamflowEstimates function
     let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
     this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
       console.log(response);
