@@ -551,40 +551,40 @@ export class MapComponent implements OnInit {
         // console.log(console);
         let number_of_queries = Math.ceil(geology_ids.length / 200);
         console.log(geology_ids);
-        // for (let i=0; i<number_of_queries;i++) {
-        //   let geology_ids_shortlist = geology_ids.slice(i*200,200);
-        //   console.log(geology_ids_shortlist);
+        for (let i=0; i<number_of_queries;i++) {
+          let geology_ids_shortlist = geology_ids.slice(i*200,200);
+          console.log(geology_ids_shortlist);
 
-        //   context.workflowLayers["GeologyFeatures"].query().featureIds(geology_ids_shortlist).returnGeometry(true)
-        //     .run((error: any, results: any) => {
-        //       if (error) {
-        //         context.createMessage("Error. Geology cannot be analyzed.");
-        //         context._loaderService.hideFullPageLoad();
-        //       } else if (results && results.features.length > 0) {
-        //         console.log(results);
-        //         let geologyUnion = results.features[0];
-        //         for (let i = 0; i < results.features.length; i++) {
-        //             let nextFeature = results.features[i];
-        //             if (nextFeature) {
-        //               // geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-        //               // console.log(geologyUnion);
-        //               let intersectPolygons = intersect(results.features[i], basin);
-        //               let intersectArea = area(intersectPolygons) / 1000000;
-        //               console.log(intersectArea);
-        //               if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-        //                 geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-        //               } else {
-        //                 geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-        //               }
-        //               if (i==number_of_queries-1) {
-        //                 console.log("Geology results:")
-        //                 console.log(geology_dictionary);
-        //               }
-        //             }
-        //         }
-        //       }
-        //     });
-        // }
+          context.workflowLayers["GeologyFeatures"].query().featureIds(geology_ids_shortlist).returnGeometry(true)
+            .run((error: any, results: any) => {
+              if (error) {
+                context.createMessage("Error. Geology cannot be analyzed.");
+                context._loaderService.hideFullPageLoad();
+              } else if (results && results.features.length > 0) {
+                console.log(results);
+                let geologyUnion = results.features[0];
+                for (let i = 0; i < results.features.length; i++) {
+                    let nextFeature = results.features[i];
+                    if (nextFeature) {
+                      // geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+                      // console.log(geologyUnion);
+                      let intersectPolygons = intersect(results.features[i], basin);
+                      let intersectArea = area(intersectPolygons) / 1000000;
+                      console.log(intersectArea);
+                      if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+                      } else {
+                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                      }
+                      if (i==number_of_queries-1) {
+                        console.log("Geology results:")
+                        console.log(geology_dictionary);
+                      }
+                    }
+                }
+              }
+            });
+        }
 
         
         Object.keys(geology_dictionary).forEach(function(key) {
