@@ -465,7 +465,7 @@ export class MapComponent implements OnInit {
               parameter["value"] = basinarea; 
               break;
             case "I_30_M":
-              parameter["value"] = parameter_dictionary["i2y30"];
+              parameter["value"] = parameter_dictionary["i2y30"] / 1000;
               break;
             case "BRNAREA":
               parameter["value"] = 0.0; // this should be the burned area from queryBurnedArea. Doesn't matter for now though because this is only use for Level 2 or 3 equations.
