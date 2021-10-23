@@ -429,8 +429,6 @@ export class MapComponent implements OnInit {
         console.log((area(this.basin.features[1]) / 1000000).toPrecision(3) + " sq mi");
         this.splitCatchmentLayer.addTo(this._mapService.map);
         this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
-        // this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
-        // this.queryGeology(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000));
       } else {
         this.createMessage("Error. Basin cannot be delineated.");
       }
@@ -438,12 +436,12 @@ export class MapComponent implements OnInit {
     });
   }
 
-  async queryLambdaService(lat, lng, basinarea, burnarea) {
-    let post_this;
+  public queryPrecomputedBasinCharacteristics(lat, lng, basinarea) {
+    let post;
     console.log("Basin characteristics:");
     let parameter_dictionary = {};
     const parameters = ["i2y30","jantmin","jantmax","forests"]; 
-    await parameters.forEach(parameter => {
+    parameters.forEach( parameter => {
       const url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + lat + "&longitude=" + lng + "&fcpg_parameter=" + parameter;
       this._http.post(url, {headers: this.authHeader}).subscribe(result => {
         console.log(parameter + ": " + result["results"][parameter]);
@@ -453,43 +451,41 @@ export class MapComponent implements OnInit {
       })
     });
     console.log(parameter_dictionary);
-    return parameter_dictionary;
 
-    // let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
-    // await this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
-    //   console.log(response);
-    //   post_this = response;
-    //   let regressionRegions = post_this[0]["regressionRegions"];
-    //   regressionRegions.forEach(regressionRegion => {
-    //     let parameters = regressionRegion["parameters"];
-    //     parameters.forEach(parameter => {
-    //       // console.log(parameter["code"]);
-    //       switch (parameter["code"]) {
-    //         case "DRNAREA":
-    //           parameter["value"] = 1.0;
-    //           break;
-    //         case "I_30_M":
-    //           parameter["value"] = 2.0;
-    //           break;
-    //         case "BRNAREA":
-    //           parameter["value"] = 3.0
-    //           break;
-    //         default:
-    //           parameter["value"] = 0.0;
-    //       }
-    //     });
-    //   });
-    //   console.log(regressionRegions);
-    // }, error => {
-    //     console.log(error);
-    // });
+    let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
+    this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
+      console.log(response);
+      post = response;
+      let regressionRegions = post[0]["regressionRegions"];
+      regressionRegions.forEach(regressionRegion => {
+        let parameters = regressionRegion["parameters"];
+        parameters.forEach(parameter => {
+          switch (parameter["code"]) {
+            case "DRNAREA":
+              parameter["value"] = basinarea; 
+              break;
+            case "I_30_M":
+              parameter["value"] = parameter_dictionary["i2y30"];
+              break;
+            case "BRNAREA":
+              parameter["value"] = 0.0; // this should be the burned area from queryBurnedArea. Doesn't matter for now though because this is only use for Level 2 or 3 equations.
+              break;
+            default:
+              parameter["value"] = 0.0;
+          }
+        });
+      });
+      console.log(regressionRegions);
+    }, error => {
+        console.log(error);
+    });
 
-    // let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
-    // await this._http.post(url3, post_this, {headers: this.authHeader}).subscribe(response => {
-    //   console.log(response);
-    // }, error => {
-    //     console.log(error);
-    // });
+    let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
+    this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
+      console.log(response);
+    }, error => {
+        console.log(error);
+    });
 
   };
 
@@ -523,7 +519,7 @@ export class MapComponent implements OnInit {
   //   // '%7B"rings":%5B%5B%5B%5B%5B-78.698945,35.794525%5D,%5B-78.699168,35.795294%5D,%5B-78.697522,35.797565%5D,%5B-78.69396,35.798232%5D,%5B-78.692534,35.800051%5D,%5B-78.69033,35.799788%5D,%5B-78.688686,35.797636%5D,%5B-78.688122,35.795078%5D,%5B-78.68604,35.793312%5D,%5B-78.687609,35.788147%5D,%5B-78.690703,35.788958%5D,%5B-78.693547,35.788423%5D,%5B-78.69352,35.792311%5D,%5B-78.696379,35.794101%5D,%5B-78.697763,35.793793%5D,%5B-78.698945,35.794525%5D%5D%5D%5D%5D,"spatialReference":%7B"wkid":4326%7D%7D';
   // }
 
-  public  queryGeology(basin, basinArea) {
+  public queryGeology(basin, basinArea) {
     this._loaderService.showFullPageLoad();
     // console.log(basin.coordinates);
     // console.log({"rings":[
@@ -601,10 +597,11 @@ export class MapComponent implements OnInit {
   }
 
   public async getBasinCharacteristics(basin, basinArea, startYear, endYear) {
-    this.queryBurnedArea(basin, basinArea, startYear, endYear); // Prints the burned area to console
-    this.queryGeology(this.basin.features[1].geometry, basinArea);
-    //queryPrecomputedBasinCharacteristics
+    this.queryBurnedArea(basin, basinArea, startYear, endYear); 
+    this.queryGeology(this.basin.features[1].geometry, basinArea); 
+    this.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng, basinArea);
   }
+
 
 
   public calculateStreamflowEstimates() {
