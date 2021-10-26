@@ -21,20 +21,23 @@ export class ReportComponent implements OnInit {
       this.workflowData = data;
     });
   }
-  ngAfterViewInit(){
+
+  ngAfterViewChecked() {
     var configSettings = this._configService.getConfiguration();
     for (var i = 0; i < this.workflowData.length; ++i) {
       if (this.workflowData[i].outputs.layers) {
-      this.reportMaps[i] = L.map('reportMap' + i).setView([41.1, -98.7], 8);
-      L.tileLayer(configSettings.baseLayers[0].url,{ maxZoom: configSettings.baseLayers[0].maxZoom }).addTo(this.reportMaps[i]);
-        this.workflowData[i].outputs.layers.forEach(layer => {
-          layer.addTo(this.reportMaps[i]);
-          this.reportMaps[i].fitBounds(layer.getBounds(), { padding: [75,75] });
-          if (this.workflowData[i].outputs.clickPoint) {
-            this.marker = L.marker(this.workflowData[i].outputs.clickPoint);
-            this.reportMaps[i].addLayer(this.marker);
-          }
-        });
+        if (this.reportMaps[i] == undefined || this.reportMaps[i] == null) {
+          this.reportMaps[i] = L.map('reportMap' + i).setView([41.1, -98.7], 8);
+          L.tileLayer(configSettings.baseLayers[0].url,{ maxZoom: configSettings.baseLayers[0].maxZoom }).addTo(this.reportMaps[i]);
+          this.workflowData[i].outputs.layers.forEach(layer => {
+            layer.addTo(this.reportMaps[i]);
+            this.reportMaps[i].fitBounds(layer.getBounds(), { padding: [75,75] });
+            if (this.workflowData[i].outputs.clickPoint) {
+              this.marker = L.marker(this.workflowData[i].outputs.clickPoint);
+              this.reportMaps[i].addLayer(this.marker);
+            }
+          });
+        }
       }
     }
   }
