@@ -38,8 +38,10 @@ export class WorkflowComponent implements OnInit {
   ngOnInit(): void {
 
     if (this.formData === null) {
+      //Set steps if there is no prior form data
       this.setSteps();
     } else {
+      //Set step and set values of prior form data
       this.populateForm();
     }
 
@@ -85,20 +87,7 @@ export class WorkflowComponent implements OnInit {
     this.numberOfSteps = this.stepsArray.value.length;
   }
 
-  public addSteps(optionSelection: string, step: any) {
-    //console.log(optionSelection)
-
-    //this.resetStepsArray(step);
-
-    // // If prior selection was made on a nested step workflow, 
-    // // keep only that step then overwrite the other steps.
-    // let stepIndex = this.stepsArray.value.indexOf(step);
-    // const primaryStep = this.stepsArray.at(stepIndex);
-    // this.stepsArray.clear();
-    // this.stepsArray.push(primaryStep);
-    // this.stepsCompleted = 0; // reset steps completed counter
-    // this.finalStep = false; // reset final step boolean
-
+  public addSteps(optionSelection: string) {
     //Add nested steps depending on prior step selection
     this.workflow.steps.forEach(step => {
       step.options?.forEach(opt => {
@@ -143,7 +132,6 @@ export class WorkflowComponent implements OnInit {
     step.options?.forEach((opt:any) => {
       arr.push(this._fb.group({
         text: opt.text,
-        //label: opt.label,
         selected: []
       })
       );
@@ -203,10 +191,8 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setFormData(null);
   }
 
-  public onRadioChange(option, step) {
-    //console.log(option)
-    //console.log(step)
-    step.options.forEach( opt => {
+  public onCheckboxChange(option, step) {
+    step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = true;
 
@@ -214,7 +200,7 @@ export class WorkflowComponent implements OnInit {
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
         if (step.name === "selectFireHydroProcess") {
           this.resetStepsArray(step);
-          this.addSteps(opt.text, step);
+          this.addSteps(opt.text);
         }
       } else {
         opt.selected = false;
@@ -224,26 +210,19 @@ export class WorkflowComponent implements OnInit {
 
   public populateForm() {
     this.setSteps();
-
-    console.log(this.formData)
-
     this.formData.steps.forEach((storedStep: any, index: any) => {
       storedStep.options.forEach((option: { selected: any; text: string; }) => {
         if (option.selected) {
           if (storedStep.name === "selectFireHydroProcess") {
-            this.addSteps(option.text, storedStep);
-          }
-        }
-      })
+            this.addSteps(option.text);
+          };
+        };
+      });
       if (storedStep.completed) {
         this.nextStep(index);
-      }
-    })
-
-    //this.workflowForm.patchValue(this.formData);
+      };
+    });
     this.workflowForm.setValue(this.formData);
-
-    console.log(this.workflowForm.value)
   }
 
 

@@ -101,14 +101,14 @@ describe('WorkflowComponent', () => {
       }]
     }];
     steps.forEach(step => {
-      component.onRadioChange(optionOne, step);
+      component.onCheckboxChange(optionOne, step);
       expect(step.name).toBe("selectColor");
       step.options.forEach(opt => {
         expect(opt.text).toEqual(optionOne.text);
         optionOne.selected = true;
         expect(optionOne.selected).toBe(true);
       });
-      component.onRadioChange(optionTwo, step);
+      component.onCheckboxChange(optionTwo, step);
       step.options.forEach(opt => {
         expect(opt.text).not.toEqual(optionTwo.text);
         expect(opt.selected).toBe(false);

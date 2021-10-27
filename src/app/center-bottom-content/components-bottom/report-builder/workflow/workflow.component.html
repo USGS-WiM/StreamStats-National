@@ -10,7 +10,7 @@
             <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
               <!-- Radio Buttons -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'radio'">
-                <input type="radio" formControlName="selected" (change)="onRadioChange(option.value, step.value)"> {{option.value.text}}
+                <input type="checkbox" formControlName="selected" (change)="onCheckboxChange(option.value, step.value)"> {{option.value.text}}
               </div>
               <!-- Subscription -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'subscription'">
