@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import * as L from 'leaflet';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
@@ -13,7 +14,6 @@ export class WorkflowComponent implements OnInit {
 
   @Input() workflow!: Workflow;
   @Input() formData: any;
-  //@Output() onFormCompletion: EventEmitter<any> = new EventEmitter();
 
   public workflowForm: FormGroup;
   public stepsArray: FormArray;
@@ -22,11 +22,15 @@ export class WorkflowComponent implements OnInit {
   public finalStep: boolean = false;
   public clickedPoint;
   public selectedPerimeters;
+  public splitCatchmentLayer;
+  public firePerimetersLayers;
+  public output:any = {};
 
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
       title: [],
-      steps: this._fb.array([])
+      steps: this._fb.array([]),
+      outputs: []
     })
     this.stepsArray = this.workflowForm.get('steps') as FormArray;
   }
@@ -38,22 +42,31 @@ export class WorkflowComponent implements OnInit {
     } else {
       this.populateForm();
     }
-  
-    //this.setSteps();
 
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
-    })
-
+    });
+    //Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeters) => {
       this.selectedPerimeters = perimeters;
-    })
+    });
+    //Get selected fire perimeters
+    this._mapService.firePerimetersLayers.subscribe((layers) => {
+      this.firePerimetersLayers = layers;
+    });
+    //Get delineation
+    this._mapService.delineationPolygon.subscribe((poly: any) => {
+      var basin = poly.outputs;
+      if (basin) {  
+        this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
+      }
+    });
   }
 
   public setTitle() {
     this.workflowForm.patchValue({
       title: this.workflow.title
-    })
+    });
   }
 
   public setSteps() {
@@ -67,10 +80,9 @@ export class WorkflowComponent implements OnInit {
         clickPoint: [],
         output: [],
         options: this.setOptions(step)
-      }))
-    })
+      }));
+    });
     this.numberOfSteps = this.stepsArray.value.length;
-    //console.log(this.workflowForm)
   }
 
   public addSteps(optionSelection: string, step: any) {
@@ -100,11 +112,11 @@ export class WorkflowComponent implements OnInit {
               clickPoint: [],
               output: [],
               options: this.setOptions(s)
-            }))
-          })
-        }
-      })
-    })
+            }));
+          });
+        };
+      });
+    });
     this.numberOfSteps = this.stepsArray.value.length;
   }
 
@@ -134,59 +146,59 @@ export class WorkflowComponent implements OnInit {
         //label: opt.label,
         selected: []
       })
-      )
-    })
+      );
+    });
     return arr; 
   }
 
   public onContinue(formValue: any) {
     this._workflowService.setFormData(formValue);
-    //this.onFormCompletion.emit(formValue);
   }
 
-  public radio(i) {
-  }
-
-  public text(i) {
-  }
-
-  public subscription(i) {
+  public fillOutputs(i) {
+    this.output = {};
     switch (this.workflowForm.value.title) {
+      case "Example Workflow":
+        this.getOutputs();
+        break;
       case "Delineation":
-        this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;      
-        this.workflowForm.value.steps[i].output = 'polygon';   
+        this.getOutputs();
+        this.output.clickPoint = this.clickedPoint;
+        this.output.layers = [this.splitCatchmentLayer];
         break;
       case "Fire Hydrology":
         if (this.workflowForm.value.steps[i].name === "selectFireHydroBasin") {
-          this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-          this.workflowForm.value.steps[i].output = 'polygon'; 
+          this.output = {'clickPoint': this.clickedPoint};
         }
         if (this.workflowForm.value.steps[i].name === "selectFireHydroPerimeter") {
-          this.workflowForm.value.steps[i].clickPoint = this.clickedPoint;
-          this.workflowForm.value.steps[i].selectedPerimeters = this.selectedPerimeters;  
+          this.output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers':this.firePerimetersLayers};
         }
         break;
     }
+    this.workflowForm.value.outputs = this.output; 
   }
 
-  public nextStep(step, value) {
+  public getOutputs(){
+    this.workflowForm.value.steps.forEach(step => {
+      step.options.forEach(option => {
+        if (option.selected === true || option.selected === null) {
+          this.output[step.name] = option.text;
+        }
+      });
+    });
+  }
+
+  public nextStep(step: number) {
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
+      this.fillOutputs(step);
     } 
-    if (value == "radio") {
-      this.radio(step);
-    } else if (value == "subscription") {
-      this.subscription(step);
-    } else if (value == "text") {
-      this.text(step);
-    }
   }
 
   public finishedWorkflow(formValue: any) {
     this._workflowService.setCompletedData(formValue);
-    //console.log(formValue)
     this._workflowService.setSelectedWorkflow(null);
     this._workflowService.setFormData(null);
   }
@@ -202,9 +214,7 @@ export class WorkflowComponent implements OnInit {
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
         if (step.name === "selectFireHydroProcess") {
           this.resetStepsArray(step);
-          this.addSteps(opt.text, step)
-          //console.log(opt.text)
-          //console.log(step)
+          this.addSteps(opt.text, step);
         }
       } else {
         opt.selected = false;
@@ -214,78 +224,24 @@ export class WorkflowComponent implements OnInit {
 
   public populateForm() {
     this.setSteps();
-    //console.log(this.workflowForm)
 
     console.log(this.formData)
 
     this.formData.steps.forEach((storedStep: any, index: any) => {
-      //console.log(step.name)
-
       storedStep.options.forEach((option: { selected: any; text: string; }) => {
-        //console.log(option.text)
-        //console.log(option.selected)
-
-
         if (option.selected) {
-          //this.onRadioChange(option, step)
           if (storedStep.name === "selectFireHydroProcess") {
-
-            this.addSteps(option.text, storedStep)
-
-            // this.workflow.steps.forEach(stp => {
-            //   stp.options?.forEach(opt => {
-            //     if (opt.text === option.text) {
-            //       opt.nestedSteps.forEach(s => {
-            //         this.stepsArray.push(this._fb.group({
-            //           label: s.label,
-            //           name: s.name,
-            //           type: s.type,
-            //           completed: [],
-            //           clickPoint: [],
-            //           output: [],
-            //           options: this.setOptions(s)
-            //         }))
-            //       })
-            //     }
-            //   })
-            // })
-
-            //this.finalStep = false;
-
+            this.addSteps(option.text, storedStep);
           }
-
         }
-        
       })
-      //this.numberOfSteps = this.stepsArray.value.length;
-      if(storedStep.clickedPoint) {
-        this.clickedPoint = storedStep.clickedPoint
-      }
-
       if (storedStep.completed) {
-        console.log(storedStep)
-        
-        this.nextStep(index, storedStep.type);
-        //console.log(this.workflowForm.controls)
-        //this.workflowForm.controls
+        this.nextStep(index);
       }
-
     })
 
     //this.workflowForm.patchValue(this.formData);
     this.workflowForm.setValue(this.formData);
-    //console.log(this.workflowForm.value)
-
-    this.formData.steps.forEach((storedStep: any, index: any) => {
-      //console.log(storedStep)
-      //console.log(index)
-      if (storedStep.completed) {
-        //this.nextStep(index, storedStep.type);
-
-        //console.log(this.workflowForm.controls)
-        //this.workflowForm.controls
-      }
-    })
 
     console.log(this.workflowForm.value)
   }

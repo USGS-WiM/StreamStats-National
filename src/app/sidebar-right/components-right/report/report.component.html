@@ -1,32 +1,37 @@
 <!-- Placeholder html -->
-<h4>Completed workflows:</h4>
-<div *ngFor="let data of workflowData"> 
-    <p>{{data.title}}</p>
-    <div *ngFor="let step of data.steps">
-        <ul>
-            <li>{{step.label}}
-                <ul *ngFor="let option of step.options">
-                    <li *ngIf="option.selected === true || option.selected === null">{{option.text}}</li>
-                    <!-- Delineation -->
-                    <li *ngIf="step.label == 'Select Delineation Point'">({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
-                    <li *ngIf="step.label == 'Select Delineation Point'">{{step.output}}</li>
-                    <!-- Query Fire Perimeter -->
-                    <li *ngIf="step.label == 'Select a Fire Perimeter'">Point Clicked: ({{step.clickPoint.lat}}, {{step.clickPoint.lng}})</li>
-                    <li *ngIf="step.label == 'Select a Fire Perimeter'">Fire perimeters selected: 
-                        <div *ngFor="let perimeter of step.selectedPerimeters">
-                            <b>{{perimeter.Key}}:</b>
-                            <div *ngFor="let feat of perimeter.Data.features; let k = index">
-                                Feature {{k+1}}
-                                <div *ngFor="let prop of feat.properties | keyvalue">
-                                    <ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
-                                        {{prop.key}}: {{prop.value}}
-                                    </ul>
-                                </div> 
-                            </div>
-                        </div>
-                    </li>
+
+<h3>Completed workflows:</h3>
+
+<div *ngFor="let data of workflowData; let i = index"> 
+    <h4>{{data.title}}</h4>
+    <!-- Display Map -->
+    <div *ngIf="data.outputs.layers" id="{{ 'reportMap' + i }}" class="reportMap"></div>
+    <div *ngFor="let output of data.outputs | keyvalue">
+        <!-- Click Point -->
+        <li *ngIf="output.key=='clickPoint'">Lat/Long: ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</li>
+        <!-- Example Workflow -->
+        <li *ngIf="output.key=='selectColor'">Color Selected: {{output.value}}</li>
+        <li *ngIf="output.key=='enterText'">Text Entered: {{output.value}}</li>
+        <!-- Delineation -->
+        <li *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</li>
+        <!-- Query Basin -->
+        <!-- Query Fire Perimeters-->
+        <li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
+            <span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
+                <ul>
+                    <li>{{perimeter.Key}}:</li>
+                    <div *ngFor="let feat of perimeter.Data.features; let k = index">
+                        <ul>
+                            <li>Feature {{k+1}}</li>
+                            <span *ngFor="let prop of feat.properties | keyvalue">
+                                <ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+                                    <li>{{prop.key}}: {{prop.value}}</li>
+                                </ul>
+                            </span> 
+                        </ul>
+                    </div>
                 </ul>
-            </li>
-        </ul>
+            </span>
+        </li>
     </div>
 </div>

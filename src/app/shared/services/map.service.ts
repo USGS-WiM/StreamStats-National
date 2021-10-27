@@ -391,6 +391,14 @@ export class MapService {
         }))
     }
 
+    // Get selected Fire Perimeters layers
+    private _selectedPerimetersLayer: Subject<any> = new Subject<any>();
+    public setFirePerimetersLayers(firePerimeters: any, trace: any) {
+        this._selectedPerimetersLayer.next([firePerimeters, trace]);
+    }
+    public get firePerimetersLayers(): any {
+        return this._selectedPerimetersLayer.asObservable();
+    }
     // Get selected Fire Perimeters
     private _selectedPerimeters: Subject<any> = new Subject<any>();
     public setSelectedPerimeters(array) {
