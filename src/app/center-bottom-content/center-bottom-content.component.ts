@@ -32,11 +32,6 @@ export class CenterBottomContentComponent {
     
   }
 
-  public addFormData(formData: any) {
-    //this._workflowService.setFormData(formData);
-    //console.log(formData)
-  }
-
   public removeWorkFlow() {
     this._workflowService.setSelectedWorkflow(null);
     this._workflowService.setFormData(null);
