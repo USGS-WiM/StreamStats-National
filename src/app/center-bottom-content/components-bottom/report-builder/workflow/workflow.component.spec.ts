@@ -39,6 +39,7 @@ let mockWorkflow: Workflow = {
       complete: false
   }]
 };
+
 let mockFormData = {
   title: "Fire Hydrology",
   steps: [{
