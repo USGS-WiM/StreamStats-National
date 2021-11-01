@@ -9,7 +9,7 @@
             {
                 "label": "Select Your Favorite Color",
                 "name": "selectColor",
-                "type": "radio",
+                "type": "checkbox",
                 "validators": 
                 {
                     "required": true
@@ -32,7 +32,7 @@
             },
             {
                 "label":"Type Something",
-                "name": "selectPoints",
+                "name": "enterText",
                 "type": "text",
                 "validators": 
                 {
@@ -63,7 +63,7 @@
             {
                 "label": "Select Delineation Process",
                 "name": "selectDelineationProcess",
-                "type": "radio",
+                "type": "checkbox",
                 "options":
                 [
                     {
@@ -106,7 +106,7 @@
             {
                 "label": "Select a Fire Hydrology Query Method",
                 "name": "selectFireHydroProcess",
-                "type": "radio",
+                "type": "checkbox",
                 "options":
                 [
                     {
