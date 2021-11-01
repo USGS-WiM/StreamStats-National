@@ -211,7 +211,7 @@ export class WorkflowComponent implements OnInit {
   public populateForm() {
     this.setSteps();
     this.formData.steps.forEach((storedStep: any, index: any) => {
-      storedStep.options.forEach((option: { selected: any; text: string; }) => {
+      storedStep.options.forEach((option: any) => {
         if (option.selected) {
           if (storedStep.name === "selectFireHydroProcess") {
             this.addSteps(option.text);
@@ -222,7 +222,7 @@ export class WorkflowComponent implements OnInit {
         this.nextStep(index);
       };
     });
-    this.workflowForm.setValue(this.formData);
+    this.workflowForm.patchValue(this.formData);
   }
 
 

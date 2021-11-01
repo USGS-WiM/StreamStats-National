@@ -37,18 +37,6 @@ describe('CenterBottomContentComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('#addFormData should update form data service', () => {
-    spyOn(component, 'addFormData').and.callThrough();
-    const formData = {
-      title: "Example Workflow",
-      description: "This is an example workflow.",
-      functionality: "Core",
-      icon: "fa fa-sitemap"
-      };
-      component.addFormData(formData);
-      expect(component.addFormData).toHaveBeenCalled();
-  });
-
   it('#removeWorkflow should remove workflow and form data', () => {
     const mockWorkflow: Workflow = {
       title: "Delineation",

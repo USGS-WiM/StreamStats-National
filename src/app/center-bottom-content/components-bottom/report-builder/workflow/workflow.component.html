@@ -8,9 +8,9 @@
           <h4> Step {{i+1}}: {{ step.value.label}} </h4>
           <div formArrayName="options">
             <div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
-              <!-- Radio Buttons -->
+              <!-- Checkboxes -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'checkbox'">
-                <input type="checkbox" formControlName="selected" (change)="onCheckboxChange(option.value, step.value)"> {{option.value.text}}
+                <input type="checkbox" formControlName="selected" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)"> {{option.value.text}}
               </div>
               <!-- Subscription -->
               <div style="margin-left: 40px" *ngIf="step.value.type === 'subscription'">
