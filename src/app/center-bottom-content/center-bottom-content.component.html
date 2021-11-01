@@ -15,9 +15,9 @@
         </div>
     </div>
     <div class="v-tab-body">
-        <app-workflow-selection *ngIf="reportBuilderTab == 'selection'"></app-workflow-selection>
+        <app-workflow-selection *ngIf="reportBuilderTab == 'selection' && !selectedWorkflow"></app-workflow-selection>
         <div *ngIf="selectedWorkflow" [ngClass]="{'active': reportBuilderTab == selectedWorkflow.title}">
-            <app-workflow [workflow]="selectedWorkflow" (onFormCompletion)="addFormData($event)"></app-workflow>
+            <app-workflow [workflow]="selectedWorkflow" [formData]="formData"></app-workflow>
         </div> 
     </div>
 </div>
