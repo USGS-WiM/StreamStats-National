@@ -205,7 +205,7 @@ export class MapComponent implements OnInit {
               // let burnedArea = this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
               // console.log(burnedArea);
               this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
-              this.calculateStreamflowEstimates(); //unfinished
+              // this.calculateStreamflowEstimates(); //unfinished
               
             // }
             
@@ -518,85 +518,65 @@ export class MapComponent implements OnInit {
 
   public queryGeology(basin, basinArea) {
     this._loaderService.showFullPageLoad();
-    // console.log(basin.coordinates);
-    // console.log({"rings":[
-    //   [
-    //     basin.coordinates
-    //   ]
-    // ],"spatialReference":{"wkid":4326}});
-    // var inputGeometryString = this.getInputGeometryString(basin);
-
-    // var url2 = 'https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3/query?where=1%3D1&text=&objectIds=&time=&geometry='
-    // + inputGeometryString
-    // + 'https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3/query?where=1%3D1&text=&objectIds=&time=&geometry=%7B%22rings%22%3A%5B%5B%5B-78.631313%2C35.767104%5D%2C%5B-78.631933%2C35.767647%5D%2C%5B-78.631393%2C35.768274%5D%2C%5B-78.630754%2C35.767709%5D%2C%5B-78.631313%2C35.767104%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D  &geometryType=esriGeometryPolygon&inSR=4326&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=true&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=html';
-    
-    // let queryString = 'where=1%3D1&text=&objectIds=&time=&geometry=%7B%22rings%22%3A%5B%5B%5B-78.631313%2C35.767104%5D%2C%5B-78.631933%2C35.767647%5D%2C%5B-78.631393%2C35.768274%5D%2C%5B-78.630754%2C35.767709%5D%2C%5B-78.631313%2C35.767104%5D%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D  &geometryType=esriGeometryPolygon&inSR=4326&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=true&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=html';
-    
-    // var geology_ids;
-    // let geologyUnion;
-    // let queryString = "1=1";
-    // let url = this.configSettings.geologyURL;
-    let context = this;
-    let geology_dictionary = {};
-    // let intersectArea;
-    this.workflowLayers["GeologyFeatures"].query().intersects(basin).ids(function (error, geology_ids) {
+    this.createMessage("Analyzing Geology. Please wait.");
+    let geologyUnion;
+    let queryString = "1=1";
+    var url = this.configSettings.geologyURL;
+    this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
+    .run((error: any, results: any) => {
       if (error) {
-        context._loaderService.hideFullPageLoad();
-        context.createMessage("ScienceBase is currently unavailable. Geology cannot be analyzed.");
-      } else if (console) {
-        context.createMessage("Analyzing geology. Please wait.");
-        // console.log(console);
-        let number_of_queries = Math.ceil(geology_ids.length / 200);
-        console.log(geology_ids);
-        for (let i=0; i<number_of_queries;i++) {
-          let geology_ids_shortlist = geology_ids.slice(i*200,200);
-          console.log(geology_ids_shortlist);
+        console.log("error");
+      }
 
-          context.workflowLayers["GeologyFeatures"].query().featureIds(geology_ids_shortlist).returnGeometry(true)
-            .run((error: any, results: any) => {
-              if (error) {
-                context.createMessage("Error. Geology cannot be analyzed.");
-                context._loaderService.hideFullPageLoad();
-              } else if (results && results.features.length > 0) {
-                console.log(results);
-                let geologyUnion = results.features[0];
-                for (let i = 0; i < results.features.length; i++) {
-                    let nextFeature = results.features[i];
-                    if (nextFeature) {
-                      // geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-                      // console.log(geologyUnion);
-                      let intersectPolygons = intersect(results.features[i], basin);
-                      let intersectArea = area(intersectPolygons) / 1000000;
-                      console.log(intersectArea);
-                      if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-                      } else {
-                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-                      }
-                      if (i==number_of_queries-1) {
-                        console.log("Geology results:")
-                        console.log(geology_dictionary);
-                      }
-                    }
-                }
+      let geology_dictionary = {};
+      console.log(results);
+      if (results && results.features.length > 0) {
+        if (results.features.length > 3000) {
+            // MapServer limitation: only 3000 polygons will be returned
+            console.log("Warning: Geology results may be incorrect due to map server limitations.");
+        }
+        let intersectArea;
+        geologyUnion = results.features[0];
+        for (let i = 0; i < results.features.length; i++) {
+            const nextFeature = results.features[i];
+            if (nextFeature) {
+              geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+              const intersectPolygons = intersect(results.features[i], basin);
+              intersectArea = area(intersectPolygons) / 1000000;
+              if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+              } else {
+                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
               }
-            });
+            }
         }
 
-        
-        Object.keys(geology_dictionary).forEach(function(key) {
-          console.log(key + ": ");
-          console.log(geology_dictionary[key].toPrecision(3) + " sq mi (" + (geology_dictionary[key] / basinArea * 100).toPrecision(3) + " %)");
+        // Create array of geology results
+        var geology_results = Object.keys(geology_dictionary).map(function(key) {
+          return [key, geology_dictionary[key]];
         });
-        context._loaderService.hideFullPageLoad();
-      }
-    });
+
+        // Sort the geology results in decreasing order
+        geology_results.sort(function(first, second) {
+          return second[1] - first[1];
+        });
+
+        // console.log(geology_results);
+
+        console.log("Geology results:")
+        geology_results.forEach(geology_type => {
+          console.log(geology_type[0] + ": " + geology_type[1].toPrecision(3) + " sq mi (" + (geology_type[1] / basinArea * 100).toPrecision(3) + " %)");
+        });
+        this._loaderService.hideFullPageLoad();
+        
+        }
+      });
   }
 
   public async getBasinCharacteristics(basin, basinArea, startYear, endYear) {
-    this.queryBurnedArea(basin, basinArea, startYear, endYear); 
+    // this.queryBurnedArea(basin, basinArea, startYear, endYear); 
     this.queryGeology(this.basin.features[1].geometry, basinArea); 
-    this.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng, basinArea);
+    // this.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng, basinArea);
   }
 
 
