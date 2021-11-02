@@ -385,63 +385,60 @@ export class MapService {
 
     // Query Fire Basin
     public queryGeology(basinFeature: any) {
-        let basin = basinFeature.geometry;
-        let basinArea = (area(basinFeature) / 1000000)
-        this._loaderService.showFullPageLoad();
-        this.createMessage("Analyzing Geology. Please wait.");
-        let geologyUnion;
-        let queryString = "1=1";
-        // var url = this.configSettings.geologyURL;
-        this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
-        .run((error: any, results: any) => {
-            if (error) {
-                console.log("error");
-            }
-            let geology_dictionary = {};
-            if (results && results.features.length > 0) {
-                if (results.features.length > 3000) {
-                    // MapServer limitation: only 3000 polygons will be returned
-                    console.log("Warning: Geology results may be incorrect due to map server limitations.");
+        return new Promise<any[]>(resolve => {
+            let basin = basinFeature.geometry;
+            let basinArea = (area(basinFeature) / 1000000)
+            this._loaderService.showFullPageLoad();
+            this.createMessage("Analyzing Geology. Please wait.");
+            let geologyUnion;
+            let queryString = "1=1";
+            this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
+            .run((error: any, results: any) => {
+                if (error) {
+                    console.log("error");
                 }
-                let intersectArea;
-                geologyUnion = results.features[0];
-                for (let i = 0; i < results.features.length; i++) {
-                    const nextFeature = results.features[i];
-                    if (nextFeature) {
-                    geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-                    const intersectPolygons = intersect(results.features[i], basin);
-                    intersectArea = area(intersectPolygons) / 1000000;
-                    if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-                    } else {
-                        geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                let geology_dictionary = {};
+                if (results && results.features.length > 0) {
+                    if (results.features.length > 3000) {
+                        // MapServer limitation: only 3000 polygons will be returned
+                        console.log("Warning: Geology results may be incorrect due to map server limitations.");
                     }
+                    let intersectArea;
+                    geologyUnion = results.features[0];
+                    for (let i = 0; i < results.features.length; i++) {
+                        const nextFeature = results.features[i];
+                        if (nextFeature) {
+                        geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+                        const intersectPolygons = intersect(results.features[i], basin);
+                        intersectArea = area(intersectPolygons) / 1000000;
+                        if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                            geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+                        } else {
+                            geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                        }
+                        }
                     }
+
+                    // Create array of geology results
+                    var geology_results = Object.keys(geology_dictionary).map(function(key) {
+                        return [key, geology_dictionary[key]];
+                    });
+            
+                    // Sort the geology results in decreasing order
+                    geology_results.sort(function(first, second) {
+                        return second[1] - first[1];
+                    });
+
+                    // Format geology
+                    geology_results = geology_results.map(geology_result => 
+                        [geology_result[0], geology_result[1].toFixed(3) + " (" + (geology_result[1] / basinArea * 100).toFixed(3) + "%)"]);
+                    
+                    this._loaderService.hideFullPageLoad();
+                    resolve(geology_results);
                 }
-    
-                // Create array of geology results
-                var geology_results = Object.keys(geology_dictionary).map(function(key) {
-                    return [key, geology_dictionary[key]];
-                });
+            });
+        });
         
-                // Sort the geology results in decreasing order
-                geology_results.sort(function(first, second) {
-                    return second[1] - first[1];
-                });
-        
-                // console.log(geology_results);
-        
-                console.log("Geology results:")
-                geology_results.forEach(geology_type => {
-                console.log(geology_type[0] + ": " + geology_type[1].toPrecision(3) + " sq mi (" + (geology_type[1] / basinArea * 100).toPrecision(3) + " %)");
-                });
-                this._loaderService.hideFullPageLoad();
-                // this.setGeologyReport(geology_results);
-                console.log(geology_results);
-                return (geology_results);
-                
-            }
-          });
     }
 
     // Get geology report
