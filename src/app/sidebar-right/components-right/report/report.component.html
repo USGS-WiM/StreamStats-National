@@ -15,7 +15,21 @@
         <!-- Delineation -->
         <li *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</li>
         <!-- Query Basin -->
-        <li *ngIf="output.key=='geologyInfo'"> Geology Report: {{output.value}}</li>
+        <li *ngIf="output.key=='geologyInfo'"> Geology Report:
+            <ul><table>
+                <tr>
+                    <th>Geologic Unit</th>
+                    <th>Area (sq mi)</th>
+                </tr>
+                <tr *ngFor="let geology_type of workflowData[i].outputs.geologyInfo">
+                    <td>{{geology_type[0]}}</td>
+                    <td>{{geology_type[1]}}</td>
+                </tr>
+            </table>
+            </ul>
+            
+        </li>
+
         <!-- Query Fire Perimeters-->
         <li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
             <span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
