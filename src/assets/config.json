@@ -2,7 +2,6 @@
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
-    "geologyURL": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3/query?where=1%3D1&returnIdsOnly=true&f=json",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
     "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
     "overlays":[
@@ -80,12 +79,15 @@
         },
         {
             "name": "Geology",
-            "url": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3",
-            "type": "agsFeature",
+            "url": "https://www.sciencebase.gov/arcgis/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/WMSServer",
+            "type": "WMS",
             "layerOptions": {
-                "zIndex": 9999,
+                "layers": "0",
                 "minZoom": 10,
-                "layers": [3]
+                "maxZoom": 19,
+                "zIndex": 9999,
+                "format": "image/png",
+                "transparent": "true"
             },
             "visible": false
         }
