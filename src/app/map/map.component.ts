@@ -190,7 +190,7 @@ export class MapComponent implements OnInit {
     });
 
     //Subscribe to the form data
-    this._workflowService.formData.subscribe(data => {
+    this._workflowService.formData.subscribe(async data => {
       this.workflowData = data;
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
@@ -207,7 +207,10 @@ export class MapComponent implements OnInit {
               let burnEndYear = this.workflowData.steps[2].options[1].text;
               // let burnedArea = this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
               // console.log(burnedArea);
-              this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
+              // this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
+              let geologyResults = await this._mapService.queryGeology(this.basin.features[1]);
+              console.log(geologyResults);
+              // this._mapService.setGeologyReport(geologyResults);
               // this.calculateStreamflowEstimates(); //unfinished
               
             // }

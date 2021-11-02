@@ -8,13 +8,14 @@
     <div *ngIf="data.outputs.layers" id="{{ 'reportMap' + i }}" class="reportMap"></div>
     <div *ngFor="let output of data.outputs | keyvalue">
         <!-- Click Point -->
-        <li *ngIf="output.key=='clickPoint'">Lat/Long: ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</li>
+        <li *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</li>
         <!-- Example Workflow -->
         <li *ngIf="output.key=='selectColor'">Color Selected: {{output.value}}</li>
         <li *ngIf="output.key=='enterText'">Text Entered: {{output.value}}</li>
         <!-- Delineation -->
         <li *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</li>
         <!-- Query Basin -->
+        <li *ngIf="output.key=='geologyInfo'"> Geology Report: {{output.value}}</li>
         <!-- Query Fire Perimeters-->
         <li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
             <span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
