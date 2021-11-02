@@ -186,12 +186,14 @@ export class WorkflowComponent implements OnInit {
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
+      // console.log(this.numberOfSteps);
       this.finalStep = true;
-      this.fillOutputs();
+      // this.fillOutputs();
     } 
   }
 
   public finishedWorkflow(formValue: any) {
+    this.fillOutputs();
     this._workflowService.setCompletedData(formValue);
     this._workflowService.setSelectedWorkflow(null);
     this._workflowService.setFormData(null);
