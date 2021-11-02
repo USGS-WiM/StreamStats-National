@@ -197,26 +197,16 @@ export class MapComponent implements OnInit {
           this.checkAvailableLayers();
         }
         if (this.workflowData.title == "Fire Hydrology") {
-          // console.log(this.workflowData);
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
-            // if (this.workflowData.steps[2].completed) {
               this._loaderService.showFullPageLoad();
-              // console.log(this.workflowData.steps[2].options[0].text);
-              // console.log(this.workflowData.steps[2].options[1].text);
               let burnStartYear = this.workflowData.steps[2].options[0].text;
               let burnEndYear = this.workflowData.steps[2].options[1].text;
               // let burnedArea = this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
               // console.log(burnedArea);
               // this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
               let geologyResults = await this._mapService.queryGeology(this.basin.features[1]);
-              console.log(geologyResults);
-              // this._mapService.setGeologyReport(geologyResults);
+              this._mapService.setGeologyReport(geologyResults);
               // this.calculateStreamflowEstimates(); //unfinished
-              
-            // }
-            
-            
-            // this._loaderService.hideFullPageLoad();
           }
         }
       }
@@ -249,7 +239,7 @@ export class MapComponent implements OnInit {
             if (this.workflowData && this.workflowData.steps || this.activeWorkflowLayers.name != "NHD Flowlines") {
               this.workflowData.steps[0].options.forEach(o => {
                 if (o.text == "NLDI Delineation" && o.selected == true) {
-                  this.addLayers('NHD Flowlines');
+                  this.addLayers('NHD Flowlines', true);
                 }
               });
             }
@@ -260,17 +250,18 @@ export class MapComponent implements OnInit {
             if (this.workflowData && this.workflowData.steps) {
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
                 if (o.text === "Query by Basin" && o.selected === true) {
-                  this.addLayers('NHD Flowlines');
-                  this.addLayers('Archived WildFire Perimeters');
-                  this.addLayers('Active WildFire Perimeters');
-                  this.addLayers('MTBS Fire Boundaries');
-                  this.addLayers('Burn Severity');
+                  this.addLayers('NHD Flowlines', true);
+                  this.addLayers('Archived WildFire Perimeters', true);
+                  this.addLayers('Active WildFire Perimeters', true);
+                  this.addLayers('MTBS Fire Boundaries', true);
+                  this.addLayers('Burn Severity', true);
+                  this.addLayers('Geology', false);
                 }
                 if (o.text === "Query by Fire Perimeters" && o.selected === true) {
-                  this.addLayers('Archived WildFire Perimeters');
-                  this.addLayers('Active WildFire Perimeters');
-                  this.addLayers('MTBS Fire Boundaries');
-                  this.addLayers('Burn Severity');
+                  this.addLayers('Archived WildFire Perimeters', true);
+                  this.addLayers('Active WildFire Perimeters', true);
+                  this.addLayers('MTBS Fire Boundaries', true);
+                  this.addLayers('Burn Severity', true);
                 }
               })
             }
@@ -311,14 +302,18 @@ export class MapComponent implements OnInit {
     });
   }
 
-  public addLayers(layerName: string) {
+  public addLayers(layerName: string, visible: boolean) {
     this.configSettings.workflowLayers.forEach((layer: any) => {
       if (layer.name === layerName) {
-        layer.visible = true;
+        layer.visible = visible;
         this._mapService.setWorkflowLayers(layer);
+        if (layer.visible) { 
+          this.workflowLayers[layerName].addTo(this._mapService.map);
+        }
       }
     }); 
-    this.workflowLayers[layerName].addTo(this._mapService.map);
+    
+    
   }
 
   public setBbox(){
@@ -403,7 +398,11 @@ export class MapComponent implements OnInit {
         this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
         this.splitCatchmentLayer.addTo(this._mapService.map);
-        this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+        if (!this.splitCatchmentLayer.getBounds().isValid()) {
+          this.createMessage("Error. Basin cannot be delineated.");
+        } else {
+          this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+        }
       } else {
         this.createMessage("Error. Basin cannot be delineated.");
       }
@@ -430,7 +429,11 @@ export class MapComponent implements OnInit {
         console.log("Basin area:");
         console.log((area(this.basin.features[1]) / 1000000).toPrecision(3) + " sq mi");
         this.splitCatchmentLayer.addTo(this._mapService.map);
-        this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+        if (!this.splitCatchmentLayer.getBounds().isValid()) {
+          this.createMessage("Error. Basin cannot be delineated.");
+        } else {
+          this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
+        }
       } else {
         this.createMessage("Error. Basin cannot be delineated.");
       }
@@ -522,66 +525,65 @@ export class MapComponent implements OnInit {
   //   // '%7B"rings":%5B%5B%5B%5B%5B-78.698945,35.794525%5D,%5B-78.699168,35.795294%5D,%5B-78.697522,35.797565%5D,%5B-78.69396,35.798232%5D,%5B-78.692534,35.800051%5D,%5B-78.69033,35.799788%5D,%5B-78.688686,35.797636%5D,%5B-78.688122,35.795078%5D,%5B-78.68604,35.793312%5D,%5B-78.687609,35.788147%5D,%5B-78.690703,35.788958%5D,%5B-78.693547,35.788423%5D,%5B-78.69352,35.792311%5D,%5B-78.696379,35.794101%5D,%5B-78.697763,35.793793%5D,%5B-78.698945,35.794525%5D%5D%5D%5D%5D,"spatialReference":%7B"wkid":4326%7D%7D';
   // }
 
-  public queryGeology(basin, basinArea) {
-    this._loaderService.showFullPageLoad();
-    this.createMessage("Analyzing Geology. Please wait.");
-    let geologyUnion;
-    let queryString = "1=1";
-    var url = this.configSettings.geologyURL;
-    this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
-    .run((error: any, results: any) => {
-      if (error) {
-        console.log("error");
-      }
+  // public queryGeology(basin, basinArea) {
+  //   this._loaderService.showFullPageLoad();
+  //   this.createMessage("Analyzing Geology. Please wait.");
+  //   let geologyUnion;
+  //   let queryString = "1=1";
+  //   this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
+  //   .run((error: any, results: any) => {
+  //     if (error) {
+  //       console.log("error");
+  //     }
 
-      let geology_dictionary = {};
-      console.log(results);
-      if (results && results.features.length > 0) {
-        if (results.features.length > 3000) {
-            // MapServer limitation: only 3000 polygons will be returned
-            console.log("Warning: Geology results may be incorrect due to map server limitations.");
-        }
-        let intersectArea;
-        geologyUnion = results.features[0];
-        for (let i = 0; i < results.features.length; i++) {
-            const nextFeature = results.features[i];
-            if (nextFeature) {
-              geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-              const intersectPolygons = intersect(results.features[i], basin);
-              intersectArea = area(intersectPolygons) / 1000000;
-              if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-              } else {
-                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-              }
-            }
-        }
+  //     let geology_dictionary = {};
+  //     console.log(results);
+  //     if (results && results.features.length > 0) {
+  //       if (results.features.length > 3000) {
+  //           // MapServer limitation: only 3000 polygons will be returned
+  //           console.log("Warning: Geology results may be incorrect due to map server limitations.");
+  //       }
+  //       let intersectArea;
+  //       geologyUnion = results.features[0];
+  //       for (let i = 0; i < results.features.length; i++) {
+  //           const nextFeature = results.features[i];
+  //           if (nextFeature) {
+  //             geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+  //             const intersectPolygons = intersect(results.features[i], basin);
+  //             intersectArea = area(intersectPolygons) / 1000000;
+  //             if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+  //               geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+  //             } else {
+  //               geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+  //             }
+  //           }
+  //       }
 
-        // Create array of geology results
-        var geology_results = Object.keys(geology_dictionary).map(function(key) {
-          return [key, geology_dictionary[key]];
-        });
+  //       // Create array of geology results
+  //       var geology_results = Object.keys(geology_dictionary).map(function(key) {
+  //         return [key, geology_dictionary[key]];
+  //       });
 
-        // Sort the geology results in decreasing order
-        geology_results.sort(function(first, second) {
-          return second[1] - first[1];
-        });
+  //       // Sort the geology results in decreasing order
+  //       geology_results.sort(function(first, second) {
+  //         return second[1] - first[1];
+  //       });
 
-        // console.log(geology_results);
+  //       // console.log(geology_results);
 
-        console.log("Geology results:")
-        geology_results.forEach(geology_type => {
-          console.log(geology_type[0] + ": " + geology_type[1].toPrecision(3) + " sq mi (" + (geology_type[1] / basinArea * 100).toPrecision(3) + " %)");
-        });
-        this._loaderService.hideFullPageLoad();
+  //       console.log("Geology results:")
+  //       geology_results.forEach(geology_type => {
+  //         console.log(geology_type[0] + ": " + geology_type[1].toPrecision(3) + " sq mi (" + (geology_type[1] / basinArea * 100).toPrecision(3) + " %)");
+  //       });
+  //       this._loaderService.hideFullPageLoad();
         
-        }
-      });
-  }
+  //       }
+  //     });
+  // }
 
   public async getBasinCharacteristics(basin, basinArea, startYear, endYear) {
     // this.queryBurnedArea(basin, basinArea, startYear, endYear); 
-    this.queryGeology(this.basin.features[1].geometry, basinArea); 
+    // this.queryGeology(this.basin.features[1].geometry, basinArea); 
     // this.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng, basinArea);
   }
 
