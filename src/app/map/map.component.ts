@@ -199,13 +199,14 @@ export class MapComponent implements OnInit {
         if (this.workflowData.title == "Fire Hydrology") {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
               this._loaderService.showFullPageLoad();
-              let burnStartYear = this.workflowData.steps[2].options[0].text;
-              let burnEndYear = this.workflowData.steps[2].options[1].text;
-              // let burnedArea = this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
               // console.log(burnedArea);
               // this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
               this._mapService.setBasinArea(area(this.basin.features[1]) / 1000000);
-              this._mapService.setBurnYears([burnStartYear, burnEndYear]);
+              let starBurnYear = this.workflowData.steps[2].options[0].text;
+              let endBurnYear = this.workflowData.steps[2].options[1].text;
+              let burnedArea = await this._mapService.queryBurnedArea(this.basin.features[1], starBurnYear, endBurnYear);
+              this._mapService.setBurnedArea(burnedArea);
+              this._mapService.setBurnYears([starBurnYear, endBurnYear]);
               let geologyResults = await this._mapService.queryGeology(this.basin.features[1]);
               this._mapService.setGeologyReport(geologyResults);
 
@@ -508,7 +509,7 @@ export class MapComponent implements OnInit {
 
   }
 
-  queryBurnedArea(basin, basinArea, startYear, endYear) {
+  oldqueryBurnedArea(basin, basinArea, startYear, endYear) {
     this._loaderService.showFullPageLoad();
     this.createMessage("Calculating Burned Area. Please wait.");
     let count = 0;

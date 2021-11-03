@@ -24,6 +24,7 @@ export class WorkflowComponent implements OnInit {
   public splitCatchmentLayer;
   public basinArea;
   public burnYears;
+  public burnedArea;
   public geologyReport;
   public selectedPerimeters;
   public firePerimetersLayers;
@@ -66,6 +67,10 @@ export class WorkflowComponent implements OnInit {
     //Get burn years
     this._mapService.burnYears.subscribe((burnYears) => {
       this.burnYears = burnYears;
+    });
+    //Get burned area
+    this._mapService.burnedArea.subscribe((burnedArea) => {
+      this.burnedArea = burnedArea;
     });
     //Get geology results
     this._mapService.geologyReport.subscribe((geologyReport) => {
@@ -176,6 +181,7 @@ export class WorkflowComponent implements OnInit {
           this.output = {'clickPoint': this.clickedPoint, 
                           'basinArea': this.basinArea, 
                           'burnYears': this.burnYears,
+                          'burnedArea': this.burnedArea,
                           'geologyInfo': this.geologyReport};
         }
         if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
