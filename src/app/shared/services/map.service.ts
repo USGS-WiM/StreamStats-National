@@ -386,9 +386,9 @@ export class MapService {
     // Query Fire Basin
     public queryGeology(basinFeature: any) {
         return new Promise<any[]>(resolve => {
+            this._loaderService.showFullPageLoad();
             let basin = basinFeature.geometry;
             let basinArea = (area(basinFeature) / 1000000)
-            this._loaderService.showFullPageLoad();
             this.createMessage("Analyzing Geology. Please wait.");
             let geologyUnion;
             let queryString = "1=1";
@@ -408,14 +408,14 @@ export class MapService {
                     for (let i = 0; i < results.features.length; i++) {
                         const nextFeature = results.features[i];
                         if (nextFeature) {
-                        geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
-                        const intersectPolygons = intersect(results.features[i], basin);
-                        intersectArea = area(intersectPolygons) / 1000000;
-                        if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
-                            geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
-                        } else {
-                            geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
-                        }
+                            geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+                            const intersectPolygons = intersect(results.features[i], basin);
+                            intersectArea = area(intersectPolygons) / 1000000;
+                            if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+                            } else {
+                                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                            }
                         }
                     }
 
@@ -429,7 +429,7 @@ export class MapService {
                         return second[1] - first[1];
                     });
 
-                    // Format geology
+                    // Format geology results
                     geology_results = geology_results.map(geology_result => 
                         [geology_result[0], geology_result[1], (geology_result[1] / basinArea * 100)]
                     );
@@ -441,13 +441,22 @@ export class MapService {
         
     }
 
-    // Get basinArea
+    // Get basin area
     private _basinArea: Subject<any> = new Subject<any>();
     public setBasinArea(value) {
         this._basinArea.next(value);
     }
     public get basinArea(): any {
         return this._basinArea.asObservable();
+    }
+
+    // Get burn Years
+    private _burnYears: Subject<any> = new Subject<any>();
+    public setBurnYears(value) {
+        this._burnYears.next(value);
+    }
+    public get burnYears(): any {
+        return this._burnYears.asObservable();
     }
 
     // Get geology report
