@@ -179,6 +179,7 @@ export class WorkflowComponent implements OnInit {
       case "Fire Hydrology":
         if (this.workflowForm.value.steps[1].name === "selectFireHydroBasin") {
           this.output = {'clickPoint': this.clickedPoint, 
+                          'layers': [this.splitCatchmentLayer],
                           'basinArea': this.basinArea, 
                           'burnYears': this.burnYears,
                           'burnedArea': this.burnedArea,
