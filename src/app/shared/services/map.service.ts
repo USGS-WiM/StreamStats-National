@@ -431,14 +431,23 @@ export class MapService {
 
                     // Format geology
                     geology_results = geology_results.map(geology_result => 
-                        [geology_result[0], geology_result[1].toFixed(3) + " (" + (geology_result[1] / basinArea * 100).toFixed(3) + "%)"]);
-                    
+                        [geology_result[0], geology_result[1], (geology_result[1] / basinArea * 100)]
+                    );
                     this._loaderService.hideFullPageLoad();
                     resolve(geology_results);
                 }
             });
         });
         
+    }
+
+    // Get basinArea
+    private _basinArea: Subject<any> = new Subject<any>();
+    public setBasinArea(value) {
+        this._basinArea.next(value);
+    }
+    public get basinArea(): any {
+        return this._basinArea.asObservable();
     }
 
     // Get geology report

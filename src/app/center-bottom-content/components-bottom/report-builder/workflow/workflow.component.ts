@@ -21,11 +21,12 @@ export class WorkflowComponent implements OnInit {
   public numberOfSteps: number;
   public finalStep: boolean = false;
   public clickedPoint;
-  public selectedPerimeters;
   public splitCatchmentLayer;
+  public basinArea;
+  public geologyReport;
+  public selectedPerimeters;
   public firePerimetersLayers;
   public output:any = {};
-  public geologyReport;
 
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
@@ -50,6 +51,17 @@ export class WorkflowComponent implements OnInit {
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
     });
+    //Get delineation and basin area
+    this._mapService.delineationPolygon.subscribe((poly: any) => {
+      var basin = poly.outputs;
+      if (basin) {  
+        this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
+      }
+    });
+    //Get basin area
+    this._mapService.basinArea.subscribe((basinArea) => {
+      this.basinArea = basinArea;
+    });
     //Get geology results
     this._mapService.geologyReport.subscribe((geologyReport) => {
       this.geologyReport = geologyReport;
@@ -62,13 +74,7 @@ export class WorkflowComponent implements OnInit {
     this._mapService.firePerimetersLayers.subscribe((layers) => {
       this.firePerimetersLayers = layers;
     });
-    //Get delineation
-    this._mapService.delineationPolygon.subscribe((poly: any) => {
-      var basin = poly.outputs;
-      if (basin) {  
-        this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
-      }
-    });
+    
   }
 
   public setTitle() {
@@ -162,7 +168,7 @@ export class WorkflowComponent implements OnInit {
         break;
       case "Fire Hydrology":
         if (this.workflowForm.value.steps[1].name === "selectFireHydroBasin") {
-          this.output = {'clickPoint': this.clickedPoint, 'geologyInfo': this.geologyReport};
+          this.output = {'clickPoint': this.clickedPoint, 'basinArea': this.basinArea, 'geologyInfo': this.geologyReport};
         }
         if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
           this.output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers': this.firePerimetersLayers};
@@ -170,6 +176,7 @@ export class WorkflowComponent implements OnInit {
         break;
     }
     this.workflowForm.value.outputs = this.output; 
+    console.log(this.output);
   }
 
   public getOutputs(){

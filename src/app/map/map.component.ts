@@ -204,8 +204,10 @@ export class MapComponent implements OnInit {
               // let burnedArea = this.queryBurnedArea(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), startyear, endyear);
               // console.log(burnedArea);
               // this.getBasinCharacteristics(this.basin.features[1].geometry, (area(this.basin.features[1]) / 1000000), burnStartYear, burnEndYear);
+              this._mapService.setBasinArea(area(this.basin.features[1]) / 1000000);
               let geologyResults = await this._mapService.queryGeology(this.basin.features[1]);
               this._mapService.setGeologyReport(geologyResults);
+
               // this.calculateStreamflowEstimates(); //unfinished
           }
         }
