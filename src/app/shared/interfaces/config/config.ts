@@ -17,4 +17,11 @@ export interface Config {
     }];
     workflowLayers: [];
     overlays: [];
+    parameters: [{
+        fcpg_parameter: string,
+        description: string,
+        multiplier: number,
+        units: string,
+        value: number
+    }]
 }

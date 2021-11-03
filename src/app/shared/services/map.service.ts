@@ -14,6 +14,7 @@ import * as esri from 'esri-leaflet';
 import area from '@turf/area';
 import intersect from '@turf/intersect';
 import union from '@turf/union';
+import { resolve } from 'dns';
 
 declare const L: any;
 // import 'leaflet-compass';
@@ -433,7 +434,7 @@ export class MapService {
                     geology_results = geology_results.map(geology_result => 
                         [geology_result[0], geology_result[1], (geology_result[1] / basinArea * 100)]
                     );
-                    this._loaderService.hideFullPageLoad();
+                    // this._loaderService.hideFullPageLoad();
                     resolve(geology_results);
                 }
             });
@@ -507,7 +508,6 @@ export class MapService {
                             }
                         }
                         
-                        this._loaderService.hideFullPageLoad();
                         // console.log("Burned Area:")
                         // console.log([intArea, (intArea / basinArea * 100)])
                         // console.log(intArea.toPrecision(3) + " sq mi (" + Number((intArea / basinArea * 100).toPrecision(3)) + " %)");
@@ -524,6 +524,118 @@ export class MapService {
             });
         });
       }
+
+      public doSomeAsyncStuff(parameter, latitude, longitude) {
+        return new Promise<void>(async resolve => { 
+            // this.configSettings.parameters.forEach(async parameter => {
+                let url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
+                await this._http.post(url, {headers: this.authHeader}).subscribe(result => {
+                    parameter.value = result["results"][parameter.fcpg_parameter][0] * parameter.multiplier;
+                    resolve();
+                }, error => {
+                    console.log(error);
+                })
+            // });
+        });
+      }
+
+      public async queryPrecomputedBasinCharacteristics(basinFeature, latitude, longitude) {
+
+        const promises = [];
+        this.configSettings.parameters.forEach(parameter => {
+            promises.push(this.doSomeAsyncStuff(parameter, latitude, longitude));
+        });
+
+        await Promise.all(promises)
+            .then(() => {
+                // console.log(this.configSettings.parameters)
+                this.setBasinCharacteristics(this.configSettings.parameters);
+                this._loaderService.hideFullPageLoad();
+                // return this.configSettings.parameters;
+            })
+            .catch((e) => {
+                // handle errors here
+            });
+    }
+
+    public calculateStreamflowEstimates() {
+        let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
+        this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
+          console.log(response);
+          post = response;
+          let regressionRegions = post[0]["regressionRegions"];
+          regressionRegions.forEach(regressionRegion => {
+            let parameters = regressionRegion["parameters"];
+            parameters.forEach(parameter => {
+              switch (parameter["code"]) {
+                case "DRNAREA":
+                  parameter["value"] = (area(basinFeature) / 1000000);; 
+                  break;
+                case "I_30_M":
+                  parameter["value"] = parameter_dictionary["i2y30"] / 1000;
+                  break;
+                case "BRNAREA":
+                  parameter["value"] = 0.0; // this should be the burned area from queryBurnedArea. Doesn't matter for now though because this is only use for Level 2 or 3 equations.
+                  break;
+                default:
+                  parameter["value"] = 0.0;
+              }
+            });
+          });
+          console.log(regressionRegions);
+        }, error => {
+            console.log(error);
+        });
+    
+        let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
+        this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
+          console.log(response);
+        }, error => {
+            console.log(error);
+        });
+    }
+  
+
+        // return new Promise<any>(resolve => { 
+        //     this._loaderService.showFullPageLoad();
+        //     this.createMessage("Calculating Basin Characteristics. Please wait.");
+
+        //     this.configSettings.parameters.forEach(async parameter => {
+        //         let url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
+        //         await this._http.post(url, {headers: this.authHeader}).subscribe(result => {
+        //             // console.log(parameter + ": " + result["results"][parameter][0]);
+        //             console.log(result);
+        //             parameter.value = result["results"][parameter.fcpg_parameter][0] * parameter.multiplier;
+        //         }, error => {
+        //             console.log(error);
+        //         })
+        //     });
+        // });
+
+            
+
+            // let post;
+            // console.log("Basin characteristics:");
+            // let parameter_dictionary = {};
+            // const parameters = ["i2y30","jantmin","jantmax","forests"]; 
+            // parameters.forEach( parameter => {
+            //   const url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter;
+            //   this._http.post(url, {headers: this.authHeader}).subscribe(result => {
+            //     console.log(parameter + ": " + result["results"][parameter][0]);
+            //     parameter_dictionary[parameter] = result["results"][parameter][0];
+            //   }, error => {
+            //       console.log(error);
+            //   })
+            // });
+            // console.log(this.configSettings.parameters);
+            // this._loaderService.hideFullPageLoad();
+            // resolve(this.configSettings.parameters);
+        
+        
+    
+        
+    
+      
 
     // Get basin area
     private _basinArea: Subject<any> = new Subject<any>();
@@ -559,6 +671,15 @@ export class MapService {
     }
     public get geologyReport(): any {
         return this._geologyReport.asObservable();
+    }
+
+    // Get basin characteristics
+    private _basinCharacteristics: Subject<any> = new Subject<any>();
+    public setBasinCharacteristics(array) {
+        this._basinCharacteristics.next(array);
+    }
+    public get basinCharacteristics(): any {
+        return this._basinCharacteristics.asObservable();
     }
 
     // Query Fire Perimeters

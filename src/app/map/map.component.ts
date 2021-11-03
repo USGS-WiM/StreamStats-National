@@ -209,8 +209,11 @@ export class MapComponent implements OnInit {
               this._mapService.setBurnYears([starBurnYear, endBurnYear]);
               let geologyResults = await this._mapService.queryGeology(this.basin.features[1]);
               this._mapService.setGeologyReport(geologyResults);
-
-              // this.calculateStreamflowEstimates(); //unfinished
+              // let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.basin.features[1], this.clickPoint.lat, this.clickPoint.lng);
+              await this._mapService.queryPrecomputedBasinCharacteristics(this.basin.features[1], this.clickPoint.lat, this.clickPoint.lng);
+              // console.log(basinCharacteristics);
+              // this._mapService.setBasinCharacteristics(basinCharacteristics);
+              await this._mapService.calculateStreamflowEstimates(); //unfinished
           }
         }
       }
@@ -428,10 +431,6 @@ export class MapComponent implements OnInit {
       if (this.basin) {  
         this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-        console.log("Delineated basin:");
-        console.log(this.basin.features[1].geometry);
-        console.log("Basin area:");
-        console.log((area(this.basin.features[1]) / 1000000).toPrecision(3) + " sq mi");
         this.splitCatchmentLayer.addTo(this._mapService.map);
         if (!this.splitCatchmentLayer.getBounds().isValid()) {
           this.createMessage("Error. Basin cannot be delineated.");
@@ -445,70 +444,13 @@ export class MapComponent implements OnInit {
     });
   }
 
-  public queryPrecomputedBasinCharacteristics(lat, lng, basinarea) {
-    let post;
-    console.log("Basin characteristics:");
-    let parameter_dictionary = {};
-    const parameters = ["i2y30","jantmin","jantmax","forests"]; 
-    parameters.forEach( parameter => {
-      const url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + lat + "&longitude=" + lng + "&fcpg_parameter=" + parameter;
-      this._http.post(url, {headers: this.authHeader}).subscribe(result => {
-        console.log(parameter + ": " + result["results"][parameter]);
-        parameter_dictionary[parameter] = result["results"][parameter];
-      }, error => {
-          console.log(error);
-      })
-    });
-    console.log(parameter_dictionary);
-
-    /// The code in this function below this line should go into the calculateStreamflowEstimates function
-    let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
-    this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
-      console.log(response);
-      post = response;
-      let regressionRegions = post[0]["regressionRegions"];
-      regressionRegions.forEach(regressionRegion => {
-        let parameters = regressionRegion["parameters"];
-        parameters.forEach(parameter => {
-          switch (parameter["code"]) {
-            case "DRNAREA":
-              parameter["value"] = basinarea; 
-              break;
-            case "I_30_M":
-              parameter["value"] = parameter_dictionary["i2y30"] / 1000;
-              break;
-            case "BRNAREA":
-              parameter["value"] = 0.0; // this should be the burned area from queryBurnedArea. Doesn't matter for now though because this is only use for Level 2 or 3 equations.
-              break;
-            default:
-              parameter["value"] = 0.0;
-          }
-        });
-      });
-      console.log(regressionRegions);
-    }, error => {
-        console.log(error);
-    });
-
-    let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
-    this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
-      console.log(response);
-    }, error => {
-        console.log(error);
-    });
-
-  };
-
   public async getBasinCharacteristics(basin, basinArea, startYear, endYear) {
     // this.queryBurnedArea(basin, basinArea, startYear, endYear); 
     // this.queryGeology(this.basin.features[1].geometry, basinArea); 
     // this.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng, basinArea);
   }
 
-  public calculateStreamflowEstimates() {
-
-  }
-
+ 
   oldqueryBurnedArea(basin, basinArea, startYear, endYear) {
     this._loaderService.showFullPageLoad();
     this.createMessage("Calculating Burned Area. Please wait.");
