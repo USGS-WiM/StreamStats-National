@@ -558,8 +558,9 @@ export class MapService {
             });
     }
 
-    public calculateStreamflowEstimates() {
+    public calculateStreamflowEstimates(basinFeature) {
         let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
+        let post;
         this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
           console.log(response);
           post = response;
@@ -572,10 +573,10 @@ export class MapService {
                   parameter["value"] = (area(basinFeature) / 1000000);; 
                   break;
                 case "I_30_M":
-                  parameter["value"] = parameter_dictionary["i2y30"] / 1000;
+                  parameter["value"] = this.configSettings.parameters.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
                   break;
                 case "BRNAREA":
-                  parameter["value"] = 0.0; // this should be the burned area from queryBurnedArea. Doesn't matter for now though because this is only use for Level 2 or 3 equations.
+                  parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
                   break;
                 default:
                   parameter["value"] = 0.0;
@@ -587,12 +588,12 @@ export class MapService {
             console.log(error);
         });
     
-        let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
-        this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
-          console.log(response);
-        }, error => {
-            console.log(error);
-        });
+        // let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
+        // this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
+        //   console.log(response);
+        // }, error => {
+        //     console.log(error);
+        // });
     }
   
 

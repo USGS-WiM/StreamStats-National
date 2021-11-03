@@ -213,7 +213,7 @@ export class MapComponent implements OnInit {
               await this._mapService.queryPrecomputedBasinCharacteristics(this.basin.features[1], this.clickPoint.lat, this.clickPoint.lng);
               // console.log(basinCharacteristics);
               // this._mapService.setBasinCharacteristics(basinCharacteristics);
-              await this._mapService.calculateStreamflowEstimates(); //unfinished
+              this._mapService.calculateStreamflowEstimates(this.basin.features[1]); //unfinished
           }
         }
       }
