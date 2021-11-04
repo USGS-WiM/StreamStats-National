@@ -27,6 +27,7 @@ export class WorkflowComponent implements OnInit {
   public burnedArea;
   public geologyReport;
   public basinCharacteristics;
+  public streamflowEstimates;
   public selectedPerimeters;
   public firePerimetersLayers;
   public output:any = {};
@@ -80,6 +81,10 @@ export class WorkflowComponent implements OnInit {
     //Get basin characteristics
     this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
       this.basinCharacteristics = basinCharacteristics;
+    });
+    //Get streamflow estimates
+    this._mapService.streamflowEstimates.subscribe((streamflowEstimates) => {
+      this.streamflowEstimates = streamflowEstimates;
     });
     //Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeters) => {
@@ -189,7 +194,8 @@ export class WorkflowComponent implements OnInit {
                           'burnYears': this.burnYears,
                           'burnedArea': this.burnedArea,
                           'geologyInfo': this.geologyReport,
-                          'basinCharacteristics': this.basinCharacteristics};
+                          'basinCharacteristics': this.basinCharacteristics,
+                          'streamflowEstimates': this.streamflowEstimates};
         }
         if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
           this.output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers': this.firePerimetersLayers};

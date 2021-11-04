@@ -49,7 +49,21 @@
                 </tr>
             </table>
             </ul>
-            
+        </li>
+        <li *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+            <ul><table>
+                <tr>
+                    <th>Equation</th>
+                    <th>Value</th>
+                    <th>Units</th>
+                </tr>
+                <tr *ngFor="let streamflowEstimate of workflowData[i].outputs.streamflowEstimates">
+                    <td>{{streamflowEstimate["name"]}}</td>
+                    <td>{{streamflowEstimate["value"] | number : '1.3'}}</td>
+                    <td>{{streamflowEstimate["unit"]["abbr"]}}</td>
+                </tr>
+            </table>
+            </ul>
         </li>
 
         <!-- Query Fire Perimeters-->

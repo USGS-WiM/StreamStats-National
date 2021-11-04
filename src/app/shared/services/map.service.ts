@@ -528,7 +528,8 @@ export class MapService {
       public doSomeAsyncStuff(parameter, latitude, longitude) {
         return new Promise<void>(async resolve => { 
             // this.configSettings.parameters.forEach(async parameter => {
-                let url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
+                // let url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
+                let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
                 await this._http.post(url, {headers: this.authHeader}).subscribe(result => {
                     parameter.value = result["results"][parameter.fcpg_parameter][0] * parameter.multiplier;
                     resolve();
@@ -558,11 +559,11 @@ export class MapService {
             });
     }
 
-    public calculateStreamflowEstimates(basinFeature) {
+    public async calculateStreamflowEstimates(basinFeature) {
         let url2 = "https://streamstats.usgs.gov/nssservices/scenarios?regions=74&statisticgroups=39";
         let post;
-        this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
-          console.log(response);
+        await this._http.get(url2, {headers: this.authHeader}).subscribe(response => {
+        //   console.log(response);
           post = response;
           let regressionRegions = post[0]["regressionRegions"];
           regressionRegions.forEach(regressionRegion => {
@@ -583,17 +584,31 @@ export class MapService {
               }
             });
           });
-          console.log(regressionRegions);
+        //   console.log(regressionRegions);
+        //   console.log(post);
+
+            let streamflowEstimates = [];
+
+            let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
+            this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
+            console.log(response);
+                let regressionRegions = response[0]["regressionRegions"];
+                regressionRegions.forEach(regressionRegion => { 
+                    console.log(regressionRegion);
+                    let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
+                    
+                    streamflowEstimates.push(result);
+                });
+                console.log(streamflowEstimates);
+                this.setStreamflowEstimates(streamflowEstimates);
+            }, error => {
+                console.log(error);
+            });
         }, error => {
             console.log(error);
         });
     
-        // let url3 = "https://streamstats.usgs.gov/nssservices/scenarios/Estimate";
-        // this._http.post(url3, post, {headers: this.authHeader}).subscribe(response => {
-        //   console.log(response);
-        // }, error => {
-        //     console.log(error);
-        // });
+        
     }
   
 
@@ -681,6 +696,15 @@ export class MapService {
     }
     public get basinCharacteristics(): any {
         return this._basinCharacteristics.asObservable();
+    }
+
+    // Get streamflow estimates
+    private _streamflowEstimates: Subject<any> = new Subject<any>();
+    public setStreamflowEstimates(array) {
+        this._streamflowEstimates.next(array);
+    }
+    public get streamflowEstimates(): any {
+        return this._streamflowEstimates.asObservable();
     }
 
     // Query Fire Perimeters
