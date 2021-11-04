@@ -170,7 +170,7 @@ export class MapComponent implements OnInit {
         if (this.workflowData.title == "Fire Hydrology") {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
               this._loaderService.showFullPageLoad();
-              this.createMessage("Calculating basin characteristics. Please wait.");
+              this.createMessage("Calculating basin characteristics and streamflow estimates. Please wait.");
 
               // Basin Area
               let basinFeature = this.basin.features[1];
@@ -196,7 +196,6 @@ export class MapComponent implements OnInit {
               await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
 
               // Streamflow Estimates
-              this.createMessage("Calculating streamflow estimates. Please wait.");
               await this._mapService.calculateFireStreamflowEstimates(basinFeature);
               this._loaderService.hideFullPageLoad();
           }
