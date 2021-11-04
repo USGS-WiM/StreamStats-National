@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChildren } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import * as L from 'leaflet';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
@@ -20,14 +20,17 @@ export class WorkflowComponent implements OnInit {
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
+  // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
+  // Fire Hydrology: Query by Basin output
   public basinArea;
   public burnYears;
   public burnedArea;
   public geologyReport;
   public basinCharacteristics;
   public streamflowEstimates;
+  // Fire Hydrology: Query by Fire Perimeters output
   public selectedPerimeters;
   public firePerimetersLayers;
   public output:any = {};
@@ -44,53 +47,53 @@ export class WorkflowComponent implements OnInit {
   ngOnInit(): void {
 
     if (this.formData === null) {
-      //Set steps if there is no prior form data
+      // Set steps if there is no prior form data
       this.setSteps();
     } else {
-      //Set step and set values of prior form data
+      // Set step and set values of prior form data
       this.populateForm();
     }
 
-    //Get clicked point
+    // Get clicked point
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
     });
-    //Get delineation and basin area
+    // Get delineation and basin area
     this._mapService.delineationPolygon.subscribe((poly: any) => {
       var basin = poly.outputs;
       if (basin) {  
         this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
       }
     });
-    //Get basin area
+    // Get basin area
     this._mapService.basinArea.subscribe((basinArea) => {
       this.basinArea = basinArea;
     });
-    //Get burn years
+    // Get burn years
     this._mapService.burnYears.subscribe((burnYears) => {
       this.burnYears = burnYears;
     });
-    //Get burned area
+    // Get burned area
     this._mapService.burnedArea.subscribe((burnedArea) => {
       this.burnedArea = burnedArea;
     });
-    //Get geology results
+    // Get geology results
     this._mapService.geologyReport.subscribe((geologyReport) => {
       this.geologyReport = geologyReport;
     });
-    //Get basin characteristics
+    // Get basin characteristics
     this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
       this.basinCharacteristics = basinCharacteristics;
     });
-    //Get streamflow estimates
+    // Get streamflow estimates
     this._mapService.streamflowEstimates.subscribe((streamflowEstimates) => {
       this.streamflowEstimates = streamflowEstimates;
     });
-    //Get selected fire perimeters
+    // Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeters) => {
       this.selectedPerimeters = perimeters;
     });
-    //Get selected fire perimeter layer
+    // Get selected fire perimeter layer
     this._mapService.firePerimetersLayers.subscribe((layers) => {
       this.firePerimetersLayers = layers;
     });
@@ -120,7 +123,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public addSteps(optionSelection: string) {
-    //Add nested steps depending on prior step selection
+    // Add nested steps depending on prior step selection
     this.workflow.steps.forEach(step => {
       step.options?.forEach(opt => {
         if (opt.text === optionSelection) {
@@ -183,27 +186,34 @@ export class WorkflowComponent implements OnInit {
         break;
       case "Delineation":
         this.getOutputs();
+        this.output = {
+          'clickPoint': this.clickedPoint, 
+          'layers': [this.splitCatchmentLayer],
+        }
         this.output.clickPoint = this.clickedPoint;
         this.output.layers = [this.splitCatchmentLayer];
         break;
       case "Fire Hydrology":
         if (this.workflowForm.value.steps[1].name === "selectFireHydroBasin") {
-          this.output = {'clickPoint': this.clickedPoint, 
-                          'layers': [this.splitCatchmentLayer],
-                          'basinArea': this.basinArea, 
-                          'burnYears': this.burnYears,
-                          'burnedArea': this.burnedArea,
-                          'geologyInfo': this.geologyReport,
-                          'basinCharacteristics': this.basinCharacteristics,
-                          'streamflowEstimates': this.streamflowEstimates};
-        }
-        if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
-          this.output = {'clickPoint': this.clickedPoint, 'selectedPerimetersInfo': this.selectedPerimeters, 'layers': this.firePerimetersLayers};
+          this.output = {
+            'clickPoint': this.clickedPoint, 
+            'layers': [this.splitCatchmentLayer],
+            'basinArea': this.basinArea, 
+            'burnYears': this.burnYears,
+            'burnedArea': this.burnedArea,
+            'geologyInfo': this.geologyReport,
+            'basinCharacteristics': this.basinCharacteristics,
+            'streamflowEstimates': this.streamflowEstimates
+          };
+        } else if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
+          this.output = {
+            'clickPoint': this.clickedPoint, 
+            'layers': this.firePerimetersLayers,
+            'selectedPerimetersInfo': this.selectedPerimeters};
         }
         break;
     }
     this.workflowForm.value.outputs = this.output; 
-    // console.log(this.output);
   }
 
   public getOutputs(){
@@ -220,9 +230,7 @@ export class WorkflowComponent implements OnInit {
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
-      // console.log(this.numberOfSteps);
       this.finalStep = true;
-      // this.fillOutputs();
     } 
   }
 
@@ -266,6 +274,5 @@ export class WorkflowComponent implements OnInit {
     });
     this.workflowForm.patchValue(this.formData);
   }
-
 
 }

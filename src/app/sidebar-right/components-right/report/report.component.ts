@@ -41,4 +41,8 @@ export class ReportComponent implements OnInit {
       }
     }
   }
+
+  unsortedKeys() {
+    return 0;
+  }
 }

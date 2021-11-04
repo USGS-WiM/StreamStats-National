@@ -1,7 +1,5 @@
 // Interface for the externally referenced config file holding URLs
 
-import { StringMap } from "@angular/compiler/src/compiler_facade_interface";
-
 export interface Config {
     workflowsURL: string;
     nldiBaseURL: string;
