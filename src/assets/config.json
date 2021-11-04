@@ -2,8 +2,9 @@
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
-    "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
-    "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
+    "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices/",
+    "NSSServices": "https://streamstats.usgs.gov/nssservices/",
+    "GridQueryService": "https://test.streamstats.usgs.gov/gridqueryservices?",
     "overlays":[
         {
             "name": "Streamgages",
@@ -158,7 +159,7 @@
             "fcpg_parameter" : "i2y30",
             "description": "Mean maximum 30-minute 2-year precipitation",
             "multiplier": 0.002,
-            "units": "in per hr"
+            "units": "in/hr"
         },
         
         {
