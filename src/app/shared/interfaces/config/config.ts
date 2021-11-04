@@ -7,7 +7,8 @@ export interface Config {
     nldiBaseURL: string;
     nldiSplitCatchmentURL: string;
     GageStatsServices: string;
-    GageStatsServicesBounds: string;
+    NSSServices: string;
+    GridQueryService: string;
     baseLayers: [{
         name: string,
         url: string,
