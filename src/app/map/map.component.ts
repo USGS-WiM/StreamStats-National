@@ -128,7 +128,7 @@ export class MapComponent implements OnInit {
           }
           if (this.workflowData.title === "Fire Hydrology" && this.workflowData.steps[0].completed) {
             if (this.workflowData.steps[1].name === "selectFireHydroBasin") {
-              this.onMouseClickFireHydroQueryBasin();
+              this.onMouseClickDelineation();
             }
             if (this.workflowData.steps[1].name === "selectFireHydroPerimeter") {
               this.onMouseClickFireHydroQueryFirePerimeter();
@@ -375,31 +375,6 @@ export class MapComponent implements OnInit {
 
   // On map click, set click point value, for delineation
   public onMouseClickDelineation() { 
-    this.removeLayer(this.splitCatchmentLayer);
-    this.addPoint(this.clickPoint);
-    this.marker.openPopup();
-    this._loaderService.showFullPageLoad();
-    this.createMessage("Delineating basin. Please wait.");
-    this._mapService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
-    this._mapService.delineationPolygon.subscribe((poly: any) => {
-      this.basin = poly.outputs;
-      if (this.basin) {  
-        this.removeLayer(this.splitCatchmentLayer);  
-        this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-        this.splitCatchmentLayer.addTo(this._mapService.map);
-        if (!this.splitCatchmentLayer.getBounds().isValid()) {
-          this.createMessage("Error. Basin cannot be delineated.");
-        } else {
-          this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
-        }
-      } else {
-        this.createMessage("Error. Basin cannot be delineated.");
-      }
-      this._loaderService.hideFullPageLoad();
-    });
-  }
-
-  public onMouseClickFireHydroQueryBasin() { 
     this.removeLayer(this.splitCatchmentLayer);
     this.addPoint(this.clickPoint);
     this.marker.openPopup();
