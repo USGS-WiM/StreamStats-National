@@ -155,18 +155,18 @@ describe('WorkflowComponent', () => {
     });
     
     component.workflowForm = workflowOne;
-    component.fillOutputs(0);
+    component.fillOutputs();
     expect(component.workflowForm).toBe(workflowOne);
 
     component.workflowForm = workflowTwo;
-    component.fillOutputs(0);
+    component.fillOutputs();
     expect(component.workflowForm).toBe(workflowTwo);
 
     component.workflowForm = workflowThree;
-    component.fillOutputs(0);
+    component.fillOutputs();
     expect(component.workflowForm).toBe(workflowThree);
     component.workflowForm = workflowThree;
-    component.fillOutputs(1);
+    component.fillOutputs();
     expect(component.workflowForm).toBe(workflowThree);
   });
 
