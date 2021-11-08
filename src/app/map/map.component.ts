@@ -170,14 +170,16 @@ export class MapComponent implements OnInit {
               let basinFeature = this.basin.features[1];
               this._mapService.setBasinArea(area(basinFeature) / 1000000);
 
-              // Burn Years
-              let starBurnYear = this.workflowData.steps[2].options[0].text;
-              let endBurnYear = this.workflowData.steps[2].options[1].text;
-              this._mapService.setBurnYears([starBurnYear, endBurnYear]);
-
               // Burned Area
-              let burnedArea = await this._mapService.queryBurnedArea(basinFeature, starBurnYear, endBurnYear);
-              this._mapService.setBurnedArea(burnedArea);
+              let startBurnYear = this.workflowData.steps[2].options[0].text;
+              let endBurnYear = this.workflowData.steps[2].options[1].text;
+              if (this. validateBurnYears(startBurnYear, endBurnYear)) {
+                this._mapService.setBurnYears([startBurnYear, endBurnYear]);
+                let burnedArea = await this._mapService.queryBurnedArea(basinFeature, startBurnYear, endBurnYear);
+                this._mapService.setBurnedArea(burnedArea);
+              } else {
+                this.createMessage("Burn Years are not valid. Burned Area will not be calculated.", 'error');
+              }
 
               // Geology
               let geologyResults = await this._mapService.queryGeology(basinFeature);
@@ -207,6 +209,14 @@ export class MapComponent implements OnInit {
     });
 
     this.loadLayers();
+  }
+
+  public validateBurnYears(startBurnYear, endBurnYear) {
+    if (/^\d{4}$/.test(startBurnYear) == false || /^\d{4}$/.test(endBurnYear) == false) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   public removeWorkFlowLayers(){
