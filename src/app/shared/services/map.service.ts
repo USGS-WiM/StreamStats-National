@@ -398,7 +398,7 @@ export class MapService {
                 if (results && results.features.length > 0) {
                     if (results.features.length > 3000) {
                         // MapServer limitation: only 3000 polygons will be returned
-                        console.log("Warning: Geology results may be incorrect due to map server limitations.");
+                        this.createMessage("Warning: Geology results may be incorrect due to map server limitations.", 'error');
                     }
                     let intersectArea;
                     geologyUnion = results.features[0];
@@ -463,12 +463,12 @@ export class MapService {
                     this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
                     .run((error: any, results: any) =>  {
                         if (error) {
-                            console.log("Error calculating burned area.");
+                            this.createMessage("Error calculating Burned Area.", 'error');
                         } 
                         if (results && results.features.length > 0) {
                             if (results.features.length > 2000) {
                                 // MapServer limitation: only 2000 polygons will be returned
-                                console.log("Warning: Burned Area may be incorrect due to map server limitations.");
+                                this.createMessage("Warning: Burned Area may be incorrect due to map server limitations.", 'error');
                             }
                             if (fireUnion === undefined) { fireUnion = results.features[0]; }
                             for (let i = 0; i < results.features.length; i++) {
