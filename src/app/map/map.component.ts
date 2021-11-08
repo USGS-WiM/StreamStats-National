@@ -191,6 +191,7 @@ export class MapComponent implements OnInit {
 
               // Streamflow Estimates
               await this._mapService.calculateFireStreamflowEstimates(basinFeature);
+              this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
               this._loaderService.hideFullPageLoad();
           }
         }
