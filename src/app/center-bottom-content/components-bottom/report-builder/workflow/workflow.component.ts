@@ -190,8 +190,6 @@ export class WorkflowComponent implements OnInit {
           'clickPoint': this.clickedPoint, 
           'layers': [this.splitCatchmentLayer],
         }
-        this.output.clickPoint = this.clickedPoint;
-        this.output.layers = [this.splitCatchmentLayer];
         break;
       case "Fire Hydrology":
         if (this.workflowForm.value.steps[1].name === "selectFireHydroBasin") {
