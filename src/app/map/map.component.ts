@@ -202,13 +202,13 @@ export class MapComponent implements OnInit {
                 if (o.text === "Query by Basin" && o.selected === true) {
                   this.addLayers('NHD Flowlines');
                   this.addLayers('Archived WildFire Perimeters');
-                  this.addLayers('Active WildFire Perimeters');
+                  this.addLayers('2021 Wildfires Perimeters');
                   this.addLayers('MTBS Fire Boundaries');
                   this.addLayers('Burn Severity');
                 }
                 if (o.text === "Query by Fire Perimeters" && o.selected === true) {
                   this.addLayers('Archived WildFire Perimeters');
-                  this.addLayers('Active WildFire Perimeters');
+                  this.addLayers('2021 Wildfires Perimeters');
                   this.addLayers('MTBS Fire Boundaries');
                   this.addLayers('Burn Severity');
                 }
@@ -359,7 +359,7 @@ export class MapComponent implements OnInit {
     this.selectedPerimeters = [];
     this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
-      if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
+      if (layerName === '2021 Wildfires Perimeters' || layerName === 'Archived WildFire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
           .run((error: any, results: any) => {
             this.findFeatures(error,results,layerName);
@@ -377,7 +377,7 @@ export class MapComponent implements OnInit {
 
   public async findFeatures(error,results,layerName) {
     let popupcontent;
-    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE'];
+    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE', 'POLY_INCIDENTNAME','POLY_GISACRES','POLY_SOURCE', 'POLY_ACRES_AUTOCALC'];
     if (error) {
       this.createMessage('Error occurred.','error');
       this._loaderService.hideFullPageLoad();
@@ -401,7 +401,7 @@ export class MapComponent implements OnInit {
         popupcontent += '<br>';
         if (layerName === 'MTBS Fire Boundaries') {
           this.firePerimeterLayer = L.geoJSON(feat.geometry);
-        } else if (layerName === 'Active WildFire Perimeters' || layerName === 'Archived WildFire Perimeters') {
+        } else if (layerName === '2021 Wildfires Perimeters' || layerName === 'Archived WildFire Perimeters') {
           const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
           this.firePerimeterLayer = L.geoJSON(feat.geometry, {style: {color: col}});
         }

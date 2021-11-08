@@ -30,8 +30,8 @@
         "visible": false
     },
     {
-        "name": "Active WildFire Perimeters",
-        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Current_WildlandFire_Perimeters/FeatureServer/0",
+        "name": "2021 Wildfires Perimeters",
+        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
         "type": "agsFeature",
         "layerOptions": {
             "zIndex": 9999
@@ -120,7 +120,7 @@
         }
     ],
     "symbols": {
-        "Active WildFire Perimeters": {
+        "2021 Wildfires Perimeters": {
             "color": "#EBCF26",
             "fillColor": "#EBCF26"
         },
