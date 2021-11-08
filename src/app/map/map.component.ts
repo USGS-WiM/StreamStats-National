@@ -49,12 +49,6 @@ export class MapComponent implements OnInit {
     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
-
-
-    this.authHeader = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': "*"
-    });
   }
 
   ngOnInit() {
