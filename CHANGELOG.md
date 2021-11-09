@@ -15,12 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added leaflet map
 -   Updated site icon to WIM favicon
 -   Added template components and initial hookups into basic app structure
--   Added example workflows
+-   Added example workflow
 -   Added general map functions: scale, zoom, show your location, geosearch, basemap selection
 -   Added google analytics
 -   Added basin delineation workflow
--   Added fire hydrology workflow
+-   Added fire hydrology workflows
 -   Added trace functionality for query fire perimeters
+-   Added functionality to query geology, burned area, precomputed basin characteristics, and fire hydrology streamflow estimates
 -   Added toggleable layers
 -   Added maps to report output
 
