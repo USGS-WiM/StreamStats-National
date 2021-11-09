@@ -164,37 +164,41 @@ export class MapComponent implements OnInit {
         if (this.workflowData.title == "Fire Hydrology") {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
               this._loaderService.showFullPageLoad();
-              this.createMessage("Calculating basin characteristics and streamflow estimates. Please wait.");
 
-              // Basin Area
-              let basinFeature = this.basin.features[1];
-              this._mapService.setBasinArea(area(basinFeature) / 1000000);
-
-              // Burned Area
+              // Check for valid burn years
               let startBurnYear = this.workflowData.steps[2].options[0].text;
               let endBurnYear = this.workflowData.steps[2].options[1].text;
-              if (this. validateBurnYears(startBurnYear, endBurnYear)) {
+              if (this.validateBurnYears(startBurnYear, endBurnYear)) {
+                this.createMessage("Calculating basin characteristics and streamflow estimates. Please wait.");
+  
+                // Basin Area
+                let basinFeature = this.basin.features[1];
+                this._mapService.setBasinArea(area(basinFeature) / 1000000);
+  
+                // Burned Area
                 this._mapService.setBurnYears([startBurnYear, endBurnYear]);
                 let burnedArea = await this._mapService.queryBurnedArea(basinFeature, startBurnYear, endBurnYear);
                 this._mapService.setBurnedArea(burnedArea);
+
+                // Geology
+                let geologyResults = await this._mapService.queryGeology(basinFeature);
+                this._mapService.setGeologyReport(geologyResults);
+
+                // Basin characteristics
+                // TODO: When the lambda service is working properly (returning all parameters at once), use these lines instead: 
+                // let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.basin.features[1], this.clickPoint.lat, this.clickPoint.lng);
+                // this._mapService.setBasinCharacteristics(basinCharacteristics);
+                await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+
+                // Streamflow Estimates
+                await this._mapService.calculateFireStreamflowEstimates(basinFeature);
+                this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
               } else {
-                this.createMessage("Burn Years are not valid. Burned Area will not be calculated.", 'error');
+                this.createMessage("Please enter valid Burn Years.", 'error');
               }
-
-              // Geology
-              let geologyResults = await this._mapService.queryGeology(basinFeature);
-              this._mapService.setGeologyReport(geologyResults);
-
-              // Basin characteristics
-              // TODO: When the lambda service is working properly (returning all parameters at once), use these lines instead: 
-              // let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.basin.features[1], this.clickPoint.lat, this.clickPoint.lng);
-              // this._mapService.setBasinCharacteristics(basinCharacteristics);
-              await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
-
-              // Streamflow Estimates
-              await this._mapService.calculateFireStreamflowEstimates(basinFeature);
-              this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
               this._loaderService.hideFullPageLoad();
+
+              
           }
         }
       }
@@ -212,7 +216,8 @@ export class MapComponent implements OnInit {
   }
 
   public validateBurnYears(startBurnYear, endBurnYear) {
-    if (/^\d{4}$/.test(startBurnYear) == false || /^\d{4}$/.test(endBurnYear) == false) {
+    // Check if both burn years are 4-digit numbers
+    if (!/^\d{4}$/.test(startBurnYear) || !/^\d{4}$/.test(endBurnYear)) {
       return false;
     } else {
       return true;
