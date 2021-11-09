@@ -2,8 +2,9 @@
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/jobs?response=document",
-    "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices",
-    "GageStatsServicesBounds": "/stations/Bounds?xmin={0}&xmax={1}&ymin={2}&ymax={3}&geojson=true",
+    "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices/",
+    "NSSServices": "https://streamstats.usgs.gov/nssservices/",
+    "GridQueryService": "https://test.streamstats.usgs.gov/gridqueryservices?",
     "overlays":[
         {
             "name": "Streamgages",
@@ -15,7 +16,7 @@
         }
     ],
     "workflowLayers":[
-    {
+        {
         "name": "NHD Flowlines",
         "url": "https://labs.waterdata.usgs.gov/geoserver/gwc/service/",
         "type": "WMS",
@@ -26,46 +27,71 @@
             "zIndex": 9999,
             "format": "image/png",
             "transparent": "true"
-        },
-        "visible": false
-    },
-    {
-        "name": "2021 Wildfire Perimeters",
-        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
-        "type": "agsFeature",
-        "layerOptions": {
-            "zIndex": 9999
-        },
-        "visible": false
-    },
-    {
-        "name": "Archived Wildfire Perimeters",
-        "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
-        "type": "agsFeature",
-        "layerOptions": {
-            "zIndex": 9999
-        },
-        "visible": false
-    },
-    {
-        "name": "MTBS Fire Boundaries",
-        "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
-        "type": "agsDynamic",
-        "layerOptions": {
-            "zIndex": 9999,
-            "layers": [63]
-        },
-        "visible": false
+        }
         },
         {
-        "name": "Burn Severity",
-        "url": "https://apps.fs.usda.gov/arcx/rest/services/RDW_Wildfire/MTBS_CONUS/MapServer",
-        "type": "agsDynamic",
-        "layerOptions": {
-            "zIndex": 9999,
-            "minZoom": 10
+            "name": "2021 Wildfire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
         },
-        "visible": false
+        {
+            "name": "Archived WildFire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+    
+        {
+            "name": "MTBS Fire Boundaries",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "layers": [63]
+            },
+            "visible": true
+        },
+        {
+            "name": "Burn Severity",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/RDW_Wildfire/MTBS_CONUS/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10
+            },
+            "visible": true
+        },
+        {
+            "name": "GeologyFeatures",
+            "url": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10,
+                "layers": [3]
+            },
+            "visible": false
+        },
+        {
+            "name": "Geology",
+            "url": "https://www.sciencebase.gov/arcgis/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/WMSServer",
+            "type": "WMS",
+            "layerOptions": {
+                "layers": "0",
+                "minZoom": 10,
+                "maxZoom": 19,
+                "zIndex": 9999,
+                "format": "image/png",
+                "transparent": "true"
+            },
+            "visible": false
         }
     ],
     "baseLayers": [
@@ -128,8 +154,36 @@
             "color": "#ed8f24",
             "fillColor": "#ed8f24"
         }
-    }
-
+    },
+    "parameters": [
+        {
+            "fcpg_parameter" : "i2y30",
+            "description": "Mean maximum 30-minute 2-year precipitation",
+            "multiplier": 0.002,
+            "units": "in/hr"
+        },
+        
+        {
+            "fcpg_parameter" : "jantmin",
+            "description": "Mean January minimum temperature",
+            "multiplier": 1,
+            "units": "degrees Celsius"
+        },
+        
+        {
+            "fcpg_parameter" : "jantmax",
+            "description": "Mean January maximum temperature",
+            "multiplier": 1,
+            "units": "degrees Celsius"
+        },
+        
+        {
+            "fcpg_parameter" : "forests",
+            "description": "Forested area",
+            "multiplier": 1,
+            "units": "percent"
+        }
+    ]
     
 }
 

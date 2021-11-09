@@ -42,4 +42,8 @@ public reportMaps = [];
       }
     }
   }
+
+  unsortedKeys() {
+    return 0;
+  }
 }
