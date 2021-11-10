@@ -82,7 +82,8 @@ export class MapService {
                     this.overlays[ml["name"]] = esri.featureLayer(options);
                     this.setOverlayLayers(ml);
                 } catch (error) {
-                console.error(ml["name"] + ' layer failed to load', error);
+                    this.createMessage(ml["name"] + ' layer failed to load.', 'error');
+                    console.error(ml["name"] + ' layer failed to load', error);
                 }
             })
         }
@@ -107,6 +108,7 @@ export class MapService {
                         break;
                     }
                 } catch (error) {
+                    this.createMessage(ml["name"] + ' layer failed to load.', 'error');
                     console.error(ml["name"] + ' layer failed to load', error);
                 }
             });
@@ -393,6 +395,8 @@ export class MapService {
             .run((error: any, results: any) => {
                 if (error) {
                     console.log("error");
+                    this._loaderService.hideFullPageLoad();
+                    this.createMessage('Error querying geology.', 'error')
                 }
                 let geology_dictionary = {};
                 if (results && results.features.length > 0) {
@@ -462,7 +466,8 @@ export class MapService {
                     }
                     this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
                     .run((error: any, results: any) =>  {
-                        if (error) {
+                        if (error) {            
+                            this._loaderService.hideFullPageLoad();
                             this.createMessage("Error calculating Burned Area.", 'error');
                         } 
                         if (results && results.features.length > 0) {
@@ -506,6 +511,8 @@ export class MapService {
                 resolve();
             }, error => {
                 console.log(error);
+                this._loaderService.hideFullPageLoad();
+                this.createMessage("Error getting precomputed basin characteristic values.");
             })
         });
     }
@@ -521,7 +528,9 @@ export class MapService {
                 this.setBasinCharacteristics(this.configSettings.parameters);
             })
             .catch((e) => {
-                // handle errors here
+                console.log(e);
+                this._loaderService.hideFullPageLoad();
+                this.createMessage("Error querying precomputed basin characteristic.");
             });
     }
 
@@ -561,9 +570,13 @@ export class MapService {
                 this.setStreamflowEstimates(streamflowEstimates);
             }, error => {
                 console.log(error);
+                this._loaderService.hideFullPageLoad();
+                this.createMessage('Error calculating streamflow estimates.', 'error')
             });
         }, error => {
             console.log(error);
+            this._loaderService.hideFullPageLoad();
+            this.createMessage('Error calculating streamflow estimates.', 'error')
         });
     }
 
@@ -626,8 +639,8 @@ export class MapService {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
         return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions)
         .pipe(catchError((err: any) => {
-            this.createMessage("Error tracing fire perimeters.", 'error');
             this._loaderService.hideFullPageLoad();
+            this.createMessage("Error tracing fire perimeters.", 'error');
             return throwError(err);  
         }))
     }
