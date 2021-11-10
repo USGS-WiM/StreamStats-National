@@ -432,29 +432,8 @@ export class MapComponent implements OnInit {
 
   public async findFeatures(error,results,layerName) {
     let popupcontent;
-    const shownFields = {'INCIDENTNAME':"Incident Name",
-                          'COMMENTS':"Comments",
-                          'GISACRES':"Acres",
-                          'FIRE_YEAR':"Fire Year",
-                          'CREATEDATE':"Create Date",
-                          'ACRES':"Acres",
-                          'AGENCY':"Agency",
-                          'SOURCE':"Source",
-                          'INCIDENT':"Incident",
-                          'FIRE_ID':"Fire ID",
-                          'FIRE_NAME':"Fire Name",
-                          'YEAR':"Year",
-                          'STARTMONTH':"Start Month",
-                          'STARTDAY':"Start Day",
-                          'FIRE_TYPE':"Fire Type",					  
-                          'POLY_INCIDENTNAME':"Incident Name",
-                          'POLY_GISACRES':"Acres",
-                          'POLY_DATECURRENT':"Modified Date",
-                          'IRWIN_FIRECAUSE':"Fire Cause",
-                          'IRWIN_FIRECAUSEGENERAL':"Fire Cause-General",
-                          'IRWIN_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
-                          'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
-                          'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"};
+    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE', 
+    'POLY_INCIDENTNAME','POLY_GISACRES', 'POLY_DATECURRENT', 'IRWIN_FIRECAUSE', 'IRWIN_FIRECAUSEGENERAL', 'IRWIN_FIREDISCOVERYDATETIME','IRWIN_FIREOUTDATETIME','IRWIN_UNIQUEFIREIDENTIFIER'];
     if (error) {
       this.createMessage('Error occurred.','error');
       this._loaderService.hideFullPageLoad();
@@ -467,14 +446,13 @@ export class MapComponent implements OnInit {
           if (date.indexOf('undefined') > -1) date = 'N/A';
         }
         Object.keys(feat.properties).forEach(prop => {
-          if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
+          if (shownFields.indexOf(prop.toUpperCase()) > -1) {
             let val = feat.properties[prop];
             if (prop.toLowerCase().indexOf('date') > -1) {
               val = new Date(val).toLocaleDateString();
             }
-            let prop_label = shownFields[prop.toUpperCase()];
-            popupcontent += '<b>' + prop_label + ':</b> ' + val + '<br>';
-            }
+            popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
+          }
         });
         popupcontent += '<br>';
         if (layerName === 'MTBS Fire Boundaries') {
