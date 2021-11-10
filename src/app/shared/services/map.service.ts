@@ -448,13 +448,13 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "Archived WildFire Perimeters" || workflowLayer == "Active WildFire Perimeters") {
-                    if (workflowLayer == "Archived WildFire Perimeters") {
+                if (workflowLayer == "Archived Wildfire Perimeters" || workflowLayer == "2021 Wildfire Perimeters") {
+                    if (workflowLayer == "Archived Wildfire Perimeters") {
                     if (startBurnYear >= (new Date()).getFullYear()) {
                         count++;
                     }
                     queryString = 'FIRE_YEAR >= ' + startBurnYear.toString() + ' AND FIRE_YEAR <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "Active WildFire Perimeters") {
+                    } else if (workflowLayer == "2021 Wildfire Perimeters") {
                     if (endBurnYear < (new Date()).getFullYear()) {
                         count ++;
                     }
