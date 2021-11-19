@@ -185,10 +185,8 @@ export class MapComponent implements OnInit {
                 this._mapService.setGeologyReport(geologyResults);
 
                 // Basin characteristics
-                // TODO: When the lambda service is working properly (returning all parameters at once), use these lines instead: 
-                // let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.basin.features[1], this.clickPoint.lat, this.clickPoint.lng);
-                // this._mapService.setBasinCharacteristics(basinCharacteristics);
-                await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+                let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+                this._mapService.setBasinCharacteristics(basinCharacteristics);
 
                 // Streamflow Estimates
                 await this._mapService.calculateFireStreamflowEstimates(basinFeature);
