@@ -512,7 +512,7 @@ export class MapService {
             }, error => {
                 console.log(error);
                 this._loaderService.hideFullPageLoad();
-                this.createMessage("Error getting precomputed basin characteristic values.");
+                this.createMessage("Error getting precomputed basin characteristic values.","error");
             })
         });
     }
