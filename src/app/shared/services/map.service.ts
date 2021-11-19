@@ -501,37 +501,23 @@ export class MapService {
         });
     }
 
-    public getPrecomputedBasinCharacteristicValue(parameter, latitude, longitude) {
-        return new Promise<void>(async resolve => { 
-            let url = "https://test.streamstats.usgs.gov/gridqueryservices?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
+    public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
+        return new Promise<any []>(async resolve => { 
+            let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;
             // Use this URL if TestWeb is offline:
-            // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude + "&fcpg_parameter=" + parameter.fcpg_parameter;
-            await this._http.post(url, {headers: this.authHeader}).subscribe(result => {
-                parameter.value = result["results"][parameter.fcpg_parameter][0] * parameter.multiplier;
-                resolve();
+            // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude;
+            await this._http.post(url, {headers: this.authHeader}).subscribe(response => {
+                let parameterValues = response["results"];
+                this.configSettings.parameters.forEach(parameter => {
+                    parameter.value = parameterValues[parameter.fcpg_parameter] * parameter.multiplier;
+                });
+                resolve(this.configSettings.parameters);
             }, error => {
                 console.log(error);
                 this._loaderService.hideFullPageLoad();
-                this.createMessage("Error getting precomputed basin characteristic values.");
+                this.createMessage("Error getting precomputed basin characteristic values.","error");
             })
         });
-    }
-
-    public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
-        const promises = [];
-        this.configSettings.parameters.forEach(parameter => {
-            promises.push(this.getPrecomputedBasinCharacteristicValue(parameter, latitude, longitude));
-        });
-        // Wait for all basin characteristic values to return
-        await Promise.all(promises)
-            .then(() => {
-                this.setBasinCharacteristics(this.configSettings.parameters);
-            })
-            .catch((e) => {
-                console.log(e);
-                this._loaderService.hideFullPageLoad();
-                this.createMessage("Error querying precomputed basin characteristic.");
-            });
     }
 
     public async calculateFireStreamflowEstimates(basinFeature) {
