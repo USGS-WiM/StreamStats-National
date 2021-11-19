@@ -27,7 +27,7 @@
                     <tr *ngFor="let basin_characteristic of workflowData[i].outputs.basinCharacteristics">
                         <td>{{basin_characteristic.fcpg_parameter}}</td>
                         <td>{{basin_characteristic["description"]}}</td>
-                        <td>{{basin_characteristic["value"]}}</td>
+                        <td>{{basin_characteristic["value"] | number : '1.2'}}</td>
                         <td>{{basin_characteristic["units"]}}</td>
                     </tr>
                 </table>
