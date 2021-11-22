@@ -185,6 +185,7 @@ export class WorkflowComponent implements OnInit {
         if (step.name === "selectFireHydroProcess") {
           this.addSteps(opt.text, step)
         }
+		
       } else {
         opt.selected = false;
       }

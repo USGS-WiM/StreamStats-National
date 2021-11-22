@@ -1,25 +1,27 @@
 <div class="sidebar-inner">
+
+
 	<!-- Base Maps -->
-	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}">
+	<div class="button-popout-group">
+		<button class="toggle-popout-button" (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}">
 			<i class="far fa-map"></i>
 		</button>
 
 		<!-- Sidebar Popout window
 			- These could be moved to separate components,
-			It just needs to be a div with class sidebar-popout within the sidebar-group div
+			It just needs to be a div with class popout-body within the button-popout-group div
 	
 			Add class "wide" to make it wider,
 			Height will auto expand to fit content, and scroll if too tall
 		-->
-		<div class="sidebar-popout" *ngIf="popout == 'map'">
-			<h3 class="sidebar-popout-header">Base Maps</h3>
+		<div class="popout-body short" *ngIf="popout == 'map'">
+			<h3 class="popout-body-header">Base Maps</h3>
 	
-			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
-			<div class="sidebar-popout-content">
+			<!-- Content must be within .popout-body-content to have overflow scroll -->
+			<div class="popout-body-content">
 				<!-- This is the content of the map button popout window.
 				<br/>
-				Show and hide the map content with a click on the button.sidebar-button
+				Show and hide the map content with a click on the button.toggle-popout-button
 				<br/><br/><br/><br/><br/><br/><br/><br/>
 				If you have too much content in the map popout, <br> It'll scroll. -->
 
@@ -36,19 +38,19 @@
 	</div>
 
 	<!-- Layers -->
-	<div class="sidebar-group">
+	<div class="button-popout-group">
 
-		<button class="sidebar-button" (click)="popoutLayers == 'layers' ? popoutLayers = '' : popoutLayers = 'layers'" [ngClass]="{'active': popoutLayers == 'layers'}">
-			<i class="far fa-layer-group"></i>
+		<button class="toggle-popout-button" (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}">
+				<i class="far fa-layer-group"></i>
 		</button>
 
 		<!-- Sidebar Popout window -->
-		<!-- <div class="sidebar-popout wide" *ngIf="popout == 'layers'"> -->
-		<div class="sidebar-popout" *ngIf="popoutLayers == 'layers'">
-			<h3 class="sidebar-popout-header">Map Layers</h3>
+		<!-- <div class="popout-body wide" *ngIf="popout == 'layers'"> -->
+		<div class="popout-body" *ngIf="popout == 'layers'">
+			<h3 class="popout-body-header">Map Layers</h3>
 	
-			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
-			<div class="sidebar-popout-content">
+			<!-- Content must be within .popout-body-content to have overflow scroll -->
+			<div class="popout-body-content">
 
 				<!-- Section for layers that load automatically/not part of an active workflow  -->
 				<div  *ngIf="overlayLayers.length" class="map-layers-group">
@@ -83,40 +85,40 @@
 	
 	
 	<!-- Dog -->
-	<!-- <div class="sidebar-group">
-		<button class="sidebar-button">
+	<!-- <div class="button-popout-group">
+		<button class="toggle-popout-button">
 			<i class="far fa-dog"></i>
 		</button>
 	</div> -->
 
 	<!-- Geolocate -->
-	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="zoomLocation()">
+	<div class="button-popout-group">
+		<button class="toggle-popout-button" (click)="zoomLocation()">
 			<i class="far fa-crosshairs"></i>
 		</button>
 	</div>
 
 	<!-- Geosearch -->
-	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}">
+	<div class="button-popout-group">
+		<button class="toggle-popout-button" (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}">
 			<i class="far fa-search"></i>
 		</button>
 
 		<!-- Sidebar Popout window
 			- These could be moved to separate components,
-			It just needs to be a div with class sidebar-popout within the sidebar-group div
+			It just needs to be a div with class popout-body within the button-popout-group div
 	
 			Add class "wide" to make it wider,
 			Height will auto expand to fit content, and scroll if too tall
 		-->
-		<div class="sidebar-popout medium" *ngIf="popout == 'geosearch'">
-			<h3 class="sidebar-popout-header">Geosearch</h3>
+		<div class="popout-body medium" *ngIf="popout == 'geosearch'">
+			<h3 class="popout-body-header">Geosearch</h3>
 	
-			<!-- Content must be within .sidebar-popout-content to have overflow scroll -->
-			<div class="sidebar-popout-content">
+			<!-- Content must be within .popout-body-content to have overflow scroll -->
+			<div class="popout-body-content">
 				<!-- This is the content of the map button popout window.
 				<br/>
-				Show and hide the map content with a click on the button.sidebar-button
+				Show and hide the map content with a click on the button.toggle-popout-button
 				<br/><br/><br/><br/><br/><br/><br/><br/>
 				If you have too much content in the map popout, <br> It'll scroll. -->
 
@@ -132,40 +134,40 @@
 	<div class="sidebar-spacer">&nbsp;</div>
 
 	<!-- Report Builder -->
-	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="popout == 'reportBuilder' ? popout = '' : popout = 'reportBuilder'" [ngClass]="{'active': popout == 'reportBuilder'}">
+	<div class="button-popout-group">
+		<button class="toggle-popout-button" (click)="bottomPopout == 'reportBuilder' ? bottomPopout = '' : bottomPopout = 'reportBuilder'" [ngClass]="{'active': bottomPopout == 'reportBuilder'}">
 			<span class="sb-text">Report Builder</span>
 		</button>
 		
 		<!-- Report Builder window -->
-		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'reportBuilder'">
-			<h3 class="sidebar-popout-header">Choose Your Workflows</h3>
+		<div class="popout-body full at-bottom" *ngIf="bottomPopout == 'reportBuilder'">
+			<h3 class="popout-body-header">Choose Your Workflows</h3>
 			<app-center-bottom-content></app-center-bottom-content>
 		</div>
 	</div>
 
 	<!-- Map Options -->
-	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="popout == 'mapOptions' ? popout = '' : popout = 'mapOptions'" [ngClass]="{'active': popout == 'mapOptions'}">
+	<div class="button-popout-group">
+		<button class="toggle-popout-button" (click)="bottomPopout == 'mapOptions' ? bottomPopout = '' : bottomPopout = 'mapOptions'" [ngClass]="{'active': bottomPopout == 'mapOptions'}">
 			<span class="sb-text">Map Options</span>
 		</button>
 
 		<!-- Map Options window -->
-		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'mapOptions'">
-			<h3 class="sidebar-popout-header">For Future Use</h3>	
+		<div class="popout-body full at-bottom" *ngIf="bottomPopout == 'mapOptions'">
+			<h3 class="popout-body-header">For Future Use</h3>	
 			<!-- Things like adding a new layer or drawing a polygon on the map will go here -->		
 		</div>
 	</div>
 
 	<!-- Discover -->
-	<div class="sidebar-group">
-		<button class="sidebar-button" (click)="popout == 'discover' ? popout = '' : popout = 'discover'" [ngClass]="{'active': popout == 'discover'}">
+	<div class="button-popout-group">
+		<button class="toggle-popout-button" (click)="bottomPopout == 'discover' ? bottomPopout = '' : bottomPopout = 'discover'" [ngClass]="{'active': bottomPopout== 'discover'}">
 			<span class="sb-text">Discover</span>
 		</button>
 		
 		<!-- Discover window -->
-		<div class="sidebar-popout full at-bottom" *ngIf="popout == 'discover'">
-			<h3 class="sidebar-popout-header">For Future Use</h3>	
+		<div class="popout-body full at-bottom" *ngIf="bottomPopout == 'discover'">
+			<h3 class="popout-body-header">For Future Use</h3>	
 			<!-- Link to other products -->		
 		</div>
 	</div>

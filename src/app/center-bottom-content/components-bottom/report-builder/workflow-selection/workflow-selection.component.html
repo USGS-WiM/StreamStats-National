@@ -2,7 +2,7 @@
 
 <div *ngIf="!selectedWorkflow">
     <div *ngFor="let workflow of workflows; let i = index">
-        <button class="usa-button mbottom-xs" (click)="selectWorkflow(workflow)">
+        <button class="usa-button mbottom-xxs" (click)="selectWorkflow(workflow)">
             <i class={{workflow.icon}}></i>
        	 	{{ workflow.title }}
 		</button>

@@ -10,25 +10,38 @@ html,body{
 }  
 
 
+app-floating-buttons{
+	height: 100%;
+    width: 60px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 400;
+	box-sizing: border-box;
+	padding: 65px 15px 0 0;
+	pointer-events: none;
+}
 
-.sidebar-inner{
+
+// Sidebar & Floating button Styling
+.sidebar-inner,
+.floating-buttons{
 	display: flex;
 	flex-direction: column;
 	flex-grow: 3;
 	height: 100%;
 	box-sizing: border-box;
-	border-left: 1px solid var(--border);
-	border-right: 1px solid var(--border);
 
-	.sidebar-group{
+	.button-popout-group{
 		// position: relative;
+		pointer-events: all;
 
-		.sidebar-button{
+		.toggle-popout-button{
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			width: 60px;
-			height: 60px;
+			width: 50px;
+			height: 50px;
 			text-align: center;
 			font-size: 22px;
 			color: var(--textLight);
@@ -39,6 +52,7 @@ html,body{
 			border-top: 1px solid rgba(0,0,0,0.1);
 			position: relative;
 			transition: 0.22s ease-in;
+			background-color: var(--white);
 
 			i{
 				margin: 0 auto;
@@ -112,6 +126,21 @@ html,body{
 		}
 	}
 }
+// Adjustmnts for sidebar
+.sidebar-inner{
+	border-left: 1px solid var(--border);
+	border-right: 1px solid var(--border);
+}
+// Adjustments for floating buttons
+.floating-buttons{
+
+	.button-popout-group{
+
+		.toggle-popout-button{
+			border-radius: 50%;;
+		}
+	}
+}
 
 // Spacer
 .sidebar-spacer{
@@ -119,8 +148,9 @@ html,body{
 	display: block;
 }
 
-// Sidebar popout
-.sidebar-popout{
+// popouts
+.popout-body,
+.popout-body{
 	display: block;
 	width: 80%;
 	max-width: 300px;
@@ -148,17 +178,16 @@ html,body{
 		max-width: 600px;
 		min-width: 335px;
 	}
-
 	&.wide{
 		max-width: 600px;
 		min-width: 600px;
 	}
 
 	&.full{
-		left: 61px;
+		left: 51px;
 		min-height: 200px;
-		max-width: calc(100vw - 120px);
-		min-width: calc(100vw - 120px);
+		max-width: calc(100vw - 50px);
+		min-width: calc(100vw - 50px);
 	}
 	&.at-bottom{
 		border-radius: 0px;
@@ -166,14 +195,18 @@ html,body{
 		bottom: 0px;
 	}
 
-	.sidebar-popout-header{
+	&.short{
+		max-height: 30vh;
+	}
+
+	.popout-body-header{
 		padding: 15px 10px;
 		margin: 0;
 		box-shadow: var(--shadowLight);
 	}
 
 	// Content, scrollable
-	.sidebar-popout-content{
+	.popout-body-content{
 		box-sizing: border-box;
 		padding: 15px;
 		flex-grow: 3;
@@ -183,9 +216,9 @@ html,body{
 }
 
 // Right sidebar popout on left
-app-sidebar-right{
+app-floating-buttons{
 
-	.sidebar-popout{
+	.popout-body{
 		position: absolute;
 		right: 65px;
 		left: unset;
@@ -194,7 +227,7 @@ app-sidebar-right{
 }
 
 // Moves top popover down a bit so it doesn't align with top bar
-// .sidebar-inner .sidebar-group:first-child .sidebar-popout{
+// .sidebar-inner .button-popout-group:first-child .popout-body{
 	// margin-top: 10px;
 // }
 
@@ -202,6 +235,7 @@ app-sidebar-right{
 .vertical-tabs{
 	display: flex;
 	background-color: white;
+	height: 100%;
 
 	.v-tabs{
 		display: flex;
@@ -256,6 +290,8 @@ app-sidebar-right{
 		box-sizing: border-box;
 		width: 100%;
 		padding: 0 25px 45px 0;
+		height: 100%;
+		overflow: auto;
 	}
 }
 
@@ -283,6 +319,9 @@ app-sidebar-right{
 		z-index: 5001;
 	}
 }
+
+
+
 
 
 

@@ -14,6 +14,7 @@
             </button>
         </div>
     </div>
+	
     <div class="v-tab-body">
         <app-workflow-selection *ngIf="reportBuilderTab == 'selection'"></app-workflow-selection>
         <div *ngIf="selectedWorkflow" [ngClass]="{'active': reportBuilderTab == selectedWorkflow.title}">

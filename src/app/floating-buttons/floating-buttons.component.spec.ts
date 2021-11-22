@@ -1,11 +1,11 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToastrModule } from 'ngx-toastr';
-import { SidebarRightComponent } from './sidebar-right.component';
+import { FloatingButtons } from './floating-buttons.component';
 
-describe('SidebarRightComponent', () => {
-  let component: SidebarRightComponent;
-  let fixture: ComponentFixture<SidebarRightComponent>;
+describe('FloatingButtons', () => {
+  let component: FloatingButtons;
+  let fixture: ComponentFixture<FloatingButtons>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -13,13 +13,13 @@ describe('SidebarRightComponent', () => {
         HttpClientTestingModule,
         ToastrModule.forRoot()
       ],
-      declarations: [ SidebarRightComponent ]
+      declarations: [ FloatingButtons ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SidebarRightComponent);
+    fixture = TestBed.createComponent(FloatingButtons);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

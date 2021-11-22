@@ -1,6 +1,13 @@
-<!-- Placeholder html -->
+<button type="button" class="usa-button usa-button--default mbottom-sm" *ngIf="workflowData[0]">
+	Print Report
+</button>
+
 
 <h3>Completed workflows:</h3>
+
+<p *ngIf="!workflowData[0]">Please complete a workflow to see results</p>
+
+
 
 <div *ngFor="let data of workflowData; let i = index"> 
     <h4>{{data.title}}</h4>

@@ -34,12 +34,19 @@
 						*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
 
 						<!-- Radio Buttons -->
-						<div class="usa-radio" *ngIf="step.value.type === 'radio'">
-							<input class="usa-radio__input" name="selected" formControlName="selected" [checked]="false" (change)="onRadioChange(option.value, step.value)" />
-							<label class="usa-radio__label" for="selected" >{{option.value.text}}</label>
+						<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
+
+							<input
+								formControlName="selected" 
+								name="workflowRadioSelection"
+								id="workflowRadio{{j}}"
+								[checked]="true" 
+								(change)="onRadioChange(option.value, step.value)" 
+								type="radio"
+							/>
+
+							<label class="" for="workflowRadio{{j}}" >{{option.value.text}}</label>
 						</div>
-
-
 
 						<!-- Subscription -->
 						<div *ngIf="step.value.type === 'subscription'">

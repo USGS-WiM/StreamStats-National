@@ -2,3 +2,26 @@
 	box-sizing: border-box;
 	padding-bottom: 45px;
 }
+
+.usa-step-indicator{
+	margin-bottom: 16px;
+}
+.usa-step-indicator__segment-label{
+	font-weight: bold;
+	font-size: 14px;
+}
+
+
+.workflow-radio-group{
+	display: flex;
+	box-sizing: border-box;
+    padding: 5px 3px;
+
+	input[type=radio]{
+		transform: scale(1.5);
+	}
+	label{
+		font-size: 16px;
+		padding-left: 10px;
+	}
+}
