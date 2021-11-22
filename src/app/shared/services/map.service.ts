@@ -11,6 +11,9 @@ import { IndividualConfig, ToastrService } from 'ngx-toastr';
 import * as messageType from '../../shared/messageType';
 import {catchError} from 'rxjs/operators';
 import * as esri from 'esri-leaflet';
+import area from '@turf/area';
+import intersect from '@turf/intersect';
+import union from '@turf/union';
 
 declare const L: any;
 // import 'leaflet-compass';
@@ -79,35 +82,37 @@ export class MapService {
                     this.overlays[ml["name"]] = esri.featureLayer(options);
                     this.setOverlayLayers(ml);
                 } catch (error) {
-                console.error(ml["name"] + ' layer failed to load', error);
-              }
+                    this.createMessage(ml["name"] + ' layer failed to load.', 'error');
+                    console.error(ml["name"] + ' layer failed to load', error);
+                }
             })
         }
         // Load workflow layers, feeds into map.component.ts's workflowLayers
         if (this.configSettings) {
             this.configSettings.workflowLayers.forEach(ml => {
-              try {
-                let options;
-                switch (ml["type"]) {
-                  case "agsDynamic":
-                    options = ml["layerOptions"];
-                    options.url = ml["url"];
-                    this.workflowLayers[ml["name"]] = esri.dynamicMapLayer(options);
-                    break;
-                  case "agsFeature":
-                    options = ml["layerOptions"];
-                    options.url = ml["url"];
-                    this.workflowLayers[ml["name"]] = esri.featureLayer(options);
-                    if (this.configSettings["symbols"][ml["name"]]) { 
-                      this.workflowLayers[ml["name"]].setStyle(this.configSettings["symbols"][ml["name"]]); 
+                try {
+                    let options;
+                    switch (ml["type"]) {
+                    case "agsDynamic":
+                        options = ml["layerOptions"];
+                        options.url = ml["url"];
+                        this.workflowLayers[ml["name"]] = esri.dynamicMapLayer(options);
+                        break;
+                    case "agsFeature":
+                        options = ml["layerOptions"];
+                        options.url = ml["url"];
+                        this.workflowLayers[ml["name"]] = esri.featureLayer(options);
+                        if (this.configSettings["symbols"][ml["name"]]) { 
+                        this.workflowLayers[ml["name"]].setStyle(this.configSettings["symbols"][ml["name"]]); 
+                        }
+                        break;
                     }
-                    break;
+                } catch (error) {
+                    this.createMessage(ml["name"] + ' layer failed to load.', 'error');
+                    console.error(ml["name"] + ' layer failed to load', error);
                 }
-              } catch (error) {
-                console.error(ml["name"] + ' layer failed to load', error);
-              }
             });
-          }
+        }
 
         // Scalebar
         this.scale = L.control.scale();
@@ -237,7 +242,6 @@ export class MapService {
     // Layers section
     public AddMapLayer(ml: MapLayer) {
         // Add layer to overlays 
-        // this.overlays[ml["name"]] = ml;
         if (ml["visible"]) {
             this.map.addLayer(ml.layer);
         }
@@ -304,7 +308,7 @@ export class MapService {
     // Get Streamgages
     private _streamgages: Subject<any> = new Subject<any>();
     public setStreamgages(xmin: number, xmax: number, ymin: number, ymax: number) {
-        var url = this.configSettings.GageStatsServices + "/stations/Bounds?xmin="+xmin+"&xmax="+xmax+"&ymin="+ymin+"&ymax="+ymax+"&geojson=true";
+        var url = this.configSettings.GageStatsServices + "stations/Bounds?xmin="+xmin+"&xmax="+xmax+"&ymin="+ymin+"&ymax="+ymax+"&geojson=true";
         this._http.get(url, {headers: this.authHeader}).subscribe(res => {
             var streamgageLayer = res;
             this._streamgages.next(streamgageLayer);
@@ -380,13 +384,249 @@ export class MapService {
         return this._delineationSubject.asObservable();
     };
 
+    // Query Geology
+    public queryGeology(basinFeature: any) {
+        return new Promise<any[]>(resolve => {
+            let basin = basinFeature.geometry;
+            let basinArea = (area(basinFeature) / 1000000);
+            let geologyUnion;
+            let queryString = "1=1";
+            this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
+            .run((error: any, results: any) => {
+                if (error) {
+                    console.log("error");
+                    this._loaderService.hideFullPageLoad();
+                    this.createMessage('Error querying geology.', 'error')
+                }
+                let geology_dictionary = {};
+                if (results && results.features.length > 0) {
+                    if (results.features.length > 3000) {
+                        // MapServer limitation: only 3000 polygons will be returned
+                        this.createMessage("Warning: Geology results may be incorrect due to map server limitations.", 'error');
+                    }
+                    let intersectArea;
+                    geologyUnion = results.features[0];
+                    for (let i = 0; i < results.features.length; i++) {
+                        const nextFeature = results.features[i];
+                        if (nextFeature) {
+                            geologyUnion = union(geologyUnion, nextFeature, {"properties" : results.features[i].properties.GENERALIZED_LITH});
+                            const intersectPolygons = intersect(results.features[i], basin);
+                            intersectArea = area(intersectPolygons) / 1000000;
+                            if (!geology_dictionary[results.features[i].properties.GENERALIZED_LITH]) {
+                                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] = intersectArea;
+                            } else {
+                                geology_dictionary[results.features[i].properties.GENERALIZED_LITH] += intersectArea;
+                            }
+                        }
+                    }
+
+                    // Create array of geology results
+                    var geology_results = Object.keys(geology_dictionary).map(function(key) {
+                        return [key, geology_dictionary[key]];
+                    });
+            
+                    // Sort the geology results in decreasing order
+                    geology_results.sort(function(first, second) {
+                        return second[1] - first[1];
+                    });
+
+                    // Format geology results
+                    geology_results = geology_results.map(geology_result => 
+                        [geology_result[0], geology_result[1], (geology_result[1] / basinArea * 100)]
+                    );
+                    resolve(geology_results);
+                }
+            });
+        });
+        
+    }
+
+    // Query Burned Area
+    public queryBurnedArea(basinFeature, startBurnYear, endBurnYear) {
+        return new Promise<any[]>(resolve => { 
+            let basin = basinFeature.geometry;
+            let basinArea = (area(basinFeature) / 1000000);
+            let count = 0;
+            let fireUnion;
+            let intArea = 0;
+            
+            Object.keys(this.workflowLayers).forEach(workflowLayer => {
+                let queryString;
+                if (workflowLayer == "Archived Wildfire Perimeters" || workflowLayer == "2021 Wildfire Perimeters") {
+                    if (workflowLayer == "Archived Wildfire Perimeters") {
+                    if (startBurnYear >= (new Date()).getFullYear()) {
+                        count++;
+                    }
+                    queryString = 'FIRE_YEAR >= ' + startBurnYear.toString() + ' AND FIRE_YEAR <= ' + endBurnYear.toString();
+                    } else if (workflowLayer == "2021 Wildfire Perimeters") {
+                    if (endBurnYear < (new Date()).getFullYear()) {
+                        count ++;
+                    }
+                    queryString = '1=1';
+                    }
+                    this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
+                    .run((error: any, results: any) =>  {
+                        if (error) {            
+                            this._loaderService.hideFullPageLoad();
+                            this.createMessage("Error calculating Burned Area.", 'error');
+                        } 
+                        if (results && results.features.length > 0) {
+                            if (results.features.length > 2000) {
+                                // MapServer limitation: only 2000 polygons will be returned
+                                this.createMessage("Warning: Burned Area may be incorrect due to map server limitations.", 'error');
+                            }
+                            if (fireUnion === undefined) { fireUnion = results.features[0]; }
+                            for (let i = 0; i < results.features.length; i++) {
+                                const nextFeature = results.features[i];
+                                if (nextFeature) {
+                                    fireUnion = union(fireUnion, nextFeature);
+                                }
+                            }
+                        }
+                        count ++;
+                        if (count === 2) {
+                            if (fireUnion !== undefined) {
+                                try {
+                                    const intersectPolygons = intersect(fireUnion, basin);
+                                    intArea += area(intersectPolygons) / 1000000;
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                            }
+                            resolve([intArea, (intArea / basinArea * 100)]);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
+        return new Promise<any []>(async resolve => { 
+            let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;
+            // Use this URL if TestWeb is offline:
+            // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude;
+            await this._http.post(url, {headers: this.authHeader}).subscribe(response => {
+                let parameterValues = response["results"];
+                this.configSettings.parameters.forEach(parameter => {
+                    parameter.value = parameterValues[parameter.fcpg_parameter] * parameter.multiplier;
+                });
+                resolve(this.configSettings.parameters);
+            }, error => {
+                console.log(error);
+                this._loaderService.hideFullPageLoad();
+                this.createMessage("Error getting precomputed basin characteristic values.","error");
+            })
+        });
+    }
+
+    public async calculateFireStreamflowEstimates(basinFeature) {
+        let url = this.configSettings.NSSServices + "scenarios?regions=74&statisticgroups=39";
+        let postBody;
+        await this._http.get(url, {headers: this.authHeader}).subscribe(response => {
+            postBody = response;
+            let regressionRegions = postBody[0]["regressionRegions"];
+            regressionRegions.forEach(regressionRegion => {
+                let parameters = regressionRegion["parameters"];
+                parameters.forEach(parameter => {
+                switch (parameter["code"]) {
+                    case "DRNAREA":
+                    parameter["value"] = (area(basinFeature) / 1000000);; 
+                    break;
+                    case "I_30_M":
+                    parameter["value"] = this.configSettings.parameters.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
+                    break;
+                    case "BRNAREA":
+                    parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
+                    break;
+                    default:
+                    parameter["value"] = 0.0;
+                }
+                });
+            });
+
+            let streamflowEstimates = [];
+            let url = this.configSettings.NSSServices + "scenarios/Estimate";
+            this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
+                let regressionRegions = response[0]["regressionRegions"];
+                regressionRegions.forEach(regressionRegion => { 
+                    let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
+                    streamflowEstimates.push(result);
+                });
+                this.setStreamflowEstimates(streamflowEstimates);
+            }, error => {
+                console.log(error);
+                this._loaderService.hideFullPageLoad();
+                this.createMessage('Error calculating streamflow estimates.', 'error')
+            });
+        }, error => {
+            console.log(error);
+            this._loaderService.hideFullPageLoad();
+            this.createMessage('Error calculating streamflow estimates.', 'error')
+        });
+    }
+
+    // Get basin area
+    private _basinArea: Subject<any> = new Subject<any>();
+    public setBasinArea(value) {
+        this._basinArea.next(value);
+    }
+    public get basinArea(): any {
+        return this._basinArea.asObservable();
+    }
+
+    // Get burn Years
+    private _burnYears: Subject<any> = new Subject<any>();
+    public setBurnYears(value) {
+        this._burnYears.next(value);
+    }
+    public get burnYears(): any {
+        return this._burnYears.asObservable();
+    }
+
+    // Get burned area
+    private _burnedArea: Subject<any> = new Subject<any>();
+    public setBurnedArea(value) {
+        this._burnedArea.next(value);
+    }
+    public get burnedArea(): any {
+        return this._burnedArea.asObservable();
+    }
+
+    // Get geology report
+    private _geologyReport: Subject<any> = new Subject<any>();
+    public setGeologyReport(array) {
+        this._geologyReport.next(array);
+    }
+    public get geologyReport(): any {
+        return this._geologyReport.asObservable();
+    }
+
+    // Get basin characteristics
+    private _basinCharacteristics: Subject<any> = new Subject<any>();
+    public setBasinCharacteristics(array) {
+        this._basinCharacteristics.next(array);
+    }
+    public get basinCharacteristics(): any {
+        return this._basinCharacteristics.asObservable();
+    }
+
+    // Get streamflow estimates
+    private _streamflowEstimates: Subject<any> = new Subject<any>();
+    public setStreamflowEstimates(array) {
+        this._streamflowEstimates.next(array);
+    }
+    public get streamflowEstimates(): any {
+        return this._streamflowEstimates.asObservable();
+    }
+
     // Query Fire Perimeters
     public trace(geojson: any) {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
         return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions)
         .pipe(catchError((err: any) => {
-            this.createMessage("Error tracing fire perimeters.", 'error');
             this._loaderService.hideFullPageLoad();
+            this.createMessage("Error tracing fire perimeters.", 'error');
             return throwError(err);  
         }))
     }
@@ -410,9 +650,9 @@ export class MapService {
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
         try {
-          let options: Partial<IndividualConfig> = null;
-          if (timeout) { options = { timeOut: timeout }; }
-          this.messager.show(msg, title, options, mType);
+            let options: Partial<IndividualConfig> = null;
+            if (timeout) { options = { timeOut: timeout }; }
+            this.messager.show(msg, title, options, mType);
         } catch (e) {
         }
     }

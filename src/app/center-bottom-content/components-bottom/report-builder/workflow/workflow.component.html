@@ -1,5 +1,8 @@
 <!-- Workflow Steps/Walkthru -->
+
+
 <div class="workflow-wrapper">
+<h3>{{workflow.title}}</h3>
 
 <form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
 
@@ -72,10 +75,8 @@
 
 
     <button *ngIf="finalStep" type="submit" class="usa-button mtop-xs" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
-  </form>
 
-	
-
+</form>
 
 
-</div>
+

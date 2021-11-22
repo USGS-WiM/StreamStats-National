@@ -9,7 +9,7 @@
             {
                 "label": "Select Your Favorite Color",
                 "name": "selectColor",
-                "type": "radio",
+                "type": "checkbox",
                 "validators": 
                 {
                     "required": true
@@ -63,7 +63,7 @@
             {
                 "label": "Select Delineation Process",
                 "name": "selectDelineationProcess",
-                "type": "radio",
+                "type": "checkbox",
                 "options":
                 [
                     {
@@ -106,7 +106,7 @@
             {
                 "label": "Select a Fire Hydrology Query Method",
                 "name": "selectFireHydroProcess",
-                "type": "radio",
+                "type": "checkbox",
                 "options":
                 [
                     {
@@ -142,7 +142,7 @@
                                 [
                                     {
                                         "textLabel":"Start Year",
-                                        "text":"2021"
+                                        "text":"1900"
                                     },
                                     {
                                         "textLabel":"End Year",

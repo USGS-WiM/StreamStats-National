@@ -68,13 +68,24 @@
 						
 					</div>
 				</div>
+
+				<!-- Spacer between Application Layers and Active Wrokflow Layers -->
+				<div>&nbsp;</div> 
+
 				<!-- Section for layers that part of the active workflow  -->
 				<div *ngIf="workflowLayers.length" class="map-layers-group">
 					<h4>Active Workflow Layers</h4>
 					<div *ngFor="let layer of workflowLayers">
-						<input type="checkbox" id="{{layer.name}}" (change)="updateActiveLayer(layer.name)" [checked]="layer.visible"
-						[disabled]="layer.layerOptions.minZoom > currentZoom">&nbsp;
-						<label for="{{layer.name}}">{{layer.name}}</label>
+
+						<div class="usa-checkbox">
+							<input 
+							class="usa-checkbox__input"
+							type="checkbox" id="{{layer.name}}" (change)="updateActiveLayer(layer.name)" [checked]="layer.visible"
+							[disabled]="layer.layerOptions.minZoom > currentZoom"
+							/>
+							<label class="usa-checkbox__label" for="{{layer.name}}">{{layer.name}}</label>
+						</div>
+
 					</div>
 				</div>
 
@@ -141,8 +152,9 @@
 		
 		<!-- Report Builder window -->
 		<div class="popout-body full at-bottom" *ngIf="bottomPopout == 'reportBuilder'">
-			<h3 class="popout-body-header">Choose Your Workflows</h3>
-			<app-center-bottom-content></app-center-bottom-content>
+			<h3 class="popout-body-header" *ngIf="!selectedWorkflow">Choose Your Workflow</h3>
+			<h3 class="popout-body-header" *ngIf="selectedWorkflow">Build Your Report</h3>
+			<app-center-bottom-content [selectedWorkflow]="selectedWorkflow"></app-center-bottom-content>
 		</div>
 	</div>
 
