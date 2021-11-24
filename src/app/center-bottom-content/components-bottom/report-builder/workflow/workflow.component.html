@@ -2,81 +2,88 @@
 
 
 <div class="workflow-wrapper">
-<h3>{{workflow.title}}</h3>
-
-<form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
-
-	<!-- USWDS Step Indicator -->
-	<div class="usa-step-indicator usa-step-indicator--counters-sm" aria-label="progress" formArrayName="steps">
-		<ol class="usa-step-indicator__segments">
-
-			<li class="usa-step-indicator__segment usa-step-indicator__segment--complete" 
-				*ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
-
-				<span class="usa-step-indicator__segment-label">Step {{i+1}}: {{ step.value.label}}
-					<span class="usa-sr-only">completed</span>
-				</span>
-			</li>
-
-		</ol>
-	</div>
-
-
-
-    <!-- Form -->
-	<div formArrayName="steps">
-
-		<div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
-
-			<div formGroupName="{{i}}">
-
-				<div formArrayName="options">
-
-					<!-- Loop for each step -->
-					<div
-						*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
-
-						<!-- Radio Buttons -->
-						<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
-
-							<input
-								formControlName="selected" 
-								name="workflowRadioSelection"
-								id="workflowRadio{{j}}"
-								[checked]="true" 
-								(change)="onRadioChange(option.value, step.value)" 
-								type="radio"
-							/>
-
-							<label class="" for="workflowRadio{{j}}" >{{option.value.text}}</label>
-						</div>
-
-						<!-- Subscription -->
-						<div *ngIf="step.value.type === 'subscription'">
-							<input type="hidden" formControlName="selected" />
-							{{option.value.text}}
-						</div>
-
-						<!-- Text -->
-						<div *ngIf="step.value.type === 'text'">
-							<input type="text" class="usa-input" formControlName="text" />
-						</div>
+	<h3>{{workflow.title}}</h3>
+	
+	<form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
+	
+		<!-- USWDS Step Indicator -->
+		<div class="usa-step-indicator usa-step-indicator--counters-sm" aria-label="progress" formArrayName="steps">
+			<ol class="usa-step-indicator__segments">
+	
+				<li class="usa-step-indicator__segment usa-step-indicator__segment--complete" 
+					*ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
+	
+					<span class="usa-step-indicator__segment-label">Step {{i+1}}: {{ step.value.label}}
+						<span class="usa-sr-only">completed</span>
+					</span>
+				</li>
+	
+			</ol>
+		</div>
+	
+	
+	
+		<!-- Form -->
+		<div formArrayName="steps" class="horizontal-workflow-steps">
+	
+			<div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index' class="workflow-step">
+	
+				<div formGroupName="{{i}}">
+	
+					<div formArrayName="options">
+	
+						<!-- Loop for each step -->
+						<div
+							*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+	
+							<!-- Checkboxes -->
+							<div class="workflow-radio-group" *ngIf="step.value.type === 'checkbox'">
+								<input type="checkbox" id="workflowRadio{{j}}" name="workflowRadioSelection" formControlName="selected" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
+								<label class="" for="workflowRadio{{j}}" >{{option.value.text}}</label>
+							</div>
+	
+							<!-- Subscription -->
+							<div *ngIf="step.value.type === 'subscription'">
+								<input type="hidden" formControlName="selected" />
+								<label>
+									{{option.value.text}}
+								</label>
+							</div>
+	
+							<!-- Text -->
+							<div *ngIf="step.value.type === 'text'">
+								<input type="text" class="usa-input" formControlName="text" />
+							</div>
 						
+						</div>
+	
 					</div>
-
-					<!-- Next Button -->
-					<button (click)="nextStep(i)" class="usa-button mtop-xs">Next</button>
-
+	
 				</div>
-
+	
+	
+	
+				<!-- Next Button -->
+				<div>
+					<button (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="stepsCompleted > i">Next</button>
+				</div>
+	
+	
+									
+			</div>
+	
+			<!-- Finish Button -->
+			<div class="workflow-step" *ngIf="finalStep">
+				<div></div>
+				<div>
+					<button type="submit" class="usa-button mtop-xs" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
+				</div>
 			</div>
 		</div>
-	</div>
-
-
-    <button *ngIf="finalStep" type="submit" class="usa-button mtop-xs" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
-
-</form>
-
-
-
+	
+	
+	
+	</form>
+	
+	
+	

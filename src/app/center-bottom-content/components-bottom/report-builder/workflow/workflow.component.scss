@@ -7,7 +7,6 @@
 	margin-bottom: 16px;
 }
 .usa-step-indicator__segment-label{
-	font-weight: bold;
 	font-size: 14px;
 }
 
@@ -15,13 +14,29 @@
 .workflow-radio-group{
 	display: flex;
 	box-sizing: border-box;
-    padding: 5px 3px;
+    padding: 5px 3px 5px 15px;
 
+	input[type=checkbox],
 	input[type=radio]{
 		transform: scale(1.5);
 	}
-	label{
-		font-size: 16px;
-		padding-left: 10px;
+
+}
+
+
+.horizontal-workflow-steps{
+	display: flex;
+
+	.workflow-step{
+		box-sizing: border-box;
+		padding: 0 35px 0 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		label{
+			font-size: 16px;
+			padding-left: 10px;
+		}
 	}
 }
