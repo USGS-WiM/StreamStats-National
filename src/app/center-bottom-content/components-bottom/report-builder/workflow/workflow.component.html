@@ -13,7 +13,8 @@
 				<li class="usa-step-indicator__segment usa-step-indicator__segment--complete" 
 					*ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
 	
-					<span class="usa-step-indicator__segment-label">Step {{i+1}}: {{ step.value.label}}
+					<span class="usa-step-indicator__segment-label">
+						Step {{i+1}}:
 						<span class="usa-sr-only">completed</span>
 					</span>
 				</li>
@@ -26,8 +27,12 @@
 		<!-- Form -->
 		<div formArrayName="steps" class="horizontal-workflow-steps">
 	
-			<div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index' class="workflow-step">
+			<div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index' class="workflow-step" [ngClass]="{'completed': stepsCompleted > i}">
 	
+				<!-- Step title -->
+				<h6>{{ step.value.label}}</h6>
+
+
 				<div formGroupName="{{i}}">
 	
 					<div formArrayName="options">
@@ -74,7 +79,14 @@
 	
 			<!-- Finish Button -->
 			<div class="workflow-step" *ngIf="finalStep">
-				<div></div>
+				<div>
+					<label>
+						You've completed this 
+						<br/>
+						{{workflow.title}}. 
+						<small>Click Finish to continue</small>
+					</label>
+				</div>
 				<div>
 					<button type="submit" class="usa-button mtop-xs" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
 				</div>

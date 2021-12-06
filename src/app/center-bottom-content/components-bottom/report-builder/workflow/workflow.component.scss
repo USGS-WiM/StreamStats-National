@@ -29,14 +29,59 @@
 
 	.workflow-step{
 		box-sizing: border-box;
-		padding: 0 35px 0 0;
+		padding: 14px;
+		margin-right: 15px;
+		min-width: 200px;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+		border: 1px solid var(--border);
+		border-radius: var(--borderRadius);
 
 		label{
 			font-size: 16px;
-			padding-left: 10px;
+		}
+
+		input[type=checkbox]{
+			margin-right: 10px;
+		}
+
+		input:disabled{
+			background-color: red;
+		}
+
+		h6{
+			padding: 0 0 10px 0;
+			margin: 0;
+			font-size: 14px;
+		}
+
+		label{
+
+			small{
+				display: block;
+				font-size: 13px;
+				margin-top: 10px;
+			}
+		}
+
+
+		// Completed, disable inputs
+		&.completed{
+			background-color: var(--greyFade);
+			pointer-events: none;
+
+			input{
+				opacity: 0.5;
+			}
+			label{
+				color: var(--textFade);
+			}
+
+			&:hover,
+			*:hover{
+				cursor: default;
+			}
 		}
 	}
 }
