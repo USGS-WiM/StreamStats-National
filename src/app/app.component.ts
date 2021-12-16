@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Config } from './shared/interfaces/config/config';
+import { ConfigService } from './shared/config/config.service';
 import { MapService } from './shared/services/map.service';
 
 // Import USWDS
@@ -12,13 +14,15 @@ const { modal } = USWDS;
 })
 export class AppComponent{
   title = 'StreamStats-National';
+  private configSettings: Config;
+  public version: string;
 
-	constructor(public mapService: MapService) {
-
+	constructor(public mapService: MapService, private _configService: ConfigService) {
+    this.configSettings = this._configService.getConfiguration();
 	}
 
-  	ngOnInit() {
-
+  ngOnInit() {
+    this.version = this.configSettings.version;
 		// initialize USWDS components
 		modal.on(true);
 	}
