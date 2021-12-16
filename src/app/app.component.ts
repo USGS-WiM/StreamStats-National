@@ -19,11 +19,10 @@ export class AppComponent{
 
 	constructor(public mapService: MapService, private _configService: ConfigService) {
     this.configSettings = this._configService.getConfiguration();
-    this.version = this.configSettings.version;
 	}
 
-  	ngOnInit() {
-
+  ngOnInit() {
+    this.version = this.configSettings.version;
 		// initialize USWDS components
 		modal.on(true);
 	}
