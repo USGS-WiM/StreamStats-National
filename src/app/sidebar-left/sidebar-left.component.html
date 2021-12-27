@@ -141,9 +141,6 @@
 
 	</div>
 
-	<!-- Spacer - stretches to fill gap -->
-	<div class="sidebar-spacer">&nbsp;</div>
-
 	<!-- Report Builder -->
 	<div class="button-popout-group">
 		<button class="toggle-popout-button" (click)="bottomPopout == 'reportBuilder' ? bottomPopout = '' : bottomPopout = 'reportBuilder'" [ngClass]="{'active': bottomPopout == 'reportBuilder'}">
@@ -158,31 +155,34 @@
 		</div>
 	</div>
 
+
+	<!-- Spacer - stretches to fill gap -->
+	<div class="sidebar-spacer">&nbsp;</div>
+
+	
 	<!-- Map Options -->
-	<div class="button-popout-group">
+	<!-- <div class="button-popout-group">
 		<button class="toggle-popout-button" (click)="bottomPopout == 'mapOptions' ? bottomPopout = '' : bottomPopout = 'mapOptions'" [ngClass]="{'active': bottomPopout == 'mapOptions'}">
 			<span class="sb-text">Map Options</span>
 		</button>
-
-		<!-- Map Options window -->
 		<div class="popout-body full at-bottom" *ngIf="bottomPopout == 'mapOptions'">
 			<h3 class="popout-body-header">For Future Use</h3>	
-			<!-- Things like adding a new layer or drawing a polygon on the map will go here -->		
+			Things like adding a new layer or drawing a polygon on the map will go here		
 		</div>
-	</div>
+	</div> -->
 
 	<!-- Discover -->
-	<div class="button-popout-group">
+	<!-- <div class="button-popout-group">
 		<button class="toggle-popout-button" (click)="bottomPopout == 'discover' ? bottomPopout = '' : bottomPopout = 'discover'" [ngClass]="{'active': bottomPopout== 'discover'}">
 			<span class="sb-text">Discover</span>
 		</button>
-		
-		<!-- Discover window -->
 		<div class="popout-body full at-bottom" *ngIf="bottomPopout == 'discover'">
 			<h3 class="popout-body-header">For Future Use</h3>	
-			<!-- Link to other products -->		
+			Link to other products		
 		</div>
-	</div>
+	</div> -->
+
+
 </div>
 
 

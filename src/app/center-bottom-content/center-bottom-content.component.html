@@ -3,14 +3,14 @@
 <div class="vertical-tabs">
     <!-- Icon tabs -->
     <div class="v-tabs">
-        <div *ngIf="!selectedWorkflow">
+        <!-- <div *ngIf="!selectedWorkflow">
             <button (click)="reportBuilderTab == 'selection' ? reportBuilderTab = '' : reportBuilderTab = 'selection'" [ngClass]="{'active': reportBuilderTab == 'selection'}">
                 <i class="far fa-ellipsis-h"></i>
             </button>
-        </div>
+        </div> -->
         <div *ngIf="selectedWorkflow">
             <button (click)="removeWorkFlow(); reportBuilderTab == 'selection'">
-                <i class="fa fa-times"></i>
+                <i class="fas fa-angle-left"></i>
             </button>
         </div>
     </div>
