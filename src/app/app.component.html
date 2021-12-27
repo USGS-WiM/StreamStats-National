@@ -40,8 +40,13 @@
 			<h2 class="usa-modal__heading" id="helpModalHeading">
 				About & Help
 			</h2>
+
 			<div class="modal-body">
 				<span id="helpModalDescription">
+
+					<p>
+						Please send feedback, questions, or issues to <a href="mailto:pmccarth@usgs.gov">pmccarth@usgs.gov</a>.
+					</p>
 
 					<h3>USGS Data Disclaimer</h3>
 					<p>
@@ -57,7 +62,7 @@
 					</p>
 
 				</span>
-			</div>
+
 
 			<div class="usa-modal__footer">
 				<ul class="usa-button-group">
@@ -70,11 +75,6 @@
 			</div>
 		</div>
 
-		<button class="usa-button usa-modal__close " aria-label="Close help window" data-close-modal>
-			<svg class="usa-icon" aria-hidden="true" focusable="false" role="img">
-				<use xlink:href="/assets/img/sprite.svg#close"></use>
-			</svg>
-		</button>
 	</div>
 </div>
 
@@ -85,9 +85,27 @@
 			<h2 class="usa-modal__heading" id="aboutModalHeading">
 				About
 			</h2>
-			<div class="usa-prose">
-				<p id="aboutModalDescription">
-					This is the about modal
+			<div id= "aboutModalDescription" class="usa-prose">
+				<b>About StreamStats National v{{this.version}}</b>
+				<p id="aboutModalStreamStatsNational">
+					StreamStats National is a web-based Geographic Information Systems (GIS) application that provides users with 
+					access to analytical tools that are useful for a variety of purposes, including water-resources planning, 
+					management, engineering, and design. StreamStats National users can select from a variety of workflows to access 
+					and analyze nation-wide data from the United States Geological Survey (USGS).
+				</p>
+				<br>
+				<b>Get Started</b>
+				<p id="aboutModalGetStarted">
+					Click the “Report Builder” button to select a workflow. The “Delineation” workflow allows users to delineate a 
+					watershed at a selected point via the 
+					<a href="https://labs.waterdata.usgs.gov/about-nldi/index.html" target="_blank">Hydro Network-Linked Data Index 
+					(NLDI)</a> system. The “Fire Hydrology” workflow allows users to query fire perimeters, trace flowlines from fire 
+					perimeters, compute basin characteristics, and estimate post-fire peak discharge. Once a workflow is complete, 
+					click the Report icon to view the results.
+				</p>
+				<p id="aboutModalAttribution">
+					StreamStats National was developed by 
+					<a href="https://wim.usgs.gov/" target="_blank">USGS Web Informatics and Mapping</a>.
 				</p>
 			</div>
 			<div class="usa-modal__footer">
