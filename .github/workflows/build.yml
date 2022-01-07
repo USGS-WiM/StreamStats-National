@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-node-
             ${{ runner.OS }}-
 
-      - name: npm install and npm run build
+      - name: sudo npm install and npm run build
         run: |
           npm ci
           npm run build:ci
