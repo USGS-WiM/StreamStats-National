@@ -340,4 +340,20 @@ app-floating-buttons{
 .modal-body{
 	max-height: 50vh;
 	overflow: auto;
+	overflow-x: hidden;
+}
+.usa-modal__main{
+	width: 100%;
+	max-width: unset !important;
+}
+
+// Disable accessible outlines
+input,button,textarea,a,select,.focusable{
+	outline: none;
+	&:focus{
+		outline: none !important;
+	}
+	&:active{
+		outline: none;
+	}
 }
