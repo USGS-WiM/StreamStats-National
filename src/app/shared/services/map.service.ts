@@ -452,17 +452,22 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "Archived Wildfire Perimeters" || workflowLayer == "2021 Wildfire Perimeters") {
+                if (workflowLayer == "Archived Wildfire Perimeters" || workflowLayer == "2021 Wildfire Perimeters" || workflowLayer == '2022 Wildfire Perimeters') {
                     if (workflowLayer == "Archived Wildfire Perimeters") {
-                    if (startBurnYear >= (new Date()).getFullYear()) {
-                        count++;
-                    }
-                    queryString = 'FIRE_YEAR >= ' + startBurnYear.toString() + ' AND FIRE_YEAR <= ' + endBurnYear.toString();
+                        if (startBurnYear >= (new Date()).getFullYear()) {
+                            count++;
+                        }
+                        queryString = 'FIRE_YEAR >= ' + startBurnYear.toString() + ' AND FIRE_YEAR <= ' + endBurnYear.toString();
                     } else if (workflowLayer == "2021 Wildfire Perimeters") {
-                    if (endBurnYear < (new Date()).getFullYear()) {
-                        count ++;
-                    }
-                    queryString = '1=1';
+                        if (endBurnYear < (new Date()).getFullYear()) {
+                            count ++;
+                        }
+                        queryString = '1=1';
+                    } else if (workflowLayer == "2022 Wildfire Perimeters") {
+                        if (endBurnYear < (new Date()).getFullYear()) {
+                            count ++;
+                        }
+                        queryString = '1=1';
                     }
                     this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
                     .run((error: any, results: any) =>  {
