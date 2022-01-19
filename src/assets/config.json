@@ -40,6 +40,15 @@
             "visible": true
         },
         {
+            "name": "2021 Wildfire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Fire_History_Perimeters_Public/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+        {
             "name": "Archived Wildfire Perimeters",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
             "type": "agsFeature",
@@ -147,9 +156,13 @@
         }
     ],
     "symbols": {
-        "2021 Wildfire Perimeters": {
+        "2022 Wildfire Perimeters": {
             "color": "#EBCF26",
             "fillColor": "#EBCF26"
+        },
+        "2021 Wildfire Perimeters": {
+            "color": "#ed8f24",
+            "fillColor": "#ed8f24"
         },
         "Archived Wildfire Perimeters": {
             "color": "#ed8f24",
