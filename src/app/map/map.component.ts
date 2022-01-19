@@ -470,7 +470,7 @@ export class MapComponent implements OnInit {
     }
     this._mapService.setSelectedPerimeters(this.selectedPerimeters);
     this.count ++;
-    this.checkCount(this.count, 3);
+    this.checkCount(this.count, 4);
   }
 
   public addTraceLayer(data) {
