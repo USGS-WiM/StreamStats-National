@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 
 @Component({
-  selector: 'app-sidebar-right',
-  templateUrl: './sidebar-right.component.html',
-  styleUrls: ['./sidebar-right.component.scss']
+  selector: 'app-floating-buttons',
+  templateUrl: './floating-buttons.component.html',
+  styleUrls: ['./floating-buttons.component.scss']
 })
-export class SidebarRightComponent implements OnInit {
+export class FloatingButtons implements OnInit {
 	
 	popout = '';
 

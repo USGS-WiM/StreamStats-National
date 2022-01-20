@@ -250,6 +250,7 @@ export class WorkflowComponent implements OnInit {
           this.resetStepsArray(step);
           this.addSteps(opt.text);
         }
+		
       } else {
         opt.selected = false;
       }

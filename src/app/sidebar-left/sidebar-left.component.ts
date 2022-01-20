@@ -17,8 +17,7 @@ export class SidebarLeftComponent implements OnInit {
 	@ViewChildren("overlayCheckbox") overlayCheckbox: any;
 
 	popout = '';
-	popoutLayers = '';
-	discoverTab = '';
+	bottomPopout = '';
 	title = 'StreamStats-National';
 	private MapService: MapService;
 	private configSettings: Config;

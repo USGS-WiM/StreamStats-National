@@ -1,4 +1,87 @@
-.app-wrapper{
-    height: 200px;
-    overflow: scroll;
+.workflow-wrapper{
+	box-sizing: border-box;
+	padding-bottom: 45px;
+}
+
+.usa-step-indicator{
+	margin-bottom: 16px;
+}
+.usa-step-indicator__segment-label{
+	font-size: 14px;
+}
+
+
+.workflow-radio-group{
+	display: flex;
+	box-sizing: border-box;
+    padding: 5px 3px 5px 15px;
+
+	input[type=checkbox],
+	input[type=radio]{
+		transform: scale(1.5);
+	}
+
+}
+
+
+.horizontal-workflow-steps{
+	display: flex;
+
+	.workflow-step{
+		box-sizing: border-box;
+		padding: 14px;
+		margin-right: 15px;
+		min-width: 200px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		border: 1px solid var(--border);
+		border-radius: var(--borderRadius);
+
+		label{
+			font-size: 16px;
+		}
+
+		input[type=checkbox]{
+			margin-right: 10px;
+		}
+
+		input:disabled{
+			background-color: red;
+		}
+
+		h6{
+			padding: 0 0 10px 0;
+			margin: 0;
+			font-size: 14px;
+		}
+
+		label{
+
+			small{
+				display: block;
+				font-size: 13px;
+				margin-top: 10px;
+			}
+		}
+
+
+		// Completed, disable inputs
+		&.completed{
+			background-color: var(--greyFade);
+			pointer-events: none;
+
+			input{
+				opacity: 0.5;
+			}
+			label{
+				color: var(--textFade);
+			}
+
+			&:hover,
+			*:hover{
+				cursor: default;
+			}
+		}
+	}
 }

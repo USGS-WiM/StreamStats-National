@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
 import { MapComponent } from './map/map.component';
-import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
+import { FloatingButtons } from './floating-buttons/floating-buttons.component';
 import { ToastrModule } from 'ngx-toastr';
 
 describe('AppComponent', () => {
@@ -22,7 +22,7 @@ describe('AppComponent', () => {
         TopBarComponent,
         SidebarLeftComponent,
         MapComponent,
-        SidebarRightComponent
+        FloatingButtons
       ],
     }).compileComponents();
   });

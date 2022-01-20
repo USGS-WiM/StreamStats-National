@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
-import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
+import { FloatingButtons } from './floating-buttons/floating-buttons.component';
 import { MapComponent } from './map/map.component';
 import { CenterBottomContentComponent } from './center-bottom-content/center-bottom-content.component';
 
@@ -18,8 +18,7 @@ import { WorkflowService } from './shared/services/workflow.service';
 import { environment } from 'src/environments/environment';
 import { ActiveComponentDirective } from './shared/directives/active-component.directive';
 
-import { ReportComponent } from './sidebar-right/components-right/report/report.component';
-import { AboutComponent } from './sidebar-right/components-right/about/about.component';
+import { ReportComponent } from './floating-buttons/components-right/report/report.component';
 import { WorkflowComponent } from './center-bottom-content/components-bottom/report-builder/workflow/workflow.component';
 import { MapOptionsComponent } from './center-bottom-content/components-bottom/map-options/map-options.component';
 import { DiscoverComponent } from './center-bottom-content/components-bottom/discover/discover.component';
@@ -36,12 +35,11 @@ export function ConfigLoader(configService: ConfigService) {
     AppComponent,
     TopBarComponent,
     SidebarLeftComponent,
-    SidebarRightComponent,
+    FloatingButtons,
     MapComponent,
     CenterBottomContentComponent,
     ActiveComponentDirective,
     ReportComponent,
-    AboutComponent,
     WorkflowComponent,
     MapOptionsComponent,
     DiscoverComponent,
