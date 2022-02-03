@@ -391,7 +391,7 @@ export class MapComponent implements OnInit {
     this.createMessage("Delineating basin. Please wait.");
     this._mapService.getUpstream(this.clickPoint.lat, this.clickPoint.lng, "True");
     this._mapService.delineationPolygon.subscribe((poly: any) => {
-      this.basin = poly.outputs;
+      this.basin = poly;
       if (this.basin) {  
         this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
