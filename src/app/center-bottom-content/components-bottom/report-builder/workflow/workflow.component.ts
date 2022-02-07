@@ -181,9 +181,6 @@ export class WorkflowComponent implements OnInit {
   public fillOutputs() {
     this.output = {};
     switch (this.workflowForm.value.title) {
-      case "Example Workflow":
-        this.getOutputs();
-        break;
       case "Delineation":
         this.getOutputs();
         this.output = {
