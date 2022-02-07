@@ -1,59 +1,5 @@
 [
     {
-        "title": "Example Workflow",
-        "description": "This is an example workflow.",
-        "functionality": "Core",
-        "icon": "fa fa-sitemap",
-        "steps":
-        [
-            {
-                "label": "Select Your Favorite Color",
-                "name": "selectColor",
-                "type": "checkbox",
-                "validators": 
-                {
-                    "required": true
-                },
-                "options":
-                [
-                    {
-                        "text":"Red",
-                        "selected": false
-                    },
-                    {
-                        "text":"Yellow",
-                        "selected": false
-                    },
-                    {
-                        "text":"Blue",
-                        "selected": false
-                    }
-                ]
-            },
-            {
-                "label":"Type Something",
-                "name": "enterText",
-                "type": "text",
-                "validators": 
-                {
-                    "required": true
-                },
-                "options":
-                [
-                    {
-                        "text":"Placeholder text"
-                    }
-                ]
-            }
-        ],
-        "output": 
-        {
-            "value": "",
-            "valueType": "geojson",
-            "displayType": "map"
-        }
-    },
-    {
         "title": "Delineation",
         "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
         "functionality": "Core",
