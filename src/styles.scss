@@ -123,6 +123,26 @@ app-floating-buttons{
 				}
 			}
 
+			&.has-content{
+				&:before{
+					content: '\f00c';
+					font-family: var(--fontAwesome);
+					width: 20px;
+					height: 20px;
+					line-height: 20px;
+					border-radius: 50%;
+					color: white;
+					text-align: center;
+					font-size: 12px;
+					font-weight: 600;
+					background-color: var(--green);
+					position: absolute;
+					top: -4px;
+					right: -4px;
+				}
+				border: 2px solid var(--green);
+			}
+
 		}
 	}
 }
@@ -165,7 +185,7 @@ app-floating-buttons{
 	box-sizing: border-box;
 	min-height: 120px;
 	font-size: 12px;
-	z-index: 2000;
+	z-index: 1005;
 	max-height: 80vh;
 	display: flex;
 	flex-direction: column;
@@ -355,5 +375,12 @@ input,button,textarea,a,select,.focusable{
 	}
 	&:active{
 		outline: none;
+	}
+}
+
+
+@media print {
+	body * {
+	  visibility: hidden;
 	}
 }

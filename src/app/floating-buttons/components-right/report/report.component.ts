@@ -14,6 +14,7 @@ export class ReportComponent implements OnInit {
   'POLY_INCIDENTNAME','POLY_GISACRES', 'POLY_DATECURRENT', 'IRWIN_FIRECAUSE', 'IRWIN_FIRECAUSEGENERAL', 'IRWIN_FIREDISCOVERYDATETIME','IRWIN_FIREOUTDATETIME','IRWIN_UNIQUEFIREIDENTIFIER'];
   public reportMaps = [];
   public marker: L.Marker;
+  public showPrintModal: boolean;
 
   constructor(private _workflowService: WorkflowService, private _configService: ConfigService) { }
   ngOnInit(): void {
@@ -45,4 +46,8 @@ export class ReportComponent implements OnInit {
   unsortedKeys() {
     return 0;
   }
+
+	public onPrint() {
+		window.print();
+	}
 }
