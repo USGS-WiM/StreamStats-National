@@ -60,7 +60,7 @@ export class WorkflowComponent implements OnInit {
     });
     // Get delineation and basin area
     this._mapService.delineationPolygon.subscribe((poly: any) => {
-      var basin = poly.outputs;
+      var basin = poly;
       if (basin) {  
         this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
       }
