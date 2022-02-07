@@ -18,7 +18,6 @@ export class WorkflowSelectionComponent implements OnInit {
   ngOnInit(): void {
     this._workflowService.getWorkflows().subscribe((res) => {
       this.workflows = res; // get all available workflows from json file
-      console.log(this.workflows)
     });
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
