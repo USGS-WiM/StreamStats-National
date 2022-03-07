@@ -125,7 +125,7 @@ app-floating-buttons{
 
 			&.has-content{
 				&:before{
-					content: '\f00c';
+					content: '\f005';
 					font-family: var(--fontAwesome);
 					width: 20px;
 					height: 20px;
@@ -133,7 +133,7 @@ app-floating-buttons{
 					border-radius: 50%;
 					color: white;
 					text-align: center;
-					font-size: 12px;
+					font-size: 11px;
 					font-weight: 600;
 					background-color: var(--green);
 					position: absolute;
