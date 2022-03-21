@@ -37,7 +37,7 @@ export class ReportComponent implements OnInit {
 
   public createReportMaps() {
 
-	var RedIcon = L.divIcon({className: 'wmm-pin wmm-red wmm-icon-circle wmm-icon-white wmm-size-25'});
+	var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
 
 	var configSettings = this._configService.getConfiguration();
     for (var i = 0; i < this.workflowData.length; ++i) {
@@ -60,7 +60,7 @@ export class ReportComponent implements OnInit {
 
   public createPrintMaps() {
 
-	var RedIcon = L.divIcon({className: 'wmm-pin wmm-red wmm-icon-circle wmm-icon-white wmm-size-25'});
+	var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
 
 	setTimeout(() => {
 		var configSettings = this._configService.getConfiguration();

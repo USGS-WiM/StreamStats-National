@@ -497,7 +497,7 @@ export class MapComponent implements OnInit {
   }
 
   public addPoint(latlng: any) {
-	var RedIcon = L.divIcon({className: 'wmm-pin wmm-red wmm-icon-circle wmm-icon-white wmm-size-25'});
+	var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
 
     this.removeLayer(this.marker);
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
