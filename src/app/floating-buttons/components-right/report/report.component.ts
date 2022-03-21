@@ -36,6 +36,9 @@ export class ReportComponent implements OnInit {
 	}
 
   public createReportMaps() {
+
+	var RedIcon = L.divIcon({className: 'wmm-pin wmm-red wmm-icon-circle wmm-icon-white wmm-size-25'});
+
 	var configSettings = this._configService.getConfiguration();
     for (var i = 0; i < this.workflowData.length; ++i) {
       if (this.workflowData[i].outputs.layers) {
@@ -46,7 +49,7 @@ export class ReportComponent implements OnInit {
             layer.addTo(this.reportMaps[i]);
             this.reportMaps[i].fitBounds(layer.getBounds());
             if (this.workflowData[i].outputs.clickPoint) {
-              this.marker = L.marker(this.workflowData[i].outputs.clickPoint);
+              this.marker = L.marker(this.workflowData[i].outputs.clickPoint, {icon: RedIcon});
               this.reportMaps[i].addLayer(this.marker);
             }
           });
@@ -56,24 +59,27 @@ export class ReportComponent implements OnInit {
   }
 
   public createPrintMaps() {
+
+	var RedIcon = L.divIcon({className: 'wmm-pin wmm-red wmm-icon-circle wmm-icon-white wmm-size-25'});
+
 	setTimeout(() => {
-	var configSettings = this._configService.getConfiguration();
-    for (var i = 0; i < this.workflowData.length; ++i) {
-      if (this.workflowData[i].outputs.layers) {
-        if (this.printMaps[i] == undefined || this.printMaps[i] == null) {
-          this.printMaps[i] = L.map('printMap' + i).setView([41.1, -98.7], 8);
-          L.tileLayer(configSettings.baseLayers[0].url,{ maxZoom: configSettings.baseLayers[0].maxZoom }).addTo(this.printMaps[i]);
-          this.workflowData[i].outputs.layers.forEach(layer => {
-            layer.addTo(this.printMaps[i]);
-            this.printMaps[i].fitBounds(layer.getBounds());
-            if (this.workflowData[i].outputs.clickPoint) {
-              this.marker = L.marker(this.workflowData[i].outputs.clickPoint);
-              this.printMaps[i].addLayer(this.marker);
-            }
-          });
-        }
-      }
-    }
+		var configSettings = this._configService.getConfiguration();
+		for (var i = 0; i < this.workflowData.length; ++i) {
+		if (this.workflowData[i].outputs.layers) {
+			if (this.printMaps[i] == undefined || this.printMaps[i] == null) {
+			this.printMaps[i] = L.map('printMap' + i).setView([41.1, -98.7], 8);
+			L.tileLayer(configSettings.baseLayers[0].url,{ maxZoom: configSettings.baseLayers[0].maxZoom }).addTo(this.printMaps[i]);
+			this.workflowData[i].outputs.layers.forEach(layer => {
+				layer.addTo(this.printMaps[i]);
+				this.printMaps[i].fitBounds(layer.getBounds());
+				if (this.workflowData[i].outputs.clickPoint) {
+				this.marker = L.marker(this.workflowData[i].outputs.clickPoint, {icon: RedIcon});
+				this.printMaps[i].addLayer(this.marker);
+				}
+			});
+			}
+		}
+		}
 	}, 500);
 }
 
@@ -85,5 +91,6 @@ export class ReportComponent implements OnInit {
 		var newstr = document.querySelector("#reportContent").innerHTML;
 		document.querySelector("#printArea").innerHTML = newstr;
 		window.print();
+		document.querySelector("#printArea").innerHTML = "";
 	}
 }
