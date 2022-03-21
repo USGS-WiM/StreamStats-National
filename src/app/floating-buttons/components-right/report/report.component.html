@@ -31,10 +31,6 @@
 							<!-- Click Point -->
 							<div *ngIf="output.key=='clickPoint'">Lat/Lon: ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</div>
 							
-							<!-- Example Workflow -->
-							<div *ngIf="output.key=='selectColor'">Color Selected: {{output.value}}</div>
-							<div *ngIf="output.key=='enterText'">Text Entered: {{output.value}}</div>
-							
 							<!-- Delineation -->
 							<div *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</div>
 							
@@ -110,9 +106,9 @@
 				<!-- Card footer -->
 				<div class="usa-card__footer">
 					<!-- Download -->
-					<button class="usa-button usa-button--small usa-button--outline">Download</button>
+					<!-- <button class="usa-button usa-button--small usa-button--outline">Download</button> -->
 					<!-- Delete -->
-					<button class="usa-button usa-button--small usa-button--secondary">
+					<button class="usa-button usa-button--small usa-button--secondary" (click)="workflowData.splice(i, 1)">
 						<i class="far fa-trash"></i>
 					</button>
 
