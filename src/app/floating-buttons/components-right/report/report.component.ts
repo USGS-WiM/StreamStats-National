@@ -36,7 +36,6 @@ export class ReportComponent implements OnInit {
 	}
 
   public createReportMaps() {
-	  console.log("REPORT MAPS")
 	var configSettings = this._configService.getConfiguration();
     for (var i = 0; i < this.workflowData.length; ++i) {
       if (this.workflowData[i].outputs.layers) {
@@ -58,7 +57,6 @@ export class ReportComponent implements OnInit {
 
   public createPrintMaps() {
 	setTimeout(() => {
-		console.log("PRINT MAPS")
 	var configSettings = this._configService.getConfiguration();
     for (var i = 0; i < this.workflowData.length; ++i) {
       if (this.workflowData[i].outputs.layers) {
