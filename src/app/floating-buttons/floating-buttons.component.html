@@ -2,7 +2,7 @@
 
 	<!-- Report -->
 	<div class="button-popout-group">
-		<button class="toggle-popout-button has-content" (click)="popout == 'report' ? popout = '' : popout = 'report'" [ngClass]="{'active': popout == 'report'}">
+		<button class="toggle-popout-button" (click)="popout == 'report' ? popout = '' : popout = 'report'" [ngClass]="{'active': popout == 'report', 'has-content': workflowData[0]}">
 			<i class="far fa-file-chart-line"></i>
 		</button>
 
