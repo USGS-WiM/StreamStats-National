@@ -387,6 +387,9 @@ input,button,textarea,a,select,.focusable{
 	body, html{
 		height: fit-content;
 	}
+	.leaflet-control-container{
+		display: none;
+	}
 }
 
 
