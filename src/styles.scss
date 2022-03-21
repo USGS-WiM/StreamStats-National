@@ -380,7 +380,18 @@ input,button,textarea,a,select,.focusable{
 
 
 @media print {
-	body * {
-	  visibility: hidden;
+	.app-wrapper{
+		visibility: hidden;
+		display: none !important;
 	}
+	body, html{
+		height: fit-content;
+	}
+}
+
+
+.printMap{
+	display: block;
+	width: 100%;
+	height: 300px;
 }

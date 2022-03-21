@@ -41,6 +41,9 @@ table {
 }
 
 
+
+
+
 #printModal{
 	display: block;
 	position: fixed;
@@ -54,10 +57,6 @@ table {
 	background-color: rgba(0,0,0,0.5);
 	min-height:100vh;
 
-	@media print {
-		padding: 0;
-		background-color: transparent;
-	}
 }
 #printModalContent{
 	background-color: white;
@@ -70,35 +69,4 @@ table {
 	max-width: 1000px;
 	margin: 0 auto;
 	
-	@media print {
-		padding: 0;
-		max-width: unset;
-		max-height: unset;
-		min-height: fit-content;
-		border-radius: 0;
-	}
 }
-
-@media print {
-	.hide-print{
-		display: none;
-	}
-	.show-print{
-		display: block;
-	}
- }
-
- @media print {
-	body * {
-	  visibility: hidden;
-	}
-	#printModalContent, #printModalContent * {
-	  visibility: visible;
-	}
-	#printModalContent {
-	  position: absolute;
-	  left: 0;
-	  top: 0;
-	}
-  }
-  
