@@ -31,7 +31,7 @@
         }
         },
         {
-            "name": "2022 Wildfire Perimeters",
+            "name": "2022 Wildland Fire Perimeters",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
@@ -40,7 +40,7 @@
             "visible": true
         },
         {
-            "name": "2021 Wildfire Perimeters",
+            "name": "2021 Wildland Fire Perimeters",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Fire_History_Perimeters_Public/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
@@ -49,7 +49,7 @@
             "visible": true
         },
         {
-            "name": "Archived Wildfire Perimeters",
+            "name": "Archived Wildland Fire Perimeters",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
@@ -156,15 +156,15 @@
         }
     ],
     "symbols": {
-        "2022 Wildfire Perimeters": {
+        "2022 Wildland Fire Perimeters": {
             "color": "#EBCF26",
             "fillColor": "#EBCF26"
         },
-        "2021 Wildfire Perimeters": {
+        "2021 Wildland Fire Perimeters": {
             "color": "#ed8f24",
             "fillColor": "#ed8f24"
         },
-        "Archived Wildfire Perimeters": {
+        "Archived Wildland Fire Perimeters": {
             "color": "#ed8f24",
             "fillColor": "#ed8f24"
         }
