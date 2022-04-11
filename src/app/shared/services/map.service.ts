@@ -452,18 +452,18 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "Archived Wildfire Perimeters" || workflowLayer == "2021 Wildfire Perimeters" || workflowLayer == '2022 Wildfire Perimeters') {
-                    if (workflowLayer == "Archived Wildfire Perimeters") {
+                if (workflowLayer == "Archived Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == '2022 Wildland Fire Perimeters') {
+                    if (workflowLayer == "Archived Wildland Fire Perimeters") {
                         if (startBurnYear >= (new Date()).getFullYear()) {
                             count++;
                         }
                         queryString = 'FIRE_YEAR >= ' + startBurnYear.toString() + ' AND FIRE_YEAR <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "2021 Wildfire Perimeters") {
+                    } else if (workflowLayer == "2021 Wildland Fire Perimeters") {
                         if (endBurnYear < (new Date()).getFullYear()) {
                             count ++;
                         }
                         queryString = '1=1';
-                    } else if (workflowLayer == "2022 Wildfire Perimeters") {
+                    } else if (workflowLayer == "2022 Wildland Fire Perimeters") {
                         if (endBurnYear < (new Date()).getFullYear()) {
                             count ++;
                         }

@@ -250,16 +250,16 @@ export class MapComponent implements OnInit {
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
                 if (o.text === "Query by Basin" && o.selected === true) {
                   this.addLayers('NHD Flowlines', true);
-                  this.addLayers('Archived Wildfire Perimeters', true);
-                  this.addLayers('2021 Wildfire Perimeters', true);
-                  this.addLayers('2022 Wildfire Perimeters', true);
+                  this.addLayers('Archived Wildland Fire Perimeters', true);
+                  this.addLayers('2021 Wildland Fire Perimeters', true);
+                  this.addLayers('2022 Wildland Fire Perimeters', true);
                   this.addLayers('MTBS Fire Boundaries', true);
                   this.addLayers('Burn Severity', true);
                 }
                 if (o.text === "Query by Fire Perimeters" && o.selected === true) {
-                  this.addLayers('Archived Wildfire Perimeters', true);
-                  this.addLayers('2021 Wildfire Perimeters', true);
-                  this.addLayers('2022 Wildfire Perimeters', true);
+                  this.addLayers('Archived Wildland Fire Perimeters', true);
+                  this.addLayers('2021 Wildland Fire Perimeters', true);
+                  this.addLayers('2022 Wildland Fire Perimeters', true);
                   this.addLayers('MTBS Fire Boundaries', true);
                   this.addLayers('Burn Severity', true);
                 }
@@ -414,7 +414,7 @@ export class MapComponent implements OnInit {
     this.selectedPerimeters = [];
     this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
-      if (layerName === '2022 Wildfire Perimeters' || layerName === '2021 Wildfire Perimeters' || layerName === 'Archived Wildfire Perimeters') {
+      if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === 'Archived Wildland Fire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
           .run((error: any, results: any) => {
             this.findFeatures(error,results,layerName);
@@ -457,7 +457,7 @@ export class MapComponent implements OnInit {
         popupcontent += '<br>';
         if (layerName === 'MTBS Fire Boundaries') {
           this.firePerimeterLayer = L.geoJSON(feat.geometry);
-        } else if (layerName === '2022 Wildfire Perimeters' || layerName === '2021 Wildfire Perimeters' || layerName === 'Archived Wildfire Perimeters') {
+        } else if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === 'Archived Wildland Fire Perimeters') {
           const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
           this.firePerimeterLayer = L.geoJSON(feat.geometry, {style: {color: col}});
         }
