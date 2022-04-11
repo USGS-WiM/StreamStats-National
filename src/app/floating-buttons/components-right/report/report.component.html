@@ -41,7 +41,7 @@
 							<div *ngIf="output.key=='basinCharacteristics'">Basin Characteristics:
 								<table id="reportTableBC2">
 									<tr>
-										<th>Basin Characteristic</th>
+										<th><span>Basin Characteristic</span></th>
 										<th>Description</th>
 										<th>Value</th>
 										<th>Units</th>
@@ -49,7 +49,7 @@
 									<tr *ngFor="let basin_characteristic of workflowData[i].outputs.basinCharacteristics">
 										<td>{{basin_characteristic.fcpg_parameter}}</td>
 										<td>{{basin_characteristic["description"]}}</td>
-										<td>{{basin_characteristic["value"] | number : '1.2'}}</td>
+										<td><span>{{basin_characteristic["value"] | number : '1.2'}}</span></td>
 										<td>{{basin_characteristic["units"]}}</td>
 									</tr>
 								</table>
@@ -57,12 +57,12 @@
 							<div *ngIf="output.key=='geologyInfo'">Surficial Geology:
 								<table id="reportTableSG">
 									<tr>
-										<th>Geologic Unit</th>
+										<th><span>Geologic Unit</span></th>
 										<th>Area (sq mi)</th>
 										<th>Area (%)</th>
 									</tr>
 									<tr *ngFor="let geologyType of workflowData[i].outputs.geologyInfo">
-										<td>{{geologyType[0]}}</td>
+										<td><span>{{geologyType[0]}}</span></td>
 										<td>{{geologyType[1] | number : '1.3'}}</td>
 										<td>{{geologyType[2] | number: '1.3'}}</td>
 									</tr>
@@ -72,11 +72,11 @@
 								<table id="reportTableSE">
 									<tr>
 										<th>Equation</th>
-										<th>Value</th>
-										<th>Units</th>
+										<th><span>Value</span></th>
+										<th><span>Units</span></th>
 									</tr>
 									<tr *ngFor="let streamflowEstimate of workflowData[i].outputs.streamflowEstimates">
-										<td>{{streamflowEstimate["name"]}}</td>
+										<td><span>{{streamflowEstimate["name"]}}</span></td>
 										<td>{{streamflowEstimate["value"] | number : '1.3'}}</td>
 										<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
 									</tr>
