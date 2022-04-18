@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added functionality to query geology, burned area, precomputed basin characteristics, and fire hydrology streamflow estimates
 -   Added toggleable layers
 -   Added maps to report output
+-   Added Beta release to title and About page
 
 ### Changed
 
