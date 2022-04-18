@@ -33,3 +33,15 @@
 .usa-logo{
 	margin: 0;
 }
+
+.beta-text {
+	padding-left: 10px;
+	font-weight: 400;
+	font-size: 1rem;
+}
+
+@media (max-width: 64em) {
+	.beta-text {
+		font-size: .75rem;
+	}
+}
