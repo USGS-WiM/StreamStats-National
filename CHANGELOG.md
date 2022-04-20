@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added maps to report output
 -   Added Beta release to title and About page
 -   Added credits to libraries to About modal
+-   Updated buttons to have accessible names
 
 ### Changed
 
