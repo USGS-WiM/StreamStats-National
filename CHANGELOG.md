@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added toggleable layers
 -   Added maps to report output
 -   Added Beta release to title and About page
+-   Added credits to libraries to About modal
 
 ### Changed
 
