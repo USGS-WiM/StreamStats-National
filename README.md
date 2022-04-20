@@ -1,6 +1,6 @@
 # StreamStats National
 
-[![build status](https://github.com/USGS-WiM/stnweb2/workflows/Build/badge.svg)](https://github.com/coryrylan/angular-github-actions/actions) [![GitHub Super-Linter](https://github.com/USGS-WiM/stnweb2/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![build status](https://github.com/USGS-WiM/StreamStats-National/workflows/Build/badge.svg)](https://github.com/coryrylan/angular-github-actions/actions) [![GitHub Super-Linter](https://github.com/USGS-WiM/StreamStats-National/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 ![WiM](wim.png)
 
@@ -44,6 +44,12 @@ to build a distribution folder for production:
 ng build --prod --base-href "[relative path to web server root]"
 ```
 
+to execute the unit tests via [Karma](https://karma-runner.github.io):
+
+```bash
+ng test
+```
+
 ### Development Workflow
 
 **Instructions below are for developers actively working on the repo**
@@ -55,7 +61,7 @@ An issue will be assigned to you via Github. Your workflow begins after assignme
 3. Do the work
     - While you work, you may wish to have the app running with live reload. Run `ng serve` to do so.
 4. Write tests for the work
-    - This is a critical step. STNWeb2 uses the [Jasmine library](https://jasmine.github.io/) for unit testing. Please refer there for docs and examples. Also refer to the [Angular testing guide](https://angular.io/guide/testing).
+    - This is a critical step. StreamStats-National uses the [Jasmine library](https://jasmine.github.io/) for unit testing. Please refer there for docs and examples. Also refer to the [Angular testing guide](https://angular.io/guide/testing).
 5. Run the tests to be sure they all pass and that the overall thresholds are met: `ng test`
 6. Be sure the app runs in the browser without errors: `ng serve`
 7. Ensure the app builds without error: `ng build`

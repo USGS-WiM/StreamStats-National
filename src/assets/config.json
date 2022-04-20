@@ -1,0 +1,203 @@
+{
+    "version": "v0.1.0-beta.1",
+    "workflowsURL": "assets/workflows.json",
+    "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
+    "nldiSplitCatchmentURL": "nldi-splitcatchment/execution",
+    "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices/",
+    "NSSServices": "https://streamstats.usgs.gov/nssservices/",
+    "GridQueryService": "https://test.streamstats.usgs.gov/gridqueryservices?",
+    "overlays":[
+        {
+            "name": "Streamgages",
+            "url": "https://streamstats.usgs.gov/gagestatsservices/stations",
+            "layerOptions": {
+                "minZoom": 8
+            },
+            "visible": false
+        }
+    ],
+    "workflowLayers":[
+        {
+        "name": "NHD Flowlines",
+        "url": "https://labs.waterdata.usgs.gov/geoserver/gwc/service/",
+        "type": "WMS",
+        "layerOptions": {
+            "layers": "wmadata:nhdflowline_network",
+            "minZoom": 13,
+            "maxZoom": 19,
+            "zIndex": 9999,
+            "format": "image/png",
+            "transparent": "true"
+        }
+        },
+        {
+            "name": "2022 Wildland Fire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+        {
+            "name": "2021 Wildland Fire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Fire_History_Perimeters_Public/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+        {
+            "name": "Archived Wildland Fire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Interagency_Fire_Perimeter_History_All_Years_Read_Only/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+    
+        {
+            "name": "MTBS Fire Boundaries",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "layers": [63]
+            },
+            "visible": true
+        },
+        {
+            "name": "Burn Severity",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/RDW_Wildfire/MTBS_CONUS/MapServer",
+            "type": "agsDynamic",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10
+            },
+            "visible": true
+        },
+        {
+            "name": "GeologyFeatures",
+            "url": "https://www.sciencebase.gov/arcgis/rest/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/3",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999,
+                "minZoom": 10,
+                "layers": [3]
+            },
+            "visible": false
+        },
+        {
+            "name": "Geology",
+            "url": "https://www.sciencebase.gov/arcgis/services/Catalog/5888bf4fe4b05ccb964bab9d/MapServer/WMSServer",
+            "type": "WMS",
+            "layerOptions": {
+                "layers": "0",
+                "minZoom": 10,
+                "maxZoom": 19,
+                "zIndex": 9999,
+                "format": "image/png",
+                "transparent": "true"
+            },
+            "visible": false
+        }
+    ],
+    "baseLayers": [
+        { 
+            "name": "World Topographic",
+            "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community",
+            "visible": true,
+            "maxZoom": 19
+        },
+        { 
+            "name": "National Geographic",
+            "url": "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC",
+            "visible": false,
+            "maxZoom": 16
+        },
+        { 
+            "name": "National Map",
+            "url": "https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "<a href='https://www.doi.gov'>U.S. Department of the Interior</a> | <a href='https://www.usgs.gov'>U.S. Geological Survey</a>",
+            "visible": false,
+            "maxZoom": 16
+        },
+        { 
+            "name": "Streets",
+            "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012",
+            "visible": false,
+            "maxZoom": 19
+        },
+        { 
+            "name": "Gray",
+            "url": "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ",
+            "visible": false,
+            "maxZoom": 16
+        },
+        { 
+            "name": "Satellite",
+            "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+            "visible": false,
+            "maxZoom": 19
+        },
+        { 
+            "name": "Shaded Relief",
+            "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}",
+            "attribution": "Tiles &copy; Esri &mdash; Source: Esri",
+            "visible": false,
+            "maxZoom": 13
+        }
+    ],
+    "symbols": {
+        "2022 Wildland Fire Perimeters": {
+            "color": "#EBCF26",
+            "fillColor": "#EBCF26"
+        },
+        "2021 Wildland Fire Perimeters": {
+            "color": "#ed8f24",
+            "fillColor": "#ed8f24"
+        },
+        "Archived Wildland Fire Perimeters": {
+            "color": "#ed8f24",
+            "fillColor": "#ed8f24"
+        }
+    },
+    "parameters": [
+        {
+            "fcpg_parameter" : "i2y30",
+            "description": "Mean maximum 30-minute 2-year precipitation",
+            "multiplier": 0.002,
+            "units": "in/hr"
+        },
+        
+        {
+            "fcpg_parameter" : "jantmin",
+            "description": "Mean January minimum temperature",
+            "multiplier": 1,
+            "units": "degrees Celsius"
+        },
+        
+        {
+            "fcpg_parameter" : "jantmax",
+            "description": "Mean January maximum temperature",
+            "multiplier": 1,
+            "units": "degrees Celsius"
+        },
+        
+        {
+            "fcpg_parameter" : "forests",
+            "description": "Forested area",
+            "multiplier": 1,
+            "units": "percent"
+        }
+    ]
+    
+}
+

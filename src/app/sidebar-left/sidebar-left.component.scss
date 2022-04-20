@@ -1,0 +1,78 @@
+
+// 
+// Basemap Selectors
+// 
+.basemap-selector{
+	display: flex;
+	flex-direction: column;
+
+	.basemap-option{
+		display: flex;
+		box-sizing: border-box;
+		padding: 0 0 7px 0;
+
+		input{
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+		}
+
+		img{
+			width: 50px;
+			border-radius: var(--borderRadius);
+			height: auto;
+			border: 1px solid var(--border);
+		}
+
+		span{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			box-sizing: border-box;
+			padding: 0 0 0 10px;
+			font-size: 14px;
+			font-weight: 500;
+			transition: var(--transition);
+			color: var(--textLight);
+		}
+
+
+		// Basemap hover state
+		&:hover{
+			cursor: pointer;
+
+			span{
+				text-decoration: underline;
+				color: var(--text);
+				transition: var(--transition);
+			}
+			img{
+				border-color: var(--text);
+			}
+		}
+
+		&:focus,
+		input:focus{
+			outline: none;
+		}
+
+		&:focus,
+		&:active{
+			span{
+			}
+		}
+	}
+}
+
+
+// 
+// Map Layers
+// 
+.map-layers-group{
+	display: block;
+
+	h4{
+		margin: 0 0 8px 0;
+		padding: 0;
+	}
+}
