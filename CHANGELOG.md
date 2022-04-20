@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 -
-## [v0.1.0-beta.1] - 2022-04-20
+## [v0.1.0-beta.1](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v0.1.0-beta.1) - 2022-04-20
 
 ### Added
 
