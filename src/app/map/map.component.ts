@@ -272,34 +272,36 @@ export class MapComponent implements OnInit {
   }
 
   private loadLayers() {
-    this.configSettings.workflowLayers.forEach(ml => {
-      try {
-        let options;
-        let url;
-        switch (ml.type) {
-          case "WMS":
-            options = ml.layerOptions;
-            url = ml.url;
-            this.workflowLayers[ml.name] = L.tileLayer.wms(url, options);
-            break;
-          case "agsDynamic":
-            options = ml.layerOptions;
-            options.url = ml.url;
-            this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
-            break;
-          case "agsFeature":
-            options = ml.layerOptions;
-            options.url = ml.url;
-            this.workflowLayers[ml.name] = esri.featureLayer(options);
-            if (this.configSettings.symbols[ml.name]) { 
-              this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
-            }
-            break;
+    if (this.configSettings) {
+      this.configSettings.workflowLayers.forEach(ml => {
+        try {
+          let options;
+          let url;
+          switch (ml.type) {
+            case "WMS":
+              options = ml.layerOptions;
+              url = ml.url;
+              this.workflowLayers[ml.name] = L.tileLayer.wms(url, options);
+              break;
+            case "agsDynamic":
+              options = ml.layerOptions;
+              options.url = ml.url;
+              this.workflowLayers[ml.name] = esri.dynamicMapLayer(options);
+              break;
+            case "agsFeature":
+              options = ml.layerOptions;
+              options.url = ml.url;
+              this.workflowLayers[ml.name] = esri.featureLayer(options);
+              if (this.configSettings.symbols[ml.name]) { 
+                this.workflowLayers[ml.name].setStyle(this.configSettings.symbols[ml.name]); 
+              }
+              break;
+          }
+        } catch (error) {
+          this.createMessage(ml.name + ' layer failed to load','error');
         }
-      } catch (error) {
-        this.createMessage(ml.name + ' layer failed to load','error');
-      }
-    });
+      });
+    }
   }
 
   public addLayers(layerName: string, visible: boolean) {
