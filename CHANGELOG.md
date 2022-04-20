@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/USGS-WiM/StreamStats-National/tree/dev)
+## [v0.1.0-beta.1] - 2022-04-20
 
 ### Added
 
@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added maps to report output
 -   Added Beta release to title and About page
 -   Updated buttons to have accessible names
+-   
+## [Unreleased](https://github.com/USGS-WiM/StreamStats-National/tree/dev)
+
+### Added
+
+- 
 
 ### Changed
 
