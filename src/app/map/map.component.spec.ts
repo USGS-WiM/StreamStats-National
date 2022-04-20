@@ -76,15 +76,12 @@ describe('MapComponent', () => {
     expect(component.workflowLayers["NHD Flowlines"].options.layers).toEqual("wmadata:nhdflowline_network");
   });
 
-  // it('should #setClickPoint from map click event', () => {
-  //   const click = {lat: 45, lng: -93};
-  //   //mock click data
-  //   component.clickPoint = {
-  //     lat: 45,
-  //     lng: -93
-  //   };
-  //   component.onMouseClick();
-  //   //fixture.detectChanges();
-  //   expect(component.clickPoint).toEqual(click)
-  // });
+  it('should #setClickPoint from map click event', () => {
+    //mock click data
+    const click = {evt: {latlng: {lat: 45, lng: -93}}};
+    let clickSpy = spyOn(component["_mapService"], 'setClickPoint');
+    component["_mapService"]["map"].fireEvent('click', click);
+    fixture.detectChanges();
+    expect(clickSpy).toHaveBeenCalledWith(click["latlng"])
+  });
 });
