@@ -1,0 +1,269 @@
+<button type="button" class="usa-button usa-button--default mbottom-sm" (click)="showPrintModal = true; createPrintMaps();" *ngIf="workflowData[0]" >
+	Print Report
+</button>
+
+
+<h3>Completed workflows:</h3>
+
+<p *ngIf="!workflowData[0]">Please complete a workflow to see results</p>
+
+
+<!-- Placeholder html -->
+<div *ngFor="let data of workflowData; let i = index">
+    <h4>{{data.title}}</h4>
+
+	<ul class="usa-card-group"> 
+
+
+		<li class="usa-card completed-report-card">
+
+			<div class="usa-card__container">
+				
+				<!-- Card body -->
+				<div class="usa-card__body">
+
+					<span *ngFor="let output of data.outputs | keyvalue: unsortedKeys">
+						<!-- Display Map -->
+						<div *ngIf="data.outputs.layers" id="{{ 'reportMap' + i }}" class="reportMap"></div>
+
+						<div class="card-padded">
+
+							<!-- Click Point -->
+							<div *ngIf="output.key=='clickPoint'">Lat/Lon: ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</div>
+							
+							<!-- Delineation -->
+							<div *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</div>
+							
+							<!-- Fire Hydrology: Query by Basin -->
+							<div *ngIf="output.key=='basinArea'">Drainage Area: {{output.value | number : '1.3'}} sq mi</div>
+							<div *ngIf="output.key=='burnYears'">Burn Year Range: {{output.value[0]}} to {{output.value[1]}}</div>
+							<div *ngIf="output.key=='burnedArea'">Burned Area: {{output.value[0] | number : '1.3'}} sq mi ({{output.value[1] | number : '1.3'}}%)</div>
+							<div *ngIf="output.key=='basinCharacteristics'">Basin Characteristics:
+								<table id="reportTableBC2">
+									<tr>
+										<th><span>Basin Characteristic</span></th>
+										<th>Description</th>
+										<th>Value</th>
+										<th>Units</th>
+									</tr>
+									<tr *ngFor="let basin_characteristic of workflowData[i].outputs.basinCharacteristics">
+										<td>{{basin_characteristic.fcpg_parameter}}</td>
+										<td>{{basin_characteristic["description"]}}</td>
+										<td><span>{{basin_characteristic["value"] | number : '1.2'}}</span></td>
+										<td>{{basin_characteristic["units"]}}</td>
+									</tr>
+								</table>
+							</div>
+							<div *ngIf="output.key=='geologyInfo'">Surficial Geology:
+								<table id="reportTableSG">
+									<tr>
+										<th><span>Geologic Unit</span></th>
+										<th>Area (sq mi)</th>
+										<th>Area (%)</th>
+									</tr>
+									<tr *ngFor="let geologyType of workflowData[i].outputs.geologyInfo">
+										<td><span>{{geologyType[0]}}</span></td>
+										<td>{{geologyType[1] | number : '1.3'}}</td>
+										<td>{{geologyType[2] | number: '1.3'}}</td>
+									</tr>
+								</table>
+							</div>
+							<div *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+								<table id="reportTableSE">
+									<tr>
+										<th>Equation</th>
+										<th><span>Value</span></th>
+										<th><span>Units</span></th>
+									</tr>
+									<tr *ngFor="let streamflowEstimate of workflowData[i].outputs.streamflowEstimates">
+										<td><span>{{streamflowEstimate["name"]}}</span></td>
+										<td>{{streamflowEstimate["value"] | number : '1.3'}}</td>
+										<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
+									</tr>
+								</table>
+							</div>
+							<!-- Fire Hydrology: Query by Fire Perimeters-->
+							<div *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
+								<span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
+										<div>{{perimeter.Key}}:</div>
+										<div *ngFor="let feat of perimeter.Data.features; let k = index">
+											<div>Feature {{k+1}}</div>
+											<span *ngFor="let prop of feat.properties | keyvalue">
+												<div  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+													<div>{{prop.key}}: {{prop.value}}</div>
+												</div>
+											</span> 
+										</div>
+								</span>
+							</div>
+
+
+						</div> <!-- / Padded -->
+
+					</span>
+
+				</div>
+				<!-- Card footer -->
+				<div class="usa-card__footer">
+					<!-- Download -->
+					<!-- <button class="usa-button usa-button--small usa-button--outline">Download</button> -->
+					<!-- Delete -->
+					<button class="usa-button usa-button--small usa-button--secondary" (click)="workflowData.splice(i, 1)" aria-label="Delete">
+						<i class="far fa-trash"></i>
+					</button>
+
+				</div>
+			</div>
+
+
+		</li>
+
+	</ul>
+
+
+</div>
+
+
+
+<!-- Print Report Modal -->
+<div id="printModal" *ngIf="showPrintModal">
+	<div id="printModalContent">
+		<h2 class="usa-modal__heading hide-print" id="printModalHeading">
+			Print Summary
+		</h2>
+		<div class="usa-prose hide-print">
+			<h3>Report Description</h3>
+			<p>
+				Enter a report title and/or comments here that will display on the printed report.
+			</p>
+			<div>
+				<p>
+					Report Title: 
+					<input type="text" placeholder="StreamStats National Report" style="width: 100%;" [(ngModel)]="reportTitle" >
+				</p>
+				<p>
+					Comments: 
+					<input type="text" style="width: 100%;" [(ngModel)]="reportComments">
+				</p>
+
+			</div>
+
+			<button type="button" class="usa-button" (click)="showPrintModal = false">
+				Close Window
+			</button>
+			<button type="button" class="usa-button" (click)="onPrint()">
+				Print
+			</button>
+
+			<!-- Report Parts -->
+			<h3>Report Contents</h3>
+			<br/>
+			
+		</div>
+
+		<!-- Actual print content -->
+		<div id="reportContent">
+			<div class="show-print">
+				<h1 *ngIf="reportTitle">{{reportTitle}}</h1>
+				<p *ngIf="reportComments">{{reportComments}}</p>
+				<div v-if="reportTitle">
+					<br/><br/>
+				</div>
+			</div>
+			<div *ngFor="let data of workflowData; let i = index" class="show-print"> 
+
+				<h4>{{data.title}}</h4>
+				<!-- Display Map -->
+				<div *ngIf="data.outputs.layers" id="{{ 'printMap' + i }}" class="printMap"></div>
+
+
+				<!-- Outputs -->
+				<p>{{data.title}} Outputs:</p>
+				<div *ngFor="let output of data.outputs | keyvalue: unsortedKeys">
+					<!-- Click Point -->
+					<li *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</li>
+					<!-- Example Workflow -->
+					<li *ngIf="output.key=='selectColor'">Color Selected: {{output.value}}</li>
+					<li *ngIf="output.key=='enterText'">Text Entered: {{output.value}}</li>
+					<!-- Delineation -->
+					<li *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</li>
+					<!-- Fire Hydrology: Query by Basin -->
+					<li *ngIf="output.key=='basinArea'">Drainage Area: {{output.value | number : '1.3'}} sq mi</li>
+					<li *ngIf="output.key=='burnYears'">Burn Year Range: {{output.value[0]}} to {{output.value[1]}}</li>
+					<li *ngIf="output.key=='burnedArea'">Burned Area: {{output.value[0] | number : '1.3'}} sq mi ({{output.value[1] | number : '1.3'}}%)</li>
+					<li *ngIf="output.key=='basinCharacteristics'">Basin Characteristics:
+						<ul>
+							<table id="reportTableBC1">
+								<tr>
+									<th>Basin Characteristic</th>
+									<th><span>Description</span></th>
+									<th><span>Value</span></th>
+									<th>Units</th>
+								</tr>
+								<tr *ngFor="let basin_characteristic of workflowData[i].outputs.basinCharacteristics">
+									<td>{{basin_characteristic.fcpg_parameter}}</td>
+									<td><span>{{basin_characteristic["description"]}}</span></td>
+									<td>{{basin_characteristic["value"]}}</td>
+									<td><span>{{basin_characteristic["units"]}}</span></td>
+								</tr>
+							</table>
+						</ul>
+					</li>
+					<li *ngIf="output.key=='geologyInfo'">Surficial Geology:
+						<ul>
+							<table>
+								<tr>
+									<th>Geologic Unit</th>
+									<th>Area (sq mi)</th>
+									<th>Area (%)</th>
+								</tr>
+								<tr *ngFor="let geologyType of workflowData[i].outputs.geologyInfo">
+									<td>{{geologyType[0]}}</td>
+									<td>{{geologyType[1] | number : '1.3'}}</td>
+									<td>{{geologyType[2] | number: '1.3'}}</td>
+								</tr>
+							</table>
+						</ul>
+					</li>
+					<li *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+						<ul>
+							<table>
+								<tr>
+									<th>Equation</th>
+									<th>Value</th>
+									<th>Units</th>
+								</tr>
+								<tr *ngFor="let streamflowEstimate of workflowData[i].outputs.streamflowEstimates">
+									<td>{{streamflowEstimate["name"]}}</td>
+									<td>{{streamflowEstimate["value"] | number : '1.3'}}</td>
+									<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
+								</tr>
+							</table>
+						</ul>
+					</li>
+					<!-- Fire Hydrology: Query by Fire Perimeters-->						
+					<li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
+						<span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
+							<ul>
+								<li>{{perimeter.Key}}:</li>
+								<div *ngFor="let feat of perimeter.Data.features; let k = index">
+									<ul>
+										<li>Feature {{k+1}}</li>
+										<span *ngFor="let prop of feat.properties | keyvalue">
+											<ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+												<li>{{prop.key}}: {{prop.value}}</li>
+											</ul>
+										</span> 
+									</ul>
+								</div>
+							</ul>
+						</span>
+					</li>
+				</div>
+			</div>
+		
+		</div>
+			
+	
+	</div>
+</div>

@@ -1,0 +1,129 @@
+[
+    {
+        "title": "Delineation",
+        "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
+        "functionality": "Core",
+        "icon": "far fa-map-marker",
+        "steps":
+        [
+            {
+                "label": "Select Delineation Process",
+                "name": "selectDelineationProcess",
+                "type": "checkbox",
+                "options":
+                [
+                    {
+                        "text": "NLDI Delineation",
+                        "selected": false
+                    }
+                ]
+            },
+            {
+                "label":"Select Delineation Point",
+                "name": "selectDelineationPoint",
+                "type": "subscription",
+                "validators": 
+                {
+                    "required": true
+                },
+                "options":
+                [
+                    {
+                        "text":"Click on the map",
+                        "selected": false
+                    }
+                ]
+            }
+        ],
+        "output": 
+        {
+            "value": "delineationPolygon",
+            "valueType": "geojson",
+            "displayType": "map"
+        }
+    },
+    {
+        "title": "Fire Hydrology",
+        "description": "Fire hydrology description here.",
+        "functionality": "Core",
+        "icon": "far fa-fire-alt",
+        "steps":
+        [
+            {
+                "label": "Select a Fire Hydrology Query Method",
+                "name": "selectFireHydroProcess",
+                "type": "checkbox",
+                "options":
+                [
+                    {
+                        "text": "Query by Basin",
+                        "selected": false,
+                        "nestedSteps": 
+                        [
+                            {
+                                "label": "Select a Point",
+                                "name": "selectFireHydroBasin",
+                                "type": "subscription",
+                                "validators": 
+                                {
+                                    "required": true
+                                },
+                                "options": 
+                                [
+                                    {
+                                        "text": "Click on the map",
+                                        "selected": false
+                                    }
+                                ]
+                            },
+                            {
+                                "label":"Burn Area Year Range",
+                                "name": "burnAreaStartYear",
+                                "type": "text",
+                                "validators": 
+                                {
+                                    "required": true
+                                },
+                                "options":
+                                [
+                                    {
+                                        "textLabel":"Start Year",
+                                        "text":"1900"
+                                    },
+                                    {
+                                        "textLabel":"End Year",
+                                        "text":"2022"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "text": "Query by Fire Perimeters",
+                        "selected": false,
+                        "nestedSteps": 
+                        [
+                            {
+                                "label": "Select a Fire Perimeter",
+                                "name": "selectFireHydroPerimeter",
+                                "type": "subscription",
+                                "validators": 
+                                {
+                                    "required": true
+                                },
+                                "options": 
+                                [
+                                    {
+                                        "text": "Click on the map",
+                                        "selected": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    
+]

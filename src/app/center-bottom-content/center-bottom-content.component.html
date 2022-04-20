@@ -1,0 +1,24 @@
+<!-- Workflow Selection Component-->
+
+<div class="vertical-tabs">
+    <!-- Icon tabs -->
+    <div class="v-tabs">
+        <!-- <div *ngIf="!selectedWorkflow">
+            <button (click)="reportBuilderTab == 'selection' ? reportBuilderTab = '' : reportBuilderTab = 'selection'" [ngClass]="{'active': reportBuilderTab == 'selection'}">
+                <i class="far fa-ellipsis-h"></i>
+            </button>
+        </div> -->
+        <div *ngIf="selectedWorkflow">
+            <button (click)="removeWorkFlow(); reportBuilderTab == 'selection'" aria-label="Back">
+                <i class="fas fa-angle-left"></i>
+            </button>
+        </div>
+    </div>
+	
+    <div class="v-tab-body">
+        <app-workflow-selection *ngIf="reportBuilderTab == 'selection' && !selectedWorkflow"></app-workflow-selection>
+        <div *ngIf="selectedWorkflow" [ngClass]="{'active': reportBuilderTab == selectedWorkflow.title}">
+            <app-workflow [workflow]="selectedWorkflow" [formData]="formData"></app-workflow>
+        </div> 
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<!-- Buttons to select which workflow -->
+
+<div *ngIf="!selectedWorkflow" id="workflowChoices">
+    <div *ngFor="let workflow of workflows; let i = index">
+        <button class="usa-button mbottom-xxs" (click)="selectWorkflow(workflow)" aria-label="{{workflow.title}} Workflow">
+            <i class={{workflow.icon}}></i>
+       	 	{{ workflow.title }}
+		</button>
+    </div>
+</div>

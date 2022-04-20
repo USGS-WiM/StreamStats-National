@@ -1,0 +1,206 @@
+//! Variables
+
+// Responsive Variables must be sass variables
+// because CSS variables can't be used in @media
+$screenXS: 380px;
+$screenSM: 500px;
+$screenMD: 885px;
+$screenLG: 1020px;
+$screenXL: 1400px;
+
+//  Root variables can be toggled by themes
+:root {
+
+	//* Global variables				
+	// Not specific to light theme 
+
+	// Fonts
+	--sans: var(--systemFont);
+	--serif: 'Lucida Bright', 'Garamond', 'Times New Roman', serif;
+	--monospace: monospace;
+	--fontAwesome: 'Font Awesome 5 Pro';
+	--fontAwesomeBrands: 'Font Awesome 5 Brands';
+	--systemFont: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	
+	// Transitions
+	--transition: 0.12s;
+	--bezierTransition: all 0.18s cubic-bezier(0.5, 0.1, 0.75, 1.35);
+	--bezierTransitionSlow: all 0.28s cubic-bezier(0.5, 0.1, 0.75, 1.35);
+
+	// Measurements
+	--fieldWidth: 200px;
+	--maxWidthSmall: 450px;
+	--maxWidth: 800px;
+	--maxWidthLarge: 1000px;
+	// Borders
+	--borderRadius: 3px;
+
+	// Black and White
+	--black: #1D1C31;
+	--white: #FFFFFF;
+
+
+	//*  Light Theme 
+	// Background Colors
+	--background: #ffffff;
+	--layer: #ffffff;
+
+	// Main Colors
+	--primary: var(--blue);
+	--red: #FF3D49;
+	--orange: #FF5740;
+	--yellow: #ffd84f;
+	--green: #00DAA6;
+	--blue: #015EA2;
+	--purple: #A83BF3;
+	--pink: #FB3ED8;
+	--grey: #EDF0F6;
+	--gray: #EDF0F6;
+		// Fade
+		--primaryFade: var(--blueFade);
+		--redFade: rgba(255,0,0,0.11);
+		--orangeFade: rgba(255, 131, 0, 0.11);
+		--yellowFade: rgba(255, 255, 0, 0.11);
+		--greenFade: rgba(0, 218, 166, 0.105);
+		--blueFade: rgba(1, 94, 162, 0.07);
+		--purpleFade: rgba(168, 59, 243, 0.07);
+		--pinkFade: rgba(251, 62, 216, 0.12);
+		--greyFade: rgba(160, 164, 204, 0.2);
+		--grayFade: rgba(160, 164, 204, 0.22);
+		// Light
+		--primaryLight: var(--blueLight);
+		--redLight: #FF6F78;
+		--orangeLight: #FF8972;
+		--yellowLight: #FFF269;
+		--greenLight: #14EEBA;
+		--blueLight: #076AAE;
+		--purpleLight: #DA6DFF;
+		--pinkLight: #FF83FF;
+		--greyLight: #F5F7FA;
+		--grayLight: #F5F7FA;
+		// Dark
+		--primaryDark: var(--blueDark);
+		--redDark: #D93D49;
+		--orangeDark: #E74A33;
+		--yellowDark: #f0c83e;
+		--greenDark: #00C299;
+		--blueDark: #194480;
+		--purpleDark: #872BD0;
+		--pinkDark: #DA0ECB;
+		--greyDark: #E4E9F0;
+		--grayDark: #E4E9F0;
+
+
+	// Blacks, Greys, Text
+	// Text
+	--text: #032E56;
+		--textFade: rgba(3, 46, 86, 0.4);
+		--textLight: rgba(3, 46, 86, 0.65);
+		--textDark: #001427;
+	// Borders
+	--border: rgba(3, 3, 41, 0.45);
+		--borderFade: rgba(3, 3, 41, 0.15);
+		--borderLight: rgba(3, 3, 41, 0.25);
+		--borderDark: rgba(3, 3, 41, .85);
+
+
+	// Misc
+	--outline: rgba(46, 54, 253, 0.4);
+	--scrollThumb: #EDEDF5;
+	// Links
+	--links: #4437f5;
+	--linksDark: #2d20d3;
+
+
+	// Box Shadows
+	--shadow: 0px 15px 25px -4px rgba(30,30,60,0.15);
+	--shadowLight: 0px 4px 20px -6px rgba(30, 30, 60, 0.072);
+	
+}
+
+
+
+// Dark Theme changes
+[data-theme="dark"] {
+
+	// Background Colors
+	--background: #07070f;
+	--layer: #161420;
+
+	// Main Colors
+	// --primary: var(--blue);
+	// --red: #ad2018;
+	// --orange: #F3833B;
+	// --yellow: #ac9b05;
+	// --green: #0e816c;
+	// --blue: #3f36bb;
+	// --purple: #A83BF3;
+	// --pink: #FB3ED8;
+	--grey: #20202f;
+	--gray: #20202f;
+		// Fade
+		--primaryFade: var(--blueFade);
+		--redFade: rgba(255,0,0,0.15);
+		--orangeFade: rgba(255, 131, 0, 0.15);
+		--yellowFade: rgba(255, 255, 0, 0.15);
+		--greenFade: rgba(0, 218, 166, 0.155);
+		--blueFade: rgba(0,85,251,0.12);
+		--purpleFade: rgba(168, 59, 243, 0.12);
+		--pinkFade: rgba(251, 62, 216, 0.17);
+		--greyFade: rgba(40,40,55,0.5);
+		--grayFade: rgba(40,40,55,0.5);
+		// Light
+		// --primaryLight: var(--blueLight);
+		// --redLight: #FF0081;
+		// --orangeLight: #FF8972;
+		// --yellowLight: #FFF269;
+		// --greenLight: #14EEBA;
+		// --blueLight: #5473FF;
+		// --purpleLight: #DA6DFF;
+		// --pinkLight: #FF83FF;
+		--greyLight: #141420;
+		--grayLight: #141420;
+		// Dark
+		// --primaryDark: var(--blueDark);
+		// --redDark: #D93D49;
+		// --orangeDark: #E74A33;
+		// --yellowDark: #f0c83e;
+		// --greenDark: #00C299;
+		// --blueDark: #0B02CE;
+		// --purpleDark: #872BD0;
+		// --pinkDark: #DA0ECB;
+		--greyDark: #343443;
+		--grayDark: #343443;
+
+
+	// Blacks, Greys, Text
+	// Text
+	--text: #fff;
+		--textFade: rgba(255,255,255, 0.45);
+		--textLight: rgba(255,255,255, 0.82);
+		--textDark: #FFFFFF;
+	// Borders
+	--border: rgba(148, 148, 163, 0.5);
+		--borderFade: rgba(148, 148, 163, 0.25);
+		--borderLight: rgba(148, 148, 163, 0.35);
+		--borderDark: rgba(178, 178, 198, 0.5);
+
+
+	// Misc
+	--outline: rgba(63, 54, 187, 0.86);
+	--scrollThumb: #EDEDF5;
+	// Links
+	--links: #5d7ff0;
+	--linksDark: #7e9bf8;
+
+
+	// Box Shadows
+	--shadow:
+		0px 2px 15px -8px rgba(10,10,10,0.6),
+		0px 4px 20px -10px rgba(10,10,10,0.45);
+
+
+}
+[data-theme="high-contrast-dark"] {
+
+}
