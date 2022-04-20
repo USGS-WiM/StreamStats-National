@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- 
+
+### Changed
+
+-   
+
+### Fixed
+
+-
+## [v0.1.0-beta.1](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v0.1.0-beta.1) - 2022-04-20
+
+### Added
+
 -   Added streamgage layer
 -   Basic app structure: top bar, left sidebar, right sidebar, map area, bottom section
 -   Automated checks for pull requests
@@ -28,10 +41,3 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Added credits to libraries to About modal
 -   Updated buttons to have accessible names
 
-### Changed
-
--   
-
-### Fixed
-
--   
