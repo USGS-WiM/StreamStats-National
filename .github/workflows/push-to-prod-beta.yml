@@ -1,0 +1,29 @@
+on: 
+  push:
+    branches:
+    - master
+name: Deploy to Production Beta site
+jobs:
+  deployToTest:
+    name: Deploy to Production Beta Site
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set Up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '10.15'
+    - run: npm run-script build
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+    - run: aws s3 cp /home/runner/work/StreamStats-National/StreamStats-National/dist/ s3://streamstats.usgs.gov/national-beta --recursive
+    - name: GitHub Action for Slack
+      uses: Ilshidur/action-slack@689ad44a9c9092315abd286d0e3a9a74d31ab78a
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      with:
+        args: Successfully deployed to https://streamstats.usgs.gov/national-beta/
