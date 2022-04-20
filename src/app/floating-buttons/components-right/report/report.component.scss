@@ -39,3 +39,34 @@ table {
 		}
 	}
 }
+
+
+
+
+
+#printModal{
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: fit-content;
+	z-index: 2000 !important;
+	box-sizing: border-box;
+	padding: 50px;
+	background-color: rgba(0,0,0,0.5);
+	min-height:100vh;
+
+}
+#printModalContent{
+	background-color: white;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 25px;
+	border-radius: 4px;
+	max-height: 85vh;
+	overflow: auto;
+	max-width: 1000px;
+	margin: 0 auto;
+	
+}

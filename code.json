@@ -3,8 +3,8 @@
     "name": "StreamStats National",
     "organization": "U.S. Geological Survey",
     "description": "Web-based Geographic Information Systems application that provides users with access to hydrologic data and analytical tools",
-    "version": "v0.1.0",
-    "status": "Development",
+    "version": "v0.1.0-beta.1",
+    "status": "Beta",
 
     "permissions": {
       "usageType": "openSource",
@@ -16,8 +16,8 @@
       ]
     },
 
-    "homepageURL": "https://test.streamstats.usgs.gov/national/",
-    "downloadURL": "https://github.com/USGS-WiM/StreamStats-National/archive/dev.zip",
+    "homepageURL": "https://streamstats.usgs.gov/national-beta/",
+    "downloadURL": "https://github.com/USGS-WiM/StreamStats-National/archive/master.zip",
     "disclaimerURL": "https://github.com/USGS-WiM/StreamStats-National/blob/master/DISCLAIMER%20(preliminary).md",
     "repositoryUrl": "https://github.com/USGS-WiM/StreamStats-National",
     "vcs": "git",
@@ -43,7 +43,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2021-12-20"
+      "metadataLastUpdated": "2022-04-18"
     }
   }
 ]

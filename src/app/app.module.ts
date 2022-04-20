@@ -1,7 +1,8 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
+import {CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {ToastrModule, ToastNoAnimation, ToastNoAnimationModule} from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -49,6 +50,7 @@ export function ConfigLoader(configService: ConfigService) {
   ],
   imports: [
     BrowserModule,
+	CommonModule,
     HttpClientModule,
     AppRoutingModule,
     ToastNoAnimationModule.forRoot({
@@ -58,6 +60,7 @@ export function ConfigLoader(configService: ConfigService) {
       preventDuplicates: true,
       countDuplicates:true
     }),
+    FormsModule,
     ReactiveFormsModule
   ],
   providers: [

@@ -3,7 +3,7 @@
 
 	<!-- Base Maps -->
 	<div class="button-popout-group">
-		<button class="toggle-popout-button" (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}">
+		<button class="toggle-popout-button" (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}" aria-label="Base Maps">
 			<i class="far fa-map"></i>
 		</button>
 
@@ -40,7 +40,7 @@
 	<!-- Layers -->
 	<div class="button-popout-group">
 
-		<button class="toggle-popout-button" (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}">
+		<button class="toggle-popout-button" (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}" aria-label="Map Layers">
 				<i class="far fa-layer-group"></i>
 		</button>
 
@@ -104,14 +104,14 @@
 
 	<!-- Geolocate -->
 	<div class="button-popout-group">
-		<button id="geolocate" class="toggle-popout-button" (click)="zoomLocation()">
+		<button id="geolocate" class="toggle-popout-button" (click)="zoomLocation()" aria-label="Zoom to Your Location">
 			<i class="far fa-crosshairs"></i>
 		</button>
 	</div>
 
 	<!-- Geosearch -->
 	<div class="button-popout-group">
-		<button id="geosearch" class="toggle-popout-button" (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}">
+		<button id="geosearch" class="toggle-popout-button" (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}" aria-label="Location Search">
 			<i class="far fa-search"></i>
 		</button>
 
