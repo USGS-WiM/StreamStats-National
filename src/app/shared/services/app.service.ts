@@ -17,11 +17,13 @@ export class AppService {
 
   // Setting layer visibility in config settings
   public setLayerVisibility(layerName: string) {
-    this.configSettings.workflowLayers.forEach((layer: any) => {
-      if (layer.name === layerName && layer.visible) {
-        layer.visible = false;
-      }
-    });
+    if(this.configSettings){
+      this.configSettings.workflowLayers.forEach((layer: any) => {
+        if (layer.name === layerName && layer.visible) {
+          layer.visible = false;
+        }
+      });
+    }
   }
 
 }
