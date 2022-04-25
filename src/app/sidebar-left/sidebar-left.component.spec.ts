@@ -32,4 +32,26 @@ describe('SidebarLeftComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should call zoomLocation on geolocate button click', () => {
+    let zoomLocationSpy = spyOn(component, 'zoomLocation');
+    let geolocate = document.getElementById("geolocate");
+    geolocate.dispatchEvent(new Event('click'));
+    fixture.detectChanges();
+    expect(zoomLocationSpy).toHaveBeenCalled();
+  });
+
+  it('should call geosearch on geosearch button click', () => {
+    let geosearchSpy = spyOn(component, 'geosearch');
+    let geosearch = document.getElementById("geosearch");
+    geosearch.dispatchEvent(new Event('click'));
+    fixture.detectChanges();
+    expect(geosearchSpy).toHaveBeenCalled();
+  });
+
+  it('should set baselayers', () => {
+    let baseLayerSpy = spyOn(component["MapService"], "SetBaselayer");
+    component.SetBaselayer("World Topographic");
+    expect(baseLayerSpy).toHaveBeenCalledWith("World Topographic")
+  });
 });
