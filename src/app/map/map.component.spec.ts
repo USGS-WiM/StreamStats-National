@@ -115,6 +115,24 @@ describe('MapComponent', () => {
           }
         },
       ];
+
+      component["configSettings"] = {
+        workflowLayers: [ 
+          {
+            "name": "NHD Flowlines",
+            "url": "https://labs.waterdata.usgs.gov/geoserver/gwc/service/",
+            "type": "WMS",
+            "layerOptions": {
+                "layers": "wmadata:nhdflowline_network",
+                "minZoom": 13,
+                "maxZoom": 19,
+                "zIndex": 9999,
+                "format": "image/png",
+                "transparent": "true"
+            }
+          },
+        ]
+      };
     fixture.detectChanges();
   });
 
@@ -123,23 +141,6 @@ describe('MapComponent', () => {
   });
 
   it('should create workflow layers', () => {
-    component["configSettings"] = {
-      workflowLayers: [ 
-        {
-          "name": "NHD Flowlines",
-          "url": "https://labs.waterdata.usgs.gov/geoserver/gwc/service/",
-          "type": "WMS",
-          "layerOptions": {
-              "layers": "wmadata:nhdflowline_network",
-              "minZoom": 13,
-              "maxZoom": 19,
-              "zIndex": 9999,
-              "format": "image/png",
-              "transparent": "true"
-          }
-        },
-      ]
-    };
     // Method is private
     component["loadLayers"]();
     expect(component.workflowLayers["NHD Flowlines"].options.layers).toEqual("wmadata:nhdflowline_network");
@@ -155,23 +156,6 @@ describe('MapComponent', () => {
   });
 
   it('should remove workflow layers', () => {
-    component["configSettings"] = {
-      workflowLayers: [ 
-        {
-          "name": "NHD Flowlines",
-          "url": "https://labs.waterdata.usgs.gov/geoserver/gwc/service/",
-          "type": "WMS",
-          "layerOptions": {
-              "layers": "wmadata:nhdflowline_network",
-              "minZoom": 13,
-              "maxZoom": 19,
-              "zIndex": 9999,
-              "format": "image/png",
-              "transparent": "true"
-          }
-        },
-      ]
-    };
     // Need to load the layers and add to map first to test removing them
     component["loadLayers"]();
     component["addLayers"]("NHD Flowlines", true);
