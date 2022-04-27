@@ -70,6 +70,12 @@ describe('SidebarLeftComponent', () => {
     expect(geosearchSpy).toHaveBeenCalled();
   });
 
+  it('should call map service zoom location', () => {
+    let zoomSpy = spyOn(component["MapService"], "zoomLocation");
+    component.zoomLocation();
+    expect(zoomSpy).toHaveBeenCalled();
+  });
+
   it('should set baselayers', () => {
     let baseLayerSpy = spyOn(component["MapService"], "SetBaselayer");
     component.SetBaselayer("World Topographic");

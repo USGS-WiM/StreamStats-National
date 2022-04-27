@@ -4,6 +4,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { MapService } from './map.service';
 import * as L from 'leaflet';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { Config } from '../interfaces/config/config';
 
 describe('MapService', () => {
   let service: MapService;
@@ -74,8 +75,59 @@ describe('MapService', () => {
           "visible": false
       }
     ]
+    let overlayValue = [{}];
+    service.overlayLayers.subscribe((value) => {
+			overlayValue = value;
+		});
     service.setOverlayLayers(overlay);
     expect(service.overlaysSubject).toEqual([overlay]);
+    expect(overlayValue).toEqual([overlay]);
+  });
+
+  it('should add overlay layers', () => {
+    // Mock streamgage layer and overlays
+    service.streamgageLayer = {name: 'Streamgages', layer: new L.CircleMarker([0, 0])};
+    service.overlays = [{name: 'Test', layer: new L.CircleMarker([0, 0])}];
+    // Mock config settings
+    service["configSettings"] = <Config>{};
+    service["configSettings"].overlays = [
+      {
+          "name": "Streamgages",
+          "url": "https://streamstats.usgs.gov/gagestatsservices/stations",
+          "layerOptions": {
+              "minZoom": 8
+          },
+          "visible": false
+      }, {
+          "name": "Test",
+          "url": "",
+          "layerOptions": {
+              "minZoom": 8
+          },
+          "visible": false
+      }
+    ]
+    let spy = spyOn(service.map, 'addLayer');
+    let removeSpy = spyOn(service.map, 'removeLayer');
+    // Add layers
+    service.setOverlayLayer("Streamgages");
+    expect(service["configSettings"]["overlays"][0]["visible"]).toBeTrue();
+    expect(spy).toHaveBeenCalledWith(service.streamgageLayer);
+
+    service.setOverlayLayer("Test");
+    expect(service["configSettings"]["overlays"][1]["visible"]).toBeTrue();
+    expect(spy).toHaveBeenCalledWith(service.overlays['Test']);
+
+    // Remove layers
+    service["configSettings"].overlays[1].visible = true;
+    service.setOverlayLayer("Test");
+    expect(service["configSettings"]["overlays"][1]["visible"]).toBeFalse();
+    expect(removeSpy).toHaveBeenCalledWith(service.overlays['Test']);
+    
+    service["configSettings"].overlays[0].visible = true;
+    service.setOverlayLayer("Streamgages");
+    expect(service["configSettings"]["overlays"][0]["visible"]).toBeFalse();
+    expect(removeSpy).toHaveBeenCalledWith(service.overlays['Streamgages']);
   });
 
   it('should set the streamgages layer', () => {
@@ -85,17 +137,52 @@ describe('MapService', () => {
           "name": "Streamgages",
       }
     ]
+    let streamgagesValue;
+    service.streamgagesLayer.subscribe((value) => {
+			streamgagesValue = value;
+		});
     service.setStreamgagesLayer(layer);
     expect(service.streamgageLayer).toEqual(layer);
+    expect(streamgagesValue).toEqual(layer);
   });
 
-  xit('should toggle workflow layers', () => {
+  it('should set the streamgage layer status to true', () => {
+    // Mock element
+    let el = {nativeElement: {id: "Streamgages", checked: true}}
+    
+    service.setStreamgageLayerStatus(el);
+    expect(service.streamgageStatus).toBeTrue();
+  });
+
+  it('should set the streamgage layer status to false', () => {
+    // Mock element
+    let el = {nativeElement: {id: "Streamgages", checked: false}}
+    
+    service.setStreamgageLayerStatus(el);
+    expect(service.streamgageStatus).toBeFalse();
+  });
+
+  it('should toggle workflow layers', () => {
+    service.workflowLayers = {'NHD Flowlines': new L.CircleMarker([0, 0])};
     service.activeLayers = [{name: "NHD Flowlines", visible: false, layerOptions: {minZoom: 8}}];
-    service.workflowLayers = [{name: "NHD Flowlines", visible: false, layerOptions: {minZoom: 8}}];
-    service.toggleWorkflowLayers("NHD Flowlines");
 
+    service.toggleWorkflowLayers("NHD Flowlines");
+    expect(service.map.hasLayer(service.workflowLayers["NHD Flowlines"])).toBeTrue();
+    expect(service.activeLayers[0].visible).toBeTrue();
+
+    service.activeLayers[0].visible = true;
+    service.toggleWorkflowLayers("NHD Flowlines");
+    expect(service.map.hasLayer(service.workflowLayers["NHD Flowlines"])).toBeFalse();
+    expect(service.activeLayers[0].visible).toBeFalse();
   });
-  
+
+  it('should remove workflow layers from active layer list', () => {
+    service.activeLayers = [{name: "NHD Flowlines", visible: false, layerOptions: {minZoom: 8}}];
+    
+    service.removeWorkflowLayers("NHD Flowlines");
+    expect(service.activeLayers.length).toEqual(0);
+  });
+
   it('should add a map layer', () => {
     const marker = L.marker([43, -89]);
     let layer = { name: 'Search Location', layer: marker, visible: true }
@@ -110,14 +197,32 @@ describe('MapService', () => {
   });
 
   it('should zoom to location', () => {
-    service.zoomLocation();
     let circlemarker = false;
+    service.zoomLocation();
     service.map.eachLayer(function(layer){
       if(layer instanceof L.CircleMarker){
         circlemarker = true;
       }
     })
     expect(circlemarker).toBeTrue();
+  });
+
+  it('should set the current zoom level', () => {
+    let zoomValue = 8;
+    service.currentZoomLevel.subscribe((zoom: number) => {
+			zoomValue = zoom;
+		});
+    service.setCurrentZoomLevel(10);
+    expect(zoomValue).toEqual(10);
+  });
+
+  it('should set the click point', () => {
+    let latlngValue = {lat: 44, lng: 81};
+    service.clickPoint.subscribe((latlng) => {
+			latlngValue = latlng;
+		});
+    service.setClickPoint({lat: 43, lng: 80});
+    expect(latlngValue).toEqual({lat: 43, lng: 80});
   });
 
   it('should load a layer', () => {
