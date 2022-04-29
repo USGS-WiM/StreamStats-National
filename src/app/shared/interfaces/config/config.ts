@@ -15,8 +15,8 @@ export interface Config {
         visible: boolean,
         maxZoom: number
     }];
-    workflowLayers: [];
-    overlays: [];
+    workflowLayers: Array<any>;
+    overlays: Array<any>;
     parameters: [{
         fcpg_parameter: string,
         description: string,

@@ -33,6 +33,27 @@ describe('SidebarLeftComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should update the active layer', () => {
+    let workflowLayerToggleSpy = spyOn(component["MapService"], "toggleWorkflowLayers");
+    component.updateActiveLayer("Streamgages");
+
+    expect(workflowLayerToggleSpy).toHaveBeenCalled();
+  });
+
+  it('should set an overlay layer', () => {
+    // ViewChild is in ngIf, so need to be able to detect the element
+    component.popout = 'layers';
+    component.overlayLayers = [{name: "Streamgages", visible: true, layerOptions: {minZoom: 8}}];
+    fixture.detectChanges();
+
+    let setOverlaySpy = spyOn(component["MapService"], "setOverlayLayer");
+    let streamgageSpy = spyOn(component["MapService"], "setStreamgageLayerStatus");
+    component.setOverlayLayer("Streamgages");
+
+    expect(setOverlaySpy).toHaveBeenCalled();
+    expect(streamgageSpy).toHaveBeenCalled();
+  });
+
   it('should call zoomLocation on geolocate button click', () => {
     let zoomLocationSpy = spyOn(component, 'zoomLocation');
     let geolocate = document.getElementById("geolocate");
@@ -47,6 +68,12 @@ describe('SidebarLeftComponent', () => {
     geosearch.dispatchEvent(new Event('click'));
     fixture.detectChanges();
     expect(geosearchSpy).toHaveBeenCalled();
+  });
+
+  it('should call map service zoom location', () => {
+    let zoomSpy = spyOn(component["MapService"], "zoomLocation");
+    component.zoomLocation();
+    expect(zoomSpy).toHaveBeenCalled();
   });
 
   it('should set baselayers', () => {
