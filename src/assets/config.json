@@ -189,13 +189,6 @@
             "description": "Mean January maximum temperature",
             "multiplier": 1,
             "units": "degrees Celsius"
-        },
-        
-        {
-            "fcpg_parameter" : "forests",
-            "description": "Forested area",
-            "multiplier": 1,
-            "units": "percent"
         }
     ]
     
