@@ -15,9 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 -   Contact email address
 
-### Fixed
+### Removed
 
--
+-   Forests parameter from fire hydrology basin characteristics 
+
 ## [v0.1.0-beta.1](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v0.1.0-beta.1) - 2022-04-20
 
 ### Added
