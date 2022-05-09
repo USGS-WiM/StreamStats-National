@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- 
+
+### Changed
+
+-   
+
+### Removed
+
+-   
+
+## [v1.1.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.1.0-beta) - 2022-05-09
+
+### Added
+
 - Unit testing for general map 
 
 ### Changed
