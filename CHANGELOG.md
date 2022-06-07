@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--   
+-   Trace endpoint to new service: https://nldi-polygon-query.streamstats.usgs.gov/docs
 
 ### Removed
 

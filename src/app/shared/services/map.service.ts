@@ -625,10 +625,23 @@ export class MapService {
         return this._streamflowEstimates.asObservable();
     }
 
+
     // Query Fire Perimeters
     public trace(geojson: any) {
-        const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
-        return this._http.post<any>('https://firehydrology.streamstats.usgs.gov/trace', geojson, httpOptions)
+        console.log('trace')
+        console.log(geojson)
+        const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryAwAcRCZZZyrjPudt' }) };
+
+
+        const blob = new Blob([JSON.stringify(geojson)], {type : 'application/json'});
+
+        const formData = new FormData();
+        formData.append('file', blob, 'test_poly.json');
+        formData.append('get_flowlines', 'TRUE');
+        formData.append('downstream_dist', '10.0');
+
+        
+        return this._http.post<any>('https://nldi-polygon-query.streamstats.usgs.gov/nldi_poly_query/', formData, httpOptions)
         .pipe(catchError((err: any) => {
             this._loaderService.hideFullPageLoad();
             this.createMessage("Error tracing fire perimeters.", 'error');
