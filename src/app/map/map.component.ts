@@ -468,7 +468,6 @@ export class MapComponent implements OnInit {
       });
       this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
       const data = await this._mapService.trace(results).toPromise();
-      console.log(data)
       this.addTraceLayer(data);
     }
     this._mapService.setSelectedPerimeters(this.selectedPerimeters);
