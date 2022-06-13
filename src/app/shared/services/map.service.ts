@@ -625,15 +625,14 @@ export class MapService {
         return this._streamflowEstimates.asObservable();
     }
 
-
     // Query Fire Perimeters
     public trace(geojson: any) {
+        const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' }) };
         var data = {
             "data": geojson,
             "get_flowlines": true,
-	        "downstream_dist": 25
+	        "downstream_dist": 15
         }
-        const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' }) };
 
         return this._http.post<any>('https://nldi-polygon-query.streamstats.usgs.gov/nldi_poly_query/', data, httpOptions)
         .pipe(catchError((err: any) => {
