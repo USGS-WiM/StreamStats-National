@@ -14,12 +14,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--   Pointed 'Query by Fire Perimeters' option to new service: https://nldi-polygon-query.streamstats.usgs.gov/docs
--   Changed fire hydrology layers according to NIFC updates #194
+-
 
 ### Removed
 
--   
+-
+
+
+## [v1.1.1-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.1.1-beta) - 2022-06-24
+
+
+### Changed
+
+-   Pointed 'Query by Fire Perimeters' option to new service: https://nldi-polygon-query.streamstats.usgs.gov/docs
+-   Changed fire hydrology layers according to NIFC updates #194
+ 
 
 ## [v1.1.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.1.0-beta) - 2022-05-09
 
