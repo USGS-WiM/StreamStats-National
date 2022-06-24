@@ -172,7 +172,11 @@
             "color": "#ed8f24",
             "fillColor": "#ed8f24"
         },
-        "Archived Wildland Fire Perimeters": {
+        "2019 Wildland Fire Perimeters": {
+            "color": "#ed8f24",
+            "fillColor": "#ed8f24"
+        },
+        "2000-2018 Wildland Fire Perimeters": {
             "color": "#ed8f24",
             "fillColor": "#ed8f24"
         }
