@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+-   Pointed 'Query by Fire Perimeters' option to new service: https://nldi-polygon-query.streamstats.usgs.gov/docs
 -   Changed fire hydrology layers according to NIFC updates #194
 
 ### Removed
