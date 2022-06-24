@@ -58,6 +58,15 @@
             "visible": true
         },
         {
+            "name": "2000-2018 Wildland Fire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Historic_Geomac_Perimeters_Combined_2000_2018/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+        {
             "name": "MTBS Fire Boundaries",
             "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
             "type": "agsDynamic",

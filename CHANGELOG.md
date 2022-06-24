@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
--   
+-   Changed fire hydrology layers according to NIFC updates #194
 
 ### Removed
 
