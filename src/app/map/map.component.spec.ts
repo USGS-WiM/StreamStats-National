@@ -174,7 +174,7 @@ describe('MapComponent', () => {
     // Check available layers
     component["checkAvailableLayers"]();
     expect(addLayerSpy).toHaveBeenCalledWith("NHD Flowlines", true);
-    expect(addLayerSpy).toHaveBeenCalledWith("Archived Wildland Fire Perimeters", true);
+    expect(addLayerSpy).toHaveBeenCalledWith("2019 Wildland Fire Perimeters", true);
   });
 
   it('should check available layers in workflow and add Query by Fire Parameters layers', () => {
@@ -188,7 +188,7 @@ describe('MapComponent', () => {
     // Check available layers
     component["checkAvailableLayers"]();
     expect(addLayerSpy).not.toHaveBeenCalledWith("NHD Flowlines", true);
-    expect(addLayerSpy).toHaveBeenCalledWith("Archived Wildland Fire Perimeters", true);
+    expect(addLayerSpy).toHaveBeenCalledWith("2019 Wildland Fire Perimeters", true);
   });
 
   it('should add layers', () => {
