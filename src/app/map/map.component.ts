@@ -248,22 +248,18 @@ export class MapComponent implements OnInit {
           if (!this.activeWorkflowLayers.length) {
             if (this.workflowData && this.workflowData.steps) {
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
-                if (o.text === "Query by Basin" && o.selected === true) {
-                  this.addLayers('NHD Flowlines', true);
-                  var wildlandFireYears = ["2000-2018", "2019", "2021", "2022"];
-                  wildlandFireYears.forEach(wildlandFireYear => {
-                    this.addLayers(wildlandFireYear + ' Wildland Fire Perimeters', true);
-                  });
-                  this.addLayers('MTBS Fire Boundaries', true);
-                  this.addLayers('Burn Severity', true);
-                }
-                if (o.text === "Query by Fire Perimeters" && o.selected === true) {
-                  var wildlandFireYears = ["2000-2018", "2019", "2021", "2022"];
-                  wildlandFireYears.forEach(wildlandFireYear => {
-                    this.addLayers(wildlandFireYear + ' Wildland Fire Perimeters', true);
-                  });
-                  this.addLayers('MTBS Fire Boundaries', true);
-                  this.addLayers('Burn Severity', true);
+                if (o.selected == true) {
+                  if (o.text === "Query by Fire Perimeters" || o.text === "Query by Basin") {
+                    if (o.text === "Query by Basin") {
+                      this.addLayers('NHD Flowlines', true);
+                    }
+                    this.addLayers('2000-2018 Wildland Fire Perimeters', true);
+                    this.addLayers('2019 Wildland Fire Perimeters', true);
+                    this.addLayers('2021 Wildland Fire Perimeters', true);
+                    this.addLayers('2022 Wildland Fire Perimeters', true);
+                    this.addLayers('MTBS Fire Boundaries', true);
+                    this.addLayers('Burn Severity', true);
+                  }
                 }
               })
             }
