@@ -248,20 +248,18 @@ export class MapComponent implements OnInit {
           if (!this.activeWorkflowLayers.length) {
             if (this.workflowData && this.workflowData.steps) {
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
-                if (o.text === "Query by Basin" && o.selected === true) {
-                  this.addLayers('NHD Flowlines', true);
-                  this.addLayers('Archived Wildland Fire Perimeters', true);
-                  this.addLayers('2021 Wildland Fire Perimeters', true);
-                  this.addLayers('2022 Wildland Fire Perimeters', true);
-                  this.addLayers('MTBS Fire Boundaries', true);
-                  this.addLayers('Burn Severity', true);
-                }
-                if (o.text === "Query by Fire Perimeters" && o.selected === true) {
-                  this.addLayers('Archived Wildland Fire Perimeters', true);
-                  this.addLayers('2021 Wildland Fire Perimeters', true);
-                  this.addLayers('2022 Wildland Fire Perimeters', true);
-                  this.addLayers('MTBS Fire Boundaries', true);
-                  this.addLayers('Burn Severity', true);
+                if (o.selected == true) {
+                  if (o.text === "Query by Fire Perimeters" || o.text === "Query by Basin") {
+                    if (o.text === "Query by Basin") {
+                      this.addLayers('NHD Flowlines', true);
+                    }
+                    this.addLayers('2000-2018 Wildland Fire Perimeters', true);
+                    this.addLayers('2019 Wildland Fire Perimeters', true);
+                    this.addLayers('2021 Wildland Fire Perimeters', true);
+                    this.addLayers('2022 Wildland Fire Perimeters', true);
+                    this.addLayers('MTBS Fire Boundaries', true);
+                    this.addLayers('Burn Severity', true);
+                  }
                 }
               })
             }
@@ -416,7 +414,7 @@ export class MapComponent implements OnInit {
     this.selectedPerimeters = [];
     this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
-      if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === 'Archived Wildland Fire Perimeters') {
+      if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
           .run((error: any, results: any) => {
             this.findFeatures(error,results,layerName);
@@ -453,13 +451,13 @@ export class MapComponent implements OnInit {
             if (prop.toLowerCase().indexOf('date') > -1) {
               val = new Date(val).toLocaleDateString();
             }
-            popupcontent += '<b>' + prop + ':</b> ' + val + '<br>';
+            popupcontent += '<b>' + prop.toUpperCase() + ':</b> ' + val + '<br>';
           }
         });
         popupcontent += '<br>';
         if (layerName === 'MTBS Fire Boundaries') {
           this.firePerimeterLayer = L.geoJSON(feat.geometry);
-        } else if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === 'Archived Wildland Fire Perimeters') {
+        } else if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
           const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
           this.firePerimeterLayer = L.geoJSON(feat.geometry, {style: {color: col}});
         }
@@ -472,7 +470,7 @@ export class MapComponent implements OnInit {
     }
     this._mapService.setSelectedPerimeters(this.selectedPerimeters);
     this.count ++;
-    this.checkCount(this.count, 4);
+    this.checkCount(this.count, 5);
   }
 
   public addTraceLayer(data) {
