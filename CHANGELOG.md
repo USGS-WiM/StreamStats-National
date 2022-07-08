@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added 
 
--
+- Forests parameter from fire hydrology basin characteristics 
 
 ### Changed  
 
