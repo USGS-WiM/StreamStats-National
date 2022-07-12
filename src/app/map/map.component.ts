@@ -473,8 +473,14 @@ export class MapComponent implements OnInit {
     this.checkCount(this.count, 5);
   }
 
-  public addTraceLayer(data) {
-    this.traceLayer = L.geoJSON(data);
+  public addTraceLayer(data) {    
+    if (data && data.features) {
+      data.features.forEach((feature) => {
+        if (feature.id == "flowlinesGeom") { // Only print out the flow lines
+          this.traceLayer = L.geoJSON(feature.geometry)
+        }
+      });   
+    } 
     this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
     this.traceLayer.addTo(this._mapService.map);
     this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
