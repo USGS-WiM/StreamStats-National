@@ -519,10 +519,11 @@ export class MapService {
             // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude;
             await this._http.post(url, {headers: this.authHeader}).subscribe(response => {
                 let parameterValues = response["results"];
-                this.configSettings.parameters.forEach(parameter => {
+                var basinParameters = JSON.parse(JSON.stringify(this.configSettings.parameters));
+                basinParameters.forEach(parameter => {
                     parameter.value = parameterValues[parameter.fcpg_parameter] * parameter.multiplier;
                 });
-                resolve(this.configSettings.parameters);
+                resolve(basinParameters);
             }, error => {
                 console.log(error);
                 this._loaderService.hideFullPageLoad();
