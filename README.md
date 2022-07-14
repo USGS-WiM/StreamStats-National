@@ -4,11 +4,17 @@
 
 ![WiM](wim.png)
 
-Nationwide StreamStats application using NLDI services
+StreamStats National is a web-based Geographic Information Systems (GIS) application that provides users with access to analytical tools that are useful for a variety of purposes, including water-resources planning, management, engineering, and design. StreamStats National users can select from a variety of workflows to access and analyze nation-wide data from the United States Geological Survey (USGS).
+
+Context within the greater StreamStats ecosystem: StreamStats National is an Angular application that aims to be the next iteration of the [current StreamStats client](https://streamstats.usgs.gov/ss). While the current StreamStats client divides functionality based on specific regions, StreamStats National currently focuses on national datasets and [Hydro Network-Linked Data Index (NLDI) NLDI functionality](https://waterdata.usgs.gov/blog/nldi-intro/). Functionality is divided into various "workflows" that users can work through and then see in the Report. 
+
+Test application: https://test.streamstats.usgs.gov/national/
+
+Production Beta application: https://streamstats.usgs.gov/national-beta/
 
 ## Prerequisites
 
-[Node](https://nodejs.org/en/), [NPM](https://www.npmjs.com/), [Angular CLI](https://cli.angular.io/)
+[Node](https://nodejs.org/en/) version 16.14.2, [NPM](https://www.npmjs.com/), [Angular CLI](https://cli.angular.io/)
 
 ```bash
 npm install -g @angular/cli
@@ -81,7 +87,11 @@ Move onto next assigned issue and start back at step 1.
 
 ### Deployment
 
-TBD
+1. Create a new release called "Release vX.X.X" with the new release version
+2. Complete a new Pull Request into `dev` to change the Unreleased section of the [CHANGELOG.md](CHANGELOG.md) into a new release version section and start a clean Unreleased section. Once merged, the Test website will automatically be updated: https://test.streamstats.usgs.gov/national/
+3. Complete a new Pull Request to merge `dev` into `staging`. 
+4. Complete a new Pull Request to merge `staging` into `master`. Once merged, the Production Beta website will automatically be updated: https://streamstats.usgs.gov/national-beta/
+
 
 ## Built With
 
@@ -96,15 +106,18 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for su
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](../../tags).
 
+When a new release (or version) occurs, change the Unreleased section of the [CHANGELOG.md](CHANGELOG.md) into a new release version section and start a clean Unreleased section.
+
 ## Changelog
 
-All developers must maintain the Changelog located at root as CHANGELOG.md. This document serves as a portable history of changes to the codebase and is meant to complement Github release tags. 'Added', 'Changed', and 'Fixed' sections should be updated within the Unreleased header when creating a Pull Request. As releases are created, those sections will move down into respective release headers.
+All developers must maintain the Changelog located at root as CHANGELOG.md. This document serves as a portable history of changes to the codebase and is meant to complement Github release tags. 'Added', 'Changed', 'Deprecated', 'Removed', 'Fixed', and 'Security' sections should be updated within the Unreleased header when creating a Pull Request. As releases are created, those sections will move down into respective release headers.
 
 ## Authors
 
-Katrin Jacobsen - _Lead Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+- Harper Wavra - _Co-lead Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+- Andrea Medenblik - _Co-lead Developer_ - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
 
-See also the list of [contributors](../../graphs/contributors) who participated in this project.
+See the list of [contributors](../../graphs/contributors) who participated in this project.
 
 ## License
 
@@ -116,10 +129,12 @@ In the spirit of open source, please cite any re-use of the source code stored i
 
 `This project contains code produced by the Web Informatics and Mapping (WIM) team at the United States Geological Survey (USGS). As a work of the United States Government, this project is in the public domain within the United States. https://wim.usgs.gov`
 
-## Acknowledgments
+## Internal Documentation
+
+Detailed internal documentation can be found in the [StreamStats guide](https://doimspp.sharepoint.com/:o:/r/sites/GS-UMidWIM/_layouts/15/Doc.aspx?sourcedoc=%7B86ee3545-8271-46a1-b16f-158b12f19ba3%7D&action=edit&wd=target(Introduction.one%7CFA6D5C1D-D7FB-4D35-B339-992EF3438208%2FStreamStats%20National%7C65D70672-670D-410E-8673-5E2E04AE7999%2F)onenote%3Ahttps%3A%2F%2Fdoimspp.sharepoint.com%2Fsites%2FGS-UMidWIM%2FShared%20Documents%2FProjects%2FStreamstats%20Ecosystem%2FKJ%27s%20Guide%20to%20StreamStats%201%2FIntroduction.one#StreamStats%20National%26section-id%3D%7BFA6D5C1D-D7FB-4D35-B339-992EF3438208%7D%26page-id%3D%7B65D70672-670D-410E-8673-5E2E04AE7999%7D%26end).
 
 ## About WIM
 
 -   This project authored by the [USGS WIM team](https://wim.usgs.gov)
 -   WIM is a team of developers and technologists who build and manage tools, software, web services, and databases to support USGS science and other federal government cooperators.
--   WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/wisconsin-water-science-center).
+-   WIM is a part of the [Upper Midwest Water Science Center](https://www.usgs.gov/centers/upper-midwest-water-science-center).
