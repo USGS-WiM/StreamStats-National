@@ -3,7 +3,7 @@
     "name": "StreamStats National",
     "organization": "U.S. Geological Survey",
     "description": "Web-based Geographic Information Systems application that provides users with access to hydrologic data and analytical tools",
-    "version": "v1.1.1-beta",
+    "version": "v1.2.0-beta",
     "status": "Beta",
 
     "permissions": {
@@ -43,7 +43,7 @@
     },
 
     "date": {
-      "metadataLastUpdated": "2022-04-18"
+      "metadataLastUpdated": "2022-07-14"
     }
   }
 ]
