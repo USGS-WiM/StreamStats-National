@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added 
 
--
+- 
 
 ### Changed  
 
--
+- 
 
 ### Deprecated 
 
@@ -32,6 +32,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - 
 
+## [v1.2.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.2.0-beta) - 2022-07-14
+
+### Added 
+
+- Forests parameter from fire hydrology basin characteristics 
+- ReadMe: project description, node version, deployment instructions, internal documentation
+
+### Changed  
+
+- Only print flow lines in 'Query by Fire Perimeters' workflow
+- Authors in documentation
+
+### Fixed  
+
+- Issue where basin characteristics were getting overwritten by subsequent workflows
+- Typo in version number in the About pop-up
+- Dead link in documentation
 
 ## [v1.1.1-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.1.1-beta) - 2022-06-24
 
