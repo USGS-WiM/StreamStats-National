@@ -532,7 +532,7 @@ export class MapService {
         });
     }
 
-    public async calculateFireStreamflowEstimates(basinFeature) {
+    public async calculateFireStreamflowEstimates(basinFeature, basinCharacteristics) {
         let url = this.configSettings.NSSServices + "scenarios?regions=74&statisticgroups=39";
         let postBody;
         await this._http.get(url, {headers: this.authHeader}).subscribe(response => {
@@ -543,14 +543,14 @@ export class MapService {
                 parameters.forEach(parameter => {
                 switch (parameter["code"]) {
                     case "DRNAREA":
-                    parameter["value"] = (area(basinFeature) / 1000000);; 
-                    break;
+                        parameter["value"] = (area(basinFeature) / 1000000);; 
+                        break;
                     case "I_30_M":
-                    parameter["value"] = this.basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
-                    break;
+                        parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
+                        break;
                     case "BRNAREA":
-                    parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
-                    break;
+                        parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
+                        break;
                     default:
                     parameter["value"] = 0.0;
                 }
