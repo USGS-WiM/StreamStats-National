@@ -414,27 +414,31 @@ export class MapComponent implements OnInit {
   ///////////////////////////////////////////////
     
   public async queryBurnYear(){
-    this._loaderService.showFullPageLoad();
     // Check for valid burn years
     let startBurnYear = this.workflowData.steps[2].options[0].text;
     let endBurnYear = this.workflowData.steps[2].options[1].text;
     if (this.validateBurnYears(startBurnYear, endBurnYear)) {
       this.createMessage("Calculating basin characteristics and streamflow estimates. Please wait.");
+
       // Basin Area
       let basinFeature = this.basin.features[1];
       this._mapService.setBasinArea(area(basinFeature) / 1000000);
+
       // Burned Area
       this._mapService.setBurnYears([startBurnYear, endBurnYear]);
       let burnedArea = await this._mapService.queryBurnedArea(basinFeature, startBurnYear, endBurnYear);
       this._mapService.setBurnedArea(burnedArea);
+
       // Geology
       let geologyResults = await this._mapService.queryGeology(basinFeature);
       this._mapService.setGeologyReport(geologyResults);
+
       // Basin characteristics
       let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
       this._mapService.setBasinCharacteristics(basinCharacteristics);
+
       // Streamflow Estimates
-      await this._mapService.calculateFireStreamflowEstimates(basinFeature);
+      await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
       this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
     } else {
       this.createMessage("Please enter valid Burn Years.", 'error');
