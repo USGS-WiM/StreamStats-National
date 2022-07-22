@@ -118,6 +118,22 @@
                                         "selected": false
                                     }
                                 ]
+                            },
+                            {
+                                "label": "Trace Fire Perimeter",
+                                "name": "traceFireHydroPerimeter",
+                                "type": "subscription",
+                                "validators": 
+                                {
+                                    "required": true
+                                },
+                                "options": 
+                                [
+                                    {
+                                        "text": "",
+                                        "selected": false
+                                    }
+                                ]
                             }
                         ]
                     }
