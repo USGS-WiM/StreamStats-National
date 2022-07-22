@@ -13,7 +13,6 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
 import area from '@turf/area';
-import { trace } from 'console';
 
 @Component({
   selector: 'app-map',
@@ -525,13 +524,13 @@ export class MapComponent implements OnInit {
   }
 
   public addTraceLayer(data) { 
-    var dataLength = (data.length)
+    var dataLength = (data.length);
     data.forEach(async (trace, index) => {
       var data = await this._mapService.trace(trace).toPromise();
       if (data && data.features) {
         data.features.forEach((feature) => {
           if (feature.id == "flowlinesGeom") { // Only print out the flow lines
-            this.traceLayer = L.geoJSON(feature.geometry)
+            this.traceLayer = L.geoJSON(feature.geometry);
           }
         });   
       } 
