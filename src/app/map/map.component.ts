@@ -413,7 +413,9 @@ export class MapComponent implements OnInit {
   /// FireHydrology - Query by Basin Workflow ///
   ///////////////////////////////////////////////
     
-  public async queryBurnYear(){
+  public async queryBurnYear() {
+    this._loaderService.showFullPageLoad();
+
     // Check for valid burn years
     let startBurnYear = this.workflowData.steps[2].options[0].text;
     let endBurnYear = this.workflowData.steps[2].options[1].text;
