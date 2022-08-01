@@ -34,7 +34,7 @@ export class WorkflowService {
     return this._http.get('assets/workflows.json');
   }
 
-  //get all selected workflows
+  //get selected workflow
   private _selectedWorkflow: Subject<Workflow> = new Subject<Workflow>();
   public setSelectedWorkflow(w: Workflow) {
     this._selectedWorkflow.next(w);
@@ -52,7 +52,7 @@ export class WorkflowService {
     return this._formData.asObservable();
   }
   
-  //get all selected workflows
+  //get all completed workflow data
   private _completedData: BehaviorSubject<Array<Workflow>> = new BehaviorSubject<Array<Workflow>>([]);
   public setCompletedData(w: Array<Workflow>) {
     this.completedWorkflows.push(w);
@@ -61,4 +61,5 @@ export class WorkflowService {
   public get completedData(): Observable<Array<Workflow>> {
     return this._completedData.asObservable();
   }
+
 }

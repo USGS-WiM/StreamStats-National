@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed  
 
-- 
+- Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two seperate steps. The first is to select your fire perimeter the second it to start the trace. 
 
 ### Deprecated 
 
