@@ -1,4 +1,4 @@
-.app-wrapper{
+#appWrapper{
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -6,15 +6,72 @@
     flex-direction: column;
 }
 
-.app-center {
-    flex-grow: 3;
-    width: 100%;
-    display: flex;
+#splitLayout{
+	flex-grow: 3;
+	width: 100%;
+	display: flex;
 	box-sizing: border-box;
+	height: 100%;
 }
 
-.app-center-content{
-    flex-grow: 3;
-    //display: flex;
-    //flex-direction: column;
+#splitLayoutLeft{
+	flex-grow: 3;
+	position: relative;
+
+	#viewControlButtons{
+		position: absolute;
+		box-sizing: border-box;
+		padding-right: 10px;
+		top: 0;
+		right: 0;
+		z-index: 50;
+		height: 48px;
+		background-color: var(--background);
+		margin-top: 1px;
+		margin-bottom: 1px;
+
+		button{
+			background-color: transparent;
+			border: none;
+			height: 100%;
+			font-size: 1.3em;
+			padding: 0 8px;
+			color: var(--text);
+			opacity: 0.8;
+
+			&.active{
+				color: var(--primary);
+			}
+
+			&:hover,
+			&:focus{
+				opacity: 1;
+				transform: scale(1.1);
+				cursor: pointer;
+			}
+		}
+	}
+}
+
+#splitLayoutRight{
+	transition: var(--transition);
+}
+
+// View sidebar classes
+#splitLayout{
+	&.wide{
+		#splitLayoutRight{
+			width: 66%;
+		}
+	}
+	&.none{
+		#splitLayoutRight{
+			display: none;
+		}
+	}
+	&.visible{
+		#splitLayoutRight{
+			width: 33%;
+		}
+	}
 }

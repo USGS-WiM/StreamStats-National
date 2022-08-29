@@ -2,9 +2,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
-import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
+import { ContentRightComponent } from './content-right/content-right.component';
 import { MapComponent } from './map/map.component';
-import { FloatingButtons } from './floating-buttons/floating-buttons.component';
 import { ToastrModule } from 'ngx-toastr';
 
 describe('AppComponent', () => {
@@ -20,9 +19,8 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         TopBarComponent,
-        SidebarLeftComponent,
+        ContentRightComponent,
         MapComponent,
-        FloatingButtons
       ],
     }).compileComponents();
   });

@@ -1,0 +1,86 @@
+:host{
+	display: flex;
+	flex-direction: column;
+	border-left: 1px solid var(--border);
+	border-top: 1px solid var(--border);
+	width: 100%;
+	height: 100%;
+}
+
+// Right content tabs
+#contentTabs{
+	display: flex;
+	min-height: 49px;
+	height: 49px;
+	border-bottom: 1px solid var(--border);
+	box-sizing: border-box;
+	width: 100%;
+
+	button{
+		background-color: transparent;
+		border: none;
+		font-size: 0.8em;
+		font-weight: 500;
+		text-decoration: none;
+		color: var(--text);
+		height: 100%;
+		padding: 0 20px;
+		i{
+			margin-right: 8px;
+			transform: scale(1.4);
+		}
+
+		&:hover{
+			text-decoration: underline;
+			cursor: pointer;
+		}
+
+		&.active{
+			background-color: var(--primary);
+			color: var(--white);
+		}
+	}
+}
+
+// Scrollable content within view
+#contentScroll{
+	flex-grow: 3;
+	overflow: auto;
+
+	.padded{
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+
+	.sidebar-top-button{
+		position: absolute;
+		top: 0px;
+		left: 10px;
+		background-color: transparent;
+		border: none;
+		font-size: 0.8em;
+		opacity: 0.5;
+		transition: var(--transition);
+
+		i{
+			font-size: 1.5em;
+			vertical-align: middle;
+		}
+
+		&:hover,
+		&:focus{
+			cursor: pointer;
+			opacity: 1;
+		}
+	}
+}
+
+
+// Workflows
+.workflow-section{
+	background-color: red;
+
+	&.active{
+		background-color: green;
+	}
+}

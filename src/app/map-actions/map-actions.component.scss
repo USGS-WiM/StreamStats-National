@@ -1,4 +1,73 @@
 
+// Map Action Bar
+#mapActionBar{
+	display: flex;
+	height: 50px;
+	box-sizing: border-box;
+	padding: 0 0 0 15px;
+	border-bottom: 1px solid var(--border);
+	border-top: 1px solid var(--border);
+	width: 100%;
+
+	#mapActionButtons{
+		display: flex;
+		gap: 10px;
+		width: 100%;
+
+		.grow{
+			flex-grow: 3;
+		}
+
+		button{
+			background-color: transparent;
+			border: none;
+			font-size: 0.75em;
+			font-weight: 500;
+			text-decoration: none;
+			color: var(--text);
+			i{
+				transform: scale(1.4);
+				width: 24px;
+				text-align: center;
+				margin-right: 3px;
+			}
+
+			&:hover{
+				text-decoration: underline;
+				cursor: pointer;
+			}
+
+			&.active{
+				background-color: var(--primary);
+				color: var(--white);
+			}
+
+		}
+	}
+}
+
+
+// Actions popup content
+#mapActionContent{
+	position: absolute;
+	top: 60px;
+	z-index: 9900;
+	left: 10px;
+	box-shadow: var(--shadow);
+	border: 1px solid var(--border);
+	background-color: var(--background);
+	box-sizing: border-box;
+	padding: 15px;
+	border-radius: var(--borderRadius);
+	min-width: 300px;
+}
+
+
+
+
+
+
+
 // 
 // Basemap Selectors
 // 

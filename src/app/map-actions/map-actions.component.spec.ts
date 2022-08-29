@@ -1,12 +1,12 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppService } from '../shared/services/app.service';
-import { SidebarLeftComponent } from './sidebar-left.component';
+import { MapActionsComponent } from './map-actions.component';
 import { ToastrModule } from 'ngx-toastr';
 
-describe('SidebarLeftComponent', () => {
-  let component: SidebarLeftComponent;
-  let fixture: ComponentFixture<SidebarLeftComponent>;
+describe('MapActionsComponent', () => {
+  let component: MapActionsComponent;
+  let fixture: ComponentFixture<MapActionsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -14,9 +14,9 @@ describe('SidebarLeftComponent', () => {
         HttpClientTestingModule,
         ToastrModule.forRoot()
       ],
-      declarations: [ SidebarLeftComponent ],
+      declarations: [ MapActionsComponent ],
       providers: [
-        SidebarLeftComponent,
+        MapActionsComponent,
         { provide: AppService }
       ]
     })
@@ -24,7 +24,7 @@ describe('SidebarLeftComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SidebarLeftComponent);
+    fixture = TestBed.createComponent(MapActionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

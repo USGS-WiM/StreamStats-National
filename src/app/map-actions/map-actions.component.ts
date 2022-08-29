@@ -8,16 +8,15 @@ import { WorkflowService } from '../shared/services/workflow.service';
 // import { ConsoleReporter } from 'jasmine';
 
 @Component({
-	selector: 'app-sidebar-left',
-	templateUrl: './sidebar-left.component.html',
-	styleUrls: ['./sidebar-left.component.scss']
+	selector: 'app-map-actions',
+	templateUrl: './map-actions.component.html',
+	styleUrls: ['./map-actions.component.scss']
 })
-export class SidebarLeftComponent implements OnInit {
+export class MapActionsComponent implements OnInit {
 
 	@ViewChildren("overlayCheckbox") overlayCheckbox: any;
 
 	popout = '';
-	bottomPopout = '';
 	title = 'StreamStats-National';
 	private MapService: MapService;
 	private configSettings: Config;

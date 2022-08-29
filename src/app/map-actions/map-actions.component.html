@@ -1,0 +1,88 @@
+<header  id="mapActionBar">
+	<nav id="mapActionButtons">
+		<!-- Basemaps -->
+		<button (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}" aria-label="Base Maps">
+			<span><i [ngClass]="popout == 'map' ? 'fas fa-times' : 'fas fa-map' "></i>Base Maps</span>
+		</button>
+		<!-- Map Layers -->
+		<button (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}" aria-label="Map Layers">
+			<span><i [ngClass]="popout == 'layers' ? 'fas fa-times' : 'fas fa-layer-group' "></i>Map Layers</span>
+		</button>
+		<!-- Geosearch -->
+		<button (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}" aria-label="Location Search">
+			<span><i [ngClass]="popout == 'geosearch' ? 'fas fa-times' : 'fas fa-search' "></i>Geosearch</span>
+		</button>
+		<!-- Your Location -->
+		<button (click)="zoomLocation()" aria-label="Zoom to Your Location" id="geolocate">
+			<span><i class="fas fa-crosshairs"></i>Your Location</span>
+		</button>
+	</nav>
+</header>
+
+<!-- Popup content for map actions -->
+<div id="mapActionContent" *ngIf="popout">
+
+	<!-- Basemaps -->
+	<div *ngIf="popout == 'map'">
+
+		<div *ngFor="let item of baselayers" class="basemap-selector"> 
+			<label class="basemap-option">
+				<input type="radio" name="basemap" value="item[0]" (click)="SetBaselayer(item[0])">
+				<img src="assets/images/{{item[1]}}"> 
+				<span>{{item[0]}}</span>
+			</label>
+		</div>
+
+	</div>
+
+
+	<!-- Map Layers -->
+	<div *ngIf="popout == 'layers'">
+
+		<!-- Section for layers that load automatically/not part of an active workflow  -->
+		<div  *ngIf="overlayLayers.length" class="map-layers-group">
+			<h4>Application Layers</h4>
+			<div *ngFor="let overlay of overlayLayers">
+
+				<div class="usa-checkbox">
+					<input
+					  class="usa-checkbox__input"
+					  #overlayCheckbox type="checkbox" id="{{overlay.name}}" (change)="setOverlayLayer(overlay.name)" [checked]="overlay.visible" 
+					[disabled]="overlay.layerOptions.minZoom > currentZoom"
+					/>
+					<label class="usa-checkbox__label" for="{{overlay.name}}">{{overlay.name}}</label>
+				</div>
+				
+			</div>
+		</div>
+
+		<!-- Spacer between Application Layers and Active Wrokflow Layers -->
+		<div>&nbsp;</div> 
+
+		<!-- Section for layers that part of the active workflow  -->
+		<div *ngIf="workflowLayers.length" class="map-layers-group">
+			<h4>Active Workflow Layers</h4>
+			<div *ngFor="let layer of workflowLayers">
+
+				<div class="usa-checkbox">
+					<input 
+					class="usa-checkbox__input"
+					type="checkbox" id="{{layer.name}}" (change)="updateActiveLayer(layer.name)" [checked]="layer.visible"
+					[disabled]="layer.layerOptions.minZoom > currentZoom"
+					/>
+					<label class="usa-checkbox__label" for="{{layer.name}}">{{layer.name}}</label>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+
+	<!-- Geosearch -->
+	<div *ngIf="popout == 'geosearch'">
+		<div id="searchBox"></div>
+	</div>
+
+
+</div>

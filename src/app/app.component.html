@@ -1,4 +1,4 @@
-<div class="app-wrapper">
+<div id="appWrapper">
 
   <!-- App loading screen -->
   <app-loading-screen></app-loading-screen>
@@ -6,26 +6,57 @@
   <!-- Top bar -->
   <app-top-bar></app-top-bar>
 
-  <!-- Middle section - left side, middle (top/bottom), right side -->
-  <div class="app-center">
+  <!-- Split layout - map on left -->
+  <div id="splitLayout" [ngClass]="sidebarView">
 
-    <!-- Left sidebar -->
-    <app-sidebar-left></app-sidebar-left>
+	<!-- Map - left side -->
+	<div id="splitLayoutLeft">
+		<app-map-actions></app-map-actions>
+		<app-map></app-map>
+
+		<!-- Buttons to control size of view -->
+		<div id="viewControlButtons">
+			<!-- Wide sidebar -->
+			<button (click)="sidebarView = 'wide'" *ngIf="sidebarView == 'visible'">
+				<i class="fas fa-arrow-left-to-line" alt="Expand Sidebar"></i>
+			</button>
+			<!-- Narrow sidebar -->
+			<button (click)="sidebarView = 'visible'" *ngIf="sidebarView == 'wide'">
+				<i class="fas fa-arrow-right-to-line" alt="Smaller Sidebar"></i>
+			</button>
+			<!-- Open sidebar - when closed -->
+			<button (click)="sidebarView = 'visible'" *ngIf="sidebarView == 'none'">
+				<i class="fas fa-bars" alt="Open Sidebar"></i>
+			</button>
+			<!-- Close sidebar - when open -->
+			<button (click)="sidebarView = 'none'" *ngIf="sidebarView != 'none'">
+				<i class="fas fa-times" alt="Close Sidebar"></i>
+			</button>
+		</div>
+	</div>
+
+
+	<!-- Content - right side -->
+	<div id="splitLayoutRight">
+		<app-content-right></app-content-right>
+	</div>
+
+  </div>
+
+  <!-- Middle section - left side, middle (top/bottom), right side -->
+  <!-- <div class="app-center"> -->
 
     <!-- Middle section -->
-    <div class="app-center-content">
+    <!-- <div class="app-center-content"> -->
       
       <!-- Top -->
-      <app-map></app-map>
 
       <!-- Bottom -->
     
-    </div>
+    <!-- </div> -->
 
     <!-- Sidebar Right -->
-    <app-floating-buttons></app-floating-buttons>
-
-  </div>
+    <!-- <app-floating-buttons></app-floating-buttons> -->
 
 
 </div>

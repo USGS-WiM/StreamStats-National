@@ -213,6 +213,13 @@ export class MapComponent implements OnInit {
     this.loadLayers();
   }
 
+
+//   Zoom to location
+public zoomLocation(): void {
+	this._mapService.zoomLocation();
+}
+
+
   public validateBurnYears(startBurnYear, endBurnYear) {
     // Check if both burn years are 4-digit numbers
     if (!/^\d{4}$/.test(startBurnYear) || !/^\d{4}$/.test(endBurnYear)) {
