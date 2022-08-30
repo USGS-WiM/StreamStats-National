@@ -3,6 +3,7 @@
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/execution",
+    "nldiPolygonQuery": "https://streamstats.usgs.gov/nldipolygonservices/nldi_poly_query/",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices/",
     "NSSServices": "https://streamstats.usgs.gov/nssservices/",
     "GridQueryService": "https://test.streamstats.usgs.gov/gridqueryservices?",
