@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Only print flow lines in 'Query by Fire Perimeters' workflow
 - Authors in documentation
+- NLDI polygon query URL
 
 ### Fixed  
 

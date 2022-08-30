@@ -641,7 +641,7 @@ export class MapService {
 	        "downstream_dist": 15
         }
 
-        return this._http.post<any>('https://nldi-polygon-query.streamstats.usgs.gov/nldi_poly_query/', data, httpOptions)
+        return this._http.post<any>(this.configSettings.nldiPolygonQuery, data, httpOptions)
         .pipe(catchError((err: any) => {
             this._loaderService.hideFullPageLoad();
             this.createMessage("Error tracing fire perimeters.", 'error');
