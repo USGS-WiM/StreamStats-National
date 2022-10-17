@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed  
 
-- 
+- Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two seperate steps. The first is to select your fire perimeter the second it to start the trace. 
 
 ### Deprecated 
 
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed  
 
-- 
+- USGS search API library reference
 
 ### Security  
 
@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Only print flow lines in 'Query by Fire Perimeters' workflow
 - Authors in documentation
+- NLDI polygon query URL
 
 ### Fixed  
 
