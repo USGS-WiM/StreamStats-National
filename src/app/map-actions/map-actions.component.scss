@@ -47,25 +47,6 @@
 }
 
 
-// Actions popup content
-#mapActionContent{
-	position: absolute;
-	top: 60px;
-	z-index: 9900;
-	left: 10px;
-	box-shadow: var(--shadow);
-	border: 1px solid var(--border);
-	background-color: var(--background);
-	box-sizing: border-box;
-	padding: 15px;
-	border-radius: var(--borderRadius);
-	min-width: 300px;
-}
-
-
-
-
-
 
 
 // 
@@ -132,6 +113,23 @@
 		}
 	}
 }
+
+
+// Actions popup content
+#mapActionContent{
+	position: absolute;
+	top: 60px;
+	z-index: 9900;
+	left: 10px;
+	box-shadow: var(--shadow);
+	border: 1px solid var(--border);
+	background-color: var(--background);
+	box-sizing: border-box;
+	padding: 15px;
+	border-radius: var(--borderRadius);
+	min-width: 300px;
+}
+
 
 
 // 

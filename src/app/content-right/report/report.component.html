@@ -1,9 +1,9 @@
-<h3 class="mtop-sm center">Completed Workflows</h3>
-
-<!-- <button type="button" class="usa-button usa-button--default mbottom-sm" (click)="showPrintModal = true; createPrintMaps();" *ngIf="workflowData[0]" >
-	Print Report
-</button> -->
-
+<div class="mtop-xs flex between mbottom-md">
+	<h3 class="">Completed Workflows</h3>
+	<button type="button" class="usa-button usa-button--default" (click)="showPrintModal = true; createPrintMaps();" *ngIf="workflowData[0]" >
+		Print Report
+	</button>
+</div>
 
 <p *ngIf="!workflowData[0]" id="emptyWorkflows">
 	<i class="fas fa-empty-set"></i>
@@ -114,9 +114,9 @@
 <!-- Print Report Modal -->
 <div id="printModal" *ngIf="showPrintModal">
 	<div id="printModalContent">
-		<h2 class="usa-modal__heading hide-print" id="printModalHeading">
+		<h1 class="usa-modal__heading hide-print" id="printModalHeading">
 			Print Summary
-		</h2>
+		</h1>
 		<div class="usa-prose hide-print">
 			<h3>Report Description</h3>
 			<p>
@@ -134,7 +134,7 @@
 
 			</div>
 
-			<button type="button" class="usa-button" (click)="showPrintModal = false">
+			<button type="button" class="usa-button usa-button--secondary" (click)="showPrintModal = false">
 				Close Window
 			</button>
 			<button type="button" class="usa-button" (click)="onPrint()">
