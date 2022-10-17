@@ -33,7 +33,7 @@ describe('ContentRightComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should update the active layer', () => {
+  /* it('should update the active layer', () => {
     let workflowLayerToggleSpy = spyOn(component["MapService"], "toggleWorkflowLayers");
     component.updateActiveLayer("Streamgages");
 
@@ -80,5 +80,5 @@ describe('ContentRightComponent', () => {
     let baseLayerSpy = spyOn(component["MapService"], "SetBaselayer");
     component.SetBaselayer("World Topographic");
     expect(baseLayerSpy).toHaveBeenCalledWith("World Topographic")
-  });
-});
+  });*/
+}); 
