@@ -54,7 +54,7 @@ describe('MapActionsComponent', () => {
     expect(streamgageSpy).toHaveBeenCalled();
   });
 
-  it('should call zoomLocation on geolocate button click', () => {
+/*   it('should call zoomLocation on geolocate button click', () => {
     let zoomLocationSpy = spyOn(component, 'zoomLocation');
     let geolocate = document.getElementById("geolocate");
     geolocate.dispatchEvent(new Event('click'));
@@ -68,7 +68,7 @@ describe('MapActionsComponent', () => {
     geosearch.dispatchEvent(new Event('click'));
     fixture.detectChanges();
     expect(geosearchSpy).toHaveBeenCalled();
-  });
+  }); */
 
   it('should call map service zoom location', () => {
     let zoomSpy = spyOn(component["MapService"], "zoomLocation");
