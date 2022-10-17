@@ -1,0 +1,59 @@
+<div id="contentTabs">
+
+	<button [ngClass]="{'active': tab == 1}" (click)="tab = 1">
+		<i class="fas fa-diagram-next"></i> Build Report
+	</button>
+	<button [ngClass]="{'active': tab == 2}" (click)="tab = 2">
+		<i class="fas fa-file-chart-column"></i> Overview
+	</button>
+
+	<!-- Print - Not currently used -->
+	<!-- <button [ngClass]="{'active': tab == 3}" (click)="tab = 3">
+		<i class="fas fa-print"></i> Print Report
+	</button> -->
+
+</div>
+
+<div id="contentScroll">
+
+	<!-- Report Builder tab -->
+	<div class="padded relative" *ngIf="tab == 1">
+
+		<!-- Header -->
+		<h3 class="center">
+			{{selectedWorkflow ? 'Build your Report' : 'Choose your Workflow'}}
+		</h3>
+		<!-- Back Button -->
+		<button (click)="removeWorkFlow(); reportBuilderTab == 'selection'" aria-label="Back"  *ngIf="selectedWorkflow" class="sidebar-top-button">
+			<i class="fas fa-angle-left"></i> Back
+		</button>
+
+		<!-- Buttons for available workflows -->
+		<app-workflow-selection *ngIf="reportBuilderTab == 'selection' && !selectedWorkflow"></app-workflow-selection>
+
+		<!-- Workflows -->
+        <div *ngIf="selectedWorkflow">
+            <app-workflow [workflow]="selectedWorkflow" [formData]="formData"></app-workflow>
+        </div> 
+
+	</div>
+
+
+	<!-- Report Overview Tab -->
+	<div class="padded relative" *ngIf="tab == 2">
+		<app-report></app-report>
+	</div>
+
+
+	<!-- Print Tab -->
+	<!-- Not currently Used -->
+	<!-- <div class="" *ngIf="tab == 3">
+		<div class="padded relative">
+			<h3>Print Report</h3>
+		</div>
+	</div> -->
+
+	<!-- Gap at bottom, so content at the bottom is padded -->
+	<div class="mtop-xl"></div>
+
+</div>

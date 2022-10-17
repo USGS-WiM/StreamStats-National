@@ -5,6 +5,7 @@ export interface Config {
     workflowsURL: string;
     nldiBaseURL: string;
     nldiSplitCatchmentURL: string;
+    nldiPolygonQuery: string;
     GageStatsServices: string;
     NSSServices: string;
     GridQueryService: string;

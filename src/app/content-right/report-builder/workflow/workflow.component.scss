@@ -1,0 +1,162 @@
+.workflow-steps{
+
+	.step{
+		box-sizing: border-box;
+		padding: 15px;
+		border: 1px solid var(--border);
+		border-radius: var(--borderRadius);
+		display: block;
+		width: 100%;
+		margin-bottom: 15px;
+
+		.step-info{
+			display: flex;
+
+			.step-number{
+				background-color: var(--primary);
+				height: 30px;
+				width: 30px;
+				min-width: 30px;
+				border-radius: 50%;
+				font-size: 1.15em;
+				color: white;
+				font-weight: 800;
+				line-height: 30px;
+				text-align: center;
+				border: 1px solid var(--border);
+
+				&.green{
+					background-color: var(--green);
+				}
+
+			}
+			.step-description{
+				box-sizing: border-box;
+				padding: 6px 0 0 15px;
+				font-size: 0.8em;
+
+				b{
+					display: block;
+					font-size: 1.25em;
+					padding: 0 0 5px 0;
+				}
+			}
+		}
+
+		// Step body
+		.step-body{
+			box-sizing: border-box;
+			padding: 15px 0 0 0;
+
+			.step-body-instruction{
+				text-align: center;
+				font-size: 1.25em;
+				font-weight: bold;
+				display: block;
+				width: 100%;
+				padding: 10px 0;
+				color: var(--red);
+			}
+		}
+
+		// Actions - bottom of card
+		.step-actions{
+			display: flex;
+			justify-content: space-between;
+		}
+
+		// Completed Step
+		&.completed{
+			background-color: var(--accent);
+			border: 1px solid transparent;
+			color: var(--textFade);
+			pointer-events: none;
+		}
+	}
+}
+
+.workflow-wrapper{
+	box-sizing: border-box;
+	padding-bottom: 45px;
+}
+
+.usa-step-indicator{
+	margin-bottom: 16px;
+}
+.usa-step-indicator__segment-label{
+	font-size: 14px;
+}
+
+
+.workflow-radio-group{
+	display: flex;
+	box-sizing: border-box;
+    padding: 5px 3px 5px 15px;
+
+	input[type=checkbox],
+	input[type=radio]{
+		transform: scale(1.5);
+	}
+
+}
+
+
+.horizontal-workflow-steps{
+	display: flex;
+
+	.workflow-step{
+		box-sizing: border-box;
+		padding: 14px;
+		margin-right: 15px;
+		min-width: 200px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		border: 1px solid var(--border);
+		border-radius: var(--borderRadius);
+
+		label{
+			font-size: 16px;
+		}
+
+		input[type=checkbox]{
+			margin-right: 10px;
+		}
+
+		input:disabled{
+			background-color: red;
+		}
+
+		h6{
+			padding: 0 0 10px 0;
+			margin: 0;
+			font-size: 14px;
+		}
+
+		label{
+
+			small{
+				display: block;
+				font-size: 13px;
+				margin-top: 10px;
+			}
+		}
+
+
+		// Completed, disable inputs
+		&.completed{
+			pointer-events: none;
+
+			input{
+				opacity: 0.5;
+			}
+			label{
+			}
+
+			&:hover,
+			*:hover{
+				cursor: default;
+			}
+		}
+	}
+}

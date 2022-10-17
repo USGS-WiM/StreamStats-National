@@ -1,16 +1,65 @@
-// :host {
-//     display: flex;
-//     height: 60px;
-//     background-color: #142234;
-//     width: 100%;
-//     color: white;
-// }
-
-// Center USA banner
-.usa-banner__inner{
+// First header bar - branding, title, USGS logo, help link
+#topHeader{
+	border-bottom: none;
+	box-sizing: border-box;
+	padding: 10px 15px;
 	display: flex;
-	justify-content: center;
+	height: 60px;
+	background-color: var(--usgsBlue);
+
+	#headerBranding{
+		display: flex;
+		position: relative;
+		color: var(--white);
+
+		img{
+			height: 36px;
+			margin-right: 25px;
+			filter: invert(100%);
+		}
+		a{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			text-decoration: none;
+			font-weight: 700;
+			font-size: 1.5em;
+			box-sizing: border-box;
+			color: var(--white);
+		}
+		.beta-text{
+			font-size: 0.8em;
+			font-style: italic;
+			position: absolute;
+			top: -6px;
+			right: 0;
+			opacity: 0.5;
+		}
+	}
+
+	#headerLinks{
+		display: flex;
+		flex-grow: 3;
+		justify-content: flex-end;
+
+		a{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			font-size: 0.9em;
+			font-weight: 600;
+			text-decoration: none;
+			color: var(--white);
+			box-sizing: border-box;
+			padding: 0 15px;
+			&:hover{
+				text-decoration: underline;
+			}
+		}
+	}
+
 }
+
 
 
 // Overwrite USWDS max width

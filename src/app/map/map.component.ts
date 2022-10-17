@@ -42,8 +42,10 @@ export class MapComponent implements OnInit {
   public streamgageLayerStatus: boolean;
   public workflowData: any;
   public count: number = 0;
+  public foundFire:boolean = false; 
   public firePerimeterLayer;
   public selectedPerimeters = [];
+  public traceData = [];
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
@@ -69,7 +71,7 @@ export class MapComponent implements OnInit {
     this.workflowLayers = this._mapService.workflowLayers;
     this._mapService.activeWorkflowLayers.subscribe(activeLayers => {
       this.activeWorkflowLayers = activeLayers;
-    })
+    });
 
     // Get streamgages toggle status
     this._mapService.streamgageLayerStatus.subscribe((status: boolean) => {
@@ -77,7 +79,7 @@ export class MapComponent implements OnInit {
       if (this.streamgageLayerStatus) {
         this.setBbox();
       }
-    })
+    });
 
     // Add scale bar
     this._mapService.scale.addTo(this._mapService.map);
@@ -100,18 +102,21 @@ export class MapComponent implements OnInit {
       if (this.latestDischarge) {
         this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature);
       }
-    })
+    });
+
     // Get current discharge
     this._mapService.streamgages.subscribe((sg: {}) => {
       this.streamgageLayer = sg;
       if (this.streamgageLayer) {
         this.addGeoJSON("streamgages", this.streamgageLayer);
       }
-    })
+    });
+
     // Setting local click point variable
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickPoint = point;
-    })
+    });
+
     // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
@@ -130,17 +135,20 @@ export class MapComponent implements OnInit {
           }
         }
       }
-    }) 
+    });
+
     // On map zoom, set current zoom, display gages
     this._mapService.map.on('zoomend',(evt) => {
       this.currentZoom = evt.target._zoom;
       this._mapService.setCurrentZoomLevel(evt.target._zoom);
       this.setBbox();
-    }) 
+    });
+
     // On map drag, display gages
     this._mapService.map.on('dragend',() => {
       this.setBbox();
-    })
+    });
+
     // Subscribe to workflow
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
@@ -154,7 +162,7 @@ export class MapComponent implements OnInit {
       }
     });
 
-    //Subscribe to the form data
+    // Subscribe to the form data
     this._workflowService.formData.subscribe(async data => {
       this.workflowData = data;
       if (this.workflowData) {
@@ -163,40 +171,11 @@ export class MapComponent implements OnInit {
         }
         if (this.workflowData.title == "Fire Hydrology") {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
-              this._loaderService.showFullPageLoad();
-
-              // Check for valid burn years
-              let startBurnYear = this.workflowData.steps[2].options[0].text;
-              let endBurnYear = this.workflowData.steps[2].options[1].text;
-              if (this.validateBurnYears(startBurnYear, endBurnYear)) {
-                this.createMessage("Calculating basin characteristics and streamflow estimates. Please wait.");
-  
-                // Basin Area
-                let basinFeature = this.basin.features[1];
-                this._mapService.setBasinArea(area(basinFeature) / 1000000);
-  
-                // Burned Area
-                this._mapService.setBurnYears([startBurnYear, endBurnYear]);
-                let burnedArea = await this._mapService.queryBurnedArea(basinFeature, startBurnYear, endBurnYear);
-                this._mapService.setBurnedArea(burnedArea);
-
-                // Geology
-                let geologyResults = await this._mapService.queryGeology(basinFeature);
-                this._mapService.setGeologyReport(geologyResults);
-
-                // Basin characteristics
-                let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
-                this._mapService.setBasinCharacteristics(basinCharacteristics);
-
-                // Streamflow Estimates
-                await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
-                this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
-              } else {
-                this.createMessage("Please enter valid Burn Years.", 'error');
-              }
-              this._loaderService.hideFullPageLoad();
-
-              
+            this.queryBurnYear();
+          }
+          if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[2].completed) {
+            this._loaderService.showFullPageLoad();
+            this.addTraceLayer(this.traceData);
           }
         }
       }
@@ -205,21 +184,19 @@ export class MapComponent implements OnInit {
       } 
     });
 
-    //Subscribe to loader state
+    // Subscribe to loader state
     this._loaderService.loaderState.subscribe((state: boolean) => {
       this.loader = state;
     });
 
+    // Load Layers
     this.loadLayers();
   }
 
-  public validateBurnYears(startBurnYear, endBurnYear) {
-    // Check if both burn years are 4-digit numbers
-    if (!/^\d{4}$/.test(startBurnYear) || !/^\d{4}$/.test(endBurnYear)) {
-      return false;
-    } else {
-      return true;
-    }
+
+  //   Zoom to location
+  public zoomLocation(): void {
+    this._mapService.zoomLocation();
   }
 
   public removeWorkFlowLayers(){
@@ -243,7 +220,7 @@ export class MapComponent implements OnInit {
               });
             }
           }
-          break;
+        break;
         case "Fire Hydrology":
           if (!this.activeWorkflowLayers.length) {
             if (this.workflowData && this.workflowData.steps) {
@@ -264,7 +241,7 @@ export class MapComponent implements OnInit {
               })
             }
           }
-          break;
+        break;
       }
     }
   }
@@ -382,7 +359,25 @@ export class MapComponent implements OnInit {
     popup.setContent( innerHTML );
   }
 
-  // On map click, set click point value, for delineation
+  public removeLayer(layer: any) {
+    if (this._mapService.map.hasLayer(layer)) {
+      this._mapService.map.removeLayer(layer);
+    }
+  }
+
+  private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
+    try {
+      let options: Partial<IndividualConfig> = null;
+      if (timeout) { options = { timeOut: timeout }; }
+      this.messager.show(msg, title, options, mType);
+    } catch (e) {
+    }
+  }
+
+  ////////////////////////////
+  /// Delineation Workflows //
+  ////////////////////////////
+
   public onMouseClickDelineation() { 
     this.removeLayer(this.splitCatchmentLayer);
     this.addPoint(this.clickPoint);
@@ -408,37 +403,105 @@ export class MapComponent implements OnInit {
     });
   }
 
+  public addPoint(latlng: any) {
+    var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
+    this.removeLayer(this.marker);
+    const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
+    this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
+    this._mapService.map?.addLayer(this.marker);
+  }
+
+  ////////////////////////////////
+  /// End Delineation Workflows //
+  ////////////////////////////////
+
+  ///////////////////////////////////////////////
+  /// FireHydrology - Query by Basin Workflow ///
+  ///////////////////////////////////////////////
+    
+  public async queryBurnYear() {
+    this._loaderService.showFullPageLoad();
+
+    // Check for valid burn years
+    let startBurnYear = this.workflowData.steps[2].options[0].text;
+    let endBurnYear = this.workflowData.steps[2].options[1].text;
+    if (this.validateBurnYears(startBurnYear, endBurnYear)) {
+      this.createMessage("Calculating basin characteristics and streamflow estimates. Please wait.");
+
+      // Basin Area
+      let basinFeature = this.basin.features[1];
+      this._mapService.setBasinArea(area(basinFeature) / 1000000);
+
+      // Burned Area
+      this._mapService.setBurnYears([startBurnYear, endBurnYear]);
+      let burnedArea = await this._mapService.queryBurnedArea(basinFeature, startBurnYear, endBurnYear);
+      this._mapService.setBurnedArea(burnedArea);
+
+      // Geology
+      let geologyResults = await this._mapService.queryGeology(basinFeature);
+      this._mapService.setGeologyReport(geologyResults);
+
+      // Basin characteristics
+      let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+      this._mapService.setBasinCharacteristics(basinCharacteristics);
+
+      // Streamflow Estimates
+      await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
+      this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
+    } else {
+      this.createMessage("Please enter valid Burn Years.", 'error');
+    }
+    this._loaderService.hideFullPageLoad();
+  }
+
+  public validateBurnYears(startBurnYear, endBurnYear) {
+    // Check if both burn years are 4-digit numbers
+    if (!/^\d{4}$/.test(startBurnYear) || !/^\d{4}$/.test(endBurnYear)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  ///////////////////////////////////////////////////
+  /// End FireHydrology - Query by Basin Workflow ///
+  //////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////
+  /// FireHydrology - Query by Fire Perimeters Workflow ///
+  /////////////////////////////////////////////////////////
+  
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this._loaderService.showFullPageLoad();
     this.count = 0;
+    this.foundFire = false;
     this.selectedPerimeters = [];
-    this.createMessage('Querying layers. Please wait.');
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
         this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
           .run((error: any, results: any) => {
-            this.findFeatures(error,results,layerName);
+            this.findFireFeatures(error,results,layerName);
           }
         );
       } else if (layerName === 'MTBS Fire Boundaries') {
         this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
           .run(async (error: any, results: any) => {
-            this.findFeatures(error,results,layerName);
+            this.findFireFeatures(error,results,layerName);
           }
         );
       }
     });
   }
 
-  public async findFeatures(error,results,layerName) {
+  public findFireFeatures(error,results,layerName) {
     let popupcontent;
     const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE', 
     'POLY_INCIDENTNAME','POLY_GISACRES', 'POLY_DATECURRENT', 'IRWIN_FIRECAUSE', 'IRWIN_FIRECAUSEGENERAL', 'IRWIN_FIREDISCOVERYDATETIME','IRWIN_FIREOUTDATETIME','IRWIN_UNIQUEFIREIDENTIFIER'];
     if (error) {
       this.createMessage('Error occurred.','error');
       this._loaderService.hideFullPageLoad();
-    } 
-    if (results && results.features.length > 0) {
+    } else if (results && results.features.length > 0) {
+      this.foundFire = true;
       results.features.forEach(feat => {
         popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
         if (layerName === 'MTBS Fire Boundaries') {
@@ -465,35 +528,31 @@ export class MapComponent implements OnInit {
         this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
       });
       this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
-      const data = await this._mapService.trace(results).toPromise();
-      this.addTraceLayer(data);
-    }
+      this.traceData.push(results);
+    } 
     this._mapService.setSelectedPerimeters(this.selectedPerimeters);
     this.count ++;
     this.checkCount(this.count, 5);
   }
 
-  public addTraceLayer(data) {    
-    if (data && data.features) {
-      data.features.forEach((feature) => {
-        if (feature.id == "flowlinesGeom") { // Only print out the flow lines
-          this.traceLayer = L.geoJSON(feature.geometry)
-        }
-      });   
-    } 
-    this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
-    this.traceLayer.addTo(this._mapService.map);
-    this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
-    this._loaderService.hideFullPageLoad();
-  }
-
-  public checkCount(count, goal) {
-    if (count === goal) {
-      if (this.loader == true) {
+  public addTraceLayer(data) { 
+    var dataLength = (data.length);
+    data.forEach(async (trace, index) => {
+      var data = await this._mapService.trace(trace).toPromise();
+      if (data && data.features) {
+        data.features.forEach((feature) => {
+          if (feature.id == "flowlinesGeom") { // Only print out the flow lines
+            this.traceLayer = L.geoJSON(feature.geometry);
+          }
+        });   
+      } 
+      this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
+      this.traceLayer.addTo(this._mapService.map);
+      this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
+      if (index + 1 == dataLength) {
         this._loaderService.hideFullPageLoad();
-        this.createMessage('Must select a fire perimeter.','error');
       }
-    }
+    }); 
   }
 
   public addBurnPoint(latlng, popupcontent) {
@@ -502,27 +561,16 @@ export class MapComponent implements OnInit {
     this.marker.openPopup();
   }
 
-  public addPoint(latlng: any) {
-	var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
-
-    this.removeLayer(this.marker);
-    const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
-    this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
-    this._mapService.map?.addLayer(this.marker);
-  }
-
-  public removeLayer(layer: any) {
-    if (this._mapService.map.hasLayer(layer)) {
-      this._mapService.map.removeLayer(layer);
+  public checkCount(count, goal) {
+    if (count === goal) {
+      if (this.foundFire == false) {
+        this.createMessage('Must select a fire perimeter.','error');
+      }
+        this._loaderService.hideFullPageLoad();
     }
   }
+  /////////////////////////////////////////////////////////////
+  /// End FireHydrology - Query by Fire Perimeters Workflow ///
+  ////////////////////////////////////////////////////////////
 
-  private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
-    try {
-      let options: Partial<IndividualConfig> = null;
-      if (timeout) { options = { timeOut: timeout }; }
-      this.messager.show(msg, title, options, mType);
-    } catch (e) {
-    }
-  }
 }
