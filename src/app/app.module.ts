@@ -8,10 +8,9 @@ import {ToastrModule, ToastNoAnimation, ToastNoAnimationModule} from 'ngx-toastr
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
-import { SidebarLeftComponent } from './sidebar-left/sidebar-left.component';
-import { FloatingButtons } from './floating-buttons/floating-buttons.component';
+import { ContentRightComponent } from './content-right/content-right.component';
 import { MapComponent } from './map/map.component';
-import { CenterBottomContentComponent } from './center-bottom-content/center-bottom-content.component';
+import { MapActionsComponent } from './map-actions/map-actions.component';
 
 import { AppService } from './shared/services/app.service';
 import { ConfigService } from './shared/config/config.service';
@@ -19,12 +18,10 @@ import { WorkflowService } from './shared/services/workflow.service';
 import { environment } from 'src/environments/environment';
 import { ActiveComponentDirective } from './shared/directives/active-component.directive';
 
-import { ReportComponent } from './floating-buttons/components-right/report/report.component';
-import { WorkflowComponent } from './center-bottom-content/components-bottom/report-builder/workflow/workflow.component';
-import { MapOptionsComponent } from './center-bottom-content/components-bottom/map-options/map-options.component';
-import { DiscoverComponent } from './center-bottom-content/components-bottom/discover/discover.component';
+import { ReportComponent } from './content-right/report/report.component';
+import { WorkflowComponent } from './content-right/report-builder/workflow/workflow.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
-import { WorkflowSelectionComponent } from './center-bottom-content/components-bottom/report-builder/workflow-selection/workflow-selection.component';
+import { WorkflowSelectionComponent } from './content-right/report-builder/workflow-selection/workflow-selection.component';
 import { ValidatorsDirective } from './shared/directives/validators.directive';
 
 export function ConfigLoader(configService: ConfigService) {
@@ -35,15 +32,12 @@ export function ConfigLoader(configService: ConfigService) {
   declarations: [
     AppComponent,
     TopBarComponent,
-    SidebarLeftComponent,
-    FloatingButtons,
+    ContentRightComponent,
     MapComponent,
-    CenterBottomContentComponent,
+    MapActionsComponent,
     ActiveComponentDirective,
     ReportComponent,
     WorkflowComponent,
-    MapOptionsComponent,
-    DiscoverComponent,
     LoaderComponent,
     WorkflowSelectionComponent,
     ValidatorsDirective

@@ -193,6 +193,12 @@ export class MapComponent implements OnInit {
     this.loadLayers();
   }
 
+
+  //   Zoom to location
+  public zoomLocation(): void {
+    this._mapService.zoomLocation();
+  }
+
   public removeWorkFlowLayers(){
     Object.keys(this.workflowLayers).forEach(layerName => {
       this._appService.setLayerVisibility(layerName);

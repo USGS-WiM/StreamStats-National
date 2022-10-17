@@ -1,0 +1,52 @@
+#workflowChoices{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	flex-wrap: wrap;
+	height: 100%;
+	gap: 30px 4%;
+	padding: 15px 0;
+	max-width: 500px;
+	margin: 0 auto;
+
+	.workflow-choice{
+		border: 1px solid var(--border);
+		width: 48%;
+		flex-basis: 48%;
+		box-sizing: border-box;
+		padding: 15px;
+		border-radius: var(--borderRadius);
+		background-color: var(--accent);
+		transition: var(--transition);
+
+		i{
+			font-size: 2.5em;
+			display: block;
+			transition: var(--transition);
+		}
+		b{
+			padding: 10px 0;
+			display: block;
+		}
+		p{
+			font-size: 0.8em;
+			line-height: 1.2em;
+			padding: 0;
+			margin: 0;
+		}
+
+		// Hover button
+		&:hover,
+		&:focus{
+			background-color: transparent;
+			cursor: pointer;
+
+			b{
+				text-decoration: underline;
+			}
+			i{
+				color: var(--primary);
+			}
+		}
+	}
+}
