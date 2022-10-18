@@ -118,6 +118,7 @@ export class WorkflowComponent implements OnInit {
         label: step.label,
         name: step.name,
         type: step.type,
+        description: step.description,
         completed: [],
         clickPoint: [],
         output: [],
@@ -137,6 +138,7 @@ export class WorkflowComponent implements OnInit {
               label: s.label,
               name: s.name,
               type: s.type,
+              description: s.description,
               completed: [],
               clickPoint: [],
               output: [],
@@ -161,6 +163,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public getSteps(form: any) {
+    console.log(form.controls.steps.controls)
     return form.controls.steps.controls;
   }
   public getOptions(form: any) {
