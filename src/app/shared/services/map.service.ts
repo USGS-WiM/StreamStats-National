@@ -632,7 +632,7 @@ export class MapService {
         return this._streamflowEstimates.asObservable();
     }
 
-    // Get basin area
+    // Get downstream trace distance
     private _downstreamDist: Subject<any> = new Subject<any>();
     public setDownstreamDist(value) {
         this._downstreamDist.next(value);

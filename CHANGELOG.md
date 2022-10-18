@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added 
 
 - Allows users to enter downstream distance in "Query by Fire Perimeters" workflow
+- Descriptions to workflows and steps
 
 ### Changed  
 

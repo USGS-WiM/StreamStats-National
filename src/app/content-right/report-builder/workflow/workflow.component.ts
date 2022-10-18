@@ -163,7 +163,6 @@ export class WorkflowComponent implements OnInit {
   }
 
   public getSteps(form: any) {
-    console.log(form.controls.steps.controls)
     return form.controls.steps.controls;
   }
   public getOptions(form: any) {
