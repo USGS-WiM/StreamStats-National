@@ -120,6 +120,21 @@
                                 ]
                             },
                             {
+                                "label": "Enter Downstream Trace Distance in Miles",
+                                "name": "enterDownstreamDistance",
+                                "type": "text",
+                                "validators": 
+                                {
+                                    "required": true
+                                },
+                                "options": 
+                                [
+                                    {
+                                        "textLabel":"Downstream Trace Distance"
+                                    }
+                                ]
+                            },
+                            {
                                 "label": "Trace Fire Perimeter",
                                 "name": "traceFireHydroPerimeter",
                                 "type": "subscription",
