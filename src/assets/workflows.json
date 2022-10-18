@@ -29,7 +29,7 @@
                 "options":
                 [
                     {
-                        "text":"Click on the map",
+                        "text":"Select a delineation point on the map",
                         "selected": false
                     }
                 ]
@@ -71,7 +71,7 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Click on the map",
+                                        "text": "Select delineation point on the map",
                                         "selected": false
                                     }
                                 ]
@@ -114,7 +114,7 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Click on the map",
+                                        "text": "Select a fire perimeter on the map",
                                         "selected": false
                                     }
                                 ]
