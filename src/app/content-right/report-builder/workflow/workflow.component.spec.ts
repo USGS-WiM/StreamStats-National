@@ -13,6 +13,7 @@ let mockWorkflow: Workflow = {
   steps: [{
     label: "Select Your Favorite Color",
     name: "selectColor",
+    description: "Slect your favorite color from the list below.",
     type: "checkbox",
     value: "",
     validators: { required: true },
@@ -24,6 +25,7 @@ let mockWorkflow: Workflow = {
           { 
             label: "nested step label", 
             name: "name", 
+            description:"nest step description",
             type: "type" ,
             value: "value"
           }] 
