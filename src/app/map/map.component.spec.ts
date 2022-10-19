@@ -20,6 +20,7 @@ describe('MapComponent', () => {
       {
           "label": "Select a Fire Hydrology Query Method",
           "name": "selectFireHydroProcess",
+          "description":"",
           "type": "checkbox",
           "value": "",
           "options":
@@ -31,6 +32,7 @@ describe('MapComponent', () => {
                   [
                       {
                           "label": "Select a Point",
+                          "description": "",
                           "name": "selectFireHydroBasin",
                           "type": "subscription",
                           "value": "",
@@ -56,6 +58,7 @@ describe('MapComponent', () => {
                     {
                         "label": "Select a Fire Perimeter",
                         "name": "selectFireHydroPerimeter",
+                        "description": "",
                         "type": "subscription",
                         "value": "",
                         "validators": 

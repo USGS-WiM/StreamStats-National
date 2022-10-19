@@ -22,7 +22,7 @@
 
 
 					<!-- Click Point -->
-					<div class="data" *ngIf="output.key=='clickPoint'">Lat/Lon: <b>({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</b></div>
+					<div class="data" *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): <b>{{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}}</b></div>
 					
 					<!-- Delineation -->
 					<div *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</div>
@@ -76,6 +76,7 @@
 						</table>
 					</div>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->
+					<div *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</div>
 					<div *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
 						<span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
 								<div>{{perimeter.Key}}:</div>
@@ -90,8 +91,6 @@
 						</span>
 					</div>
 
-
-
 				</span>
 
 			<!-- Card footer -->
@@ -102,11 +101,6 @@
 					<i class="fas fa-trash-alt mright-xs"></i>
 					<span>Delete</span>
 				</button>
-
-
-
-
-
 </div>
 
 
@@ -167,10 +161,7 @@
 				<p>{{data.title}} Outputs:</p>
 				<div *ngFor="let output of data.outputs | keyvalue: unsortedKeys">
 					<!-- Click Point -->
-					<li *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): ({{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}})</li>
-					<!-- Example Workflow -->
-					<li *ngIf="output.key=='selectColor'">Color Selected: {{output.value}}</li>
-					<li *ngIf="output.key=='enterText'">Text Entered: {{output.value}}</li>
+					<li *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): {{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}}</li>
 					<!-- Delineation -->
 					<li *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</li>
 					<!-- Fire Hydrology: Query by Basin -->
@@ -227,7 +218,8 @@
 							</table>
 						</ul>
 					</li>
-					<!-- Fire Hydrology: Query by Fire Perimeters-->						
+					<!-- Fire Hydrology: Query by Fire Perimeters-->	
+					<li *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</li>					
 					<li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
 						<span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
 							<ul>

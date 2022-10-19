@@ -632,13 +632,22 @@ export class MapService {
         return this._streamflowEstimates.asObservable();
     }
 
+    // Get downstream trace distance
+    private _downstreamDist: Subject<any> = new Subject<any>();
+    public setDownstreamDist(value) {
+        this._downstreamDist.next(value);
+    }
+    public get downstreamDist(): any {
+        return this._downstreamDist.asObservable();
+    }
+
     // Query Fire Perimeters
-    public trace(geojson: any) {
+    public trace(geojson: any, downstreamDist) {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' }) };
         var data = {
             "data": geojson,
             "get_flowlines": true,
-	        "downstream_dist": 15
+	        "downstream_dist": downstreamDist
         }
 
         return this._http.post<any>(this.configSettings.nldiPolygonQuery, data, httpOptions)

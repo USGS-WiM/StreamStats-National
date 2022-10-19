@@ -34,6 +34,7 @@ export class WorkflowComponent implements OnInit {
   public selectedPerimeters;
   public firePerimetersLayers;
   public output:any = {};
+  public downstreamDist;
 
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
@@ -97,7 +98,11 @@ export class WorkflowComponent implements OnInit {
     this._mapService.firePerimetersLayers.subscribe((layers) => {
       this.firePerimetersLayers = layers;
     });
-    
+
+    // Get downstream trace distance
+    this._mapService.downstreamDist.subscribe((downstreamDist) => {
+      this.downstreamDist = downstreamDist;
+    });
   }
 
   public setTitle() {
@@ -113,6 +118,7 @@ export class WorkflowComponent implements OnInit {
         label: step.label,
         name: step.name,
         type: step.type,
+        description: step.description,
         completed: [],
         clickPoint: [],
         output: [],
@@ -132,6 +138,7 @@ export class WorkflowComponent implements OnInit {
               label: s.label,
               name: s.name,
               type: s.type,
+              description: s.description,
               completed: [],
               clickPoint: [],
               output: [],
@@ -204,6 +211,7 @@ export class WorkflowComponent implements OnInit {
           this.output = {
             'clickPoint': this.clickedPoint, 
             'layers': this.firePerimetersLayers,
+            'downstreamDist' : this.downstreamDist,
             'selectedPerimetersInfo': this.selectedPerimeters};
         }
         break;

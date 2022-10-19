@@ -173,7 +173,7 @@ export class MapComponent implements OnInit {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
             this.queryBurnYear();
           }
-          if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[2].completed) {
+          if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
             this._loaderService.showFullPageLoad();
             this.addTraceLayer(this.traceData);
           }
@@ -537,8 +537,11 @@ export class MapComponent implements OnInit {
 
   public addTraceLayer(data) { 
     var dataLength = (data.length);
+    var downstreamDist = this.workflowData.steps[2].options[0].text
+    this._mapService.setDownstreamDist(downstreamDist);
+
     data.forEach(async (trace, index) => {
-      var data = await this._mapService.trace(trace).toPromise();
+      var data = await this._mapService.trace(trace, downstreamDist).toPromise();
       if (data && data.features) {
         data.features.forEach((feature) => {
           if (feature.id == "flowlinesGeom") { // Only print out the flow lines
