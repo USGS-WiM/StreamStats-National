@@ -8,7 +8,7 @@
         [
             {
                 "label": "Select Delineation Process",
-                "description": "Choose from list of delineation processes.",
+                "description": "",
                 "name": "selectDelineationProcess",
                 "type": "checkbox",
                 "options":
@@ -31,7 +31,7 @@
                 "options":
                 [
                     {
-                        "text":"Select a delineation point on the map.",
+                        "text":"Select a delineation point on a blue stream line on the map.",
                         "selected": false
                     }
                 ]
@@ -53,7 +53,7 @@
         [
             {
                 "label": "Select a Fire Hydrology Query Method",
-                "description": "Choose from list of fire hydrology query methods.",
+                "description": "",
                 "name": "selectFireHydroProcess",
                 "type": "checkbox",
                 "options":
@@ -75,7 +75,7 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Select a delineation point on the map.",
+                                        "text": "Select a delineation point on a blue stream line on the map.",
                                         "selected": false
                                     }
                                 ]
@@ -127,7 +127,7 @@
                             },
                             {
                                 "label": "Enter Downstream Trace Distance",
-                                "description": "Enter a downstream trace distance in miles.",
+                                "description": "Enter the distance (kilometers) to trace stream lines downstream of the fire perimeter.",
                                 "name": "enterDownstreamDistance",
                                 "type": "text",
                                 "validators": 

@@ -20,7 +20,7 @@ describe('MapComponent', () => {
       {
           "label": "Select a Fire Hydrology Query Method",
           "name": "selectFireHydroProcess",
-          "description":"Choose from list of fire hydrology query methods.",
+          "description":"",
           "type": "checkbox",
           "value": "",
           "options":
