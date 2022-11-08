@@ -83,9 +83,7 @@
 								<div *ngFor="let feat of perimeter.Data.features; let k = index">
 									<div>Feature {{k+1}}</div>
 									<span *ngFor="let prop of feat.properties | keyvalue">
-										<div  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
-											<div>{{prop.key}}: {{prop.value}}</div>
-										</div>
+										<div>{{prop.key}}: {{prop.value}}</div>
 									</span> 
 								</div>
 						</span>
@@ -227,11 +225,11 @@
 								<div *ngFor="let feat of perimeter.Data.features; let k = index">
 									<ul>
 										<li>Feature {{k+1}}</li>
-										<span *ngFor="let prop of feat.properties | keyvalue">
-											<ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+										<ul>
+											<span *ngFor="let prop of feat.properties | keyvalue">
 												<li>{{prop.key}}: {{prop.value}}</li>
-											</ul>
-										</span> 
+											</span> 
+										</ul>
 									</ul>
 								</div>
 							</ul>

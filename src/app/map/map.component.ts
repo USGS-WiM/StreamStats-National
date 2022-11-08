@@ -13,6 +13,7 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
 import area from '@turf/area';
+import { unescapeIdentifier } from '@angular/compiler';
 
 @Component({
   selector: 'app-map',
@@ -493,29 +494,55 @@ export class MapComponent implements OnInit {
     });
   }
 
-  public findFireFeatures(error,results,layerName) {
+  public findFireFeatures(error, results, layerName) {
     let popupcontent;
-    const shownFields = ['INCIDENTNAME', 'COMMENTS', 'GISACRES', 'FIRE_YEAR', 'CREATEDATE', 'ACRES', 'AGENCY', 'SOURCE', 'INCIDENT', 'FIRE_ID', 'FIRE_NAME', 'YEAR', 'STARTMONTH', 'STARTDAY', 'FIRE_TYPE', 
-    'POLY_INCIDENTNAME','POLY_GISACRES', 'POLY_DATECURRENT', 'IRWIN_FIRECAUSE', 'IRWIN_FIRECAUSEGENERAL', 'IRWIN_FIREDISCOVERYDATETIME','IRWIN_FIREOUTDATETIME','IRWIN_UNIQUEFIREIDENTIFIER'];
+    const shownFields = {
+      'INCIDENTNAME':"Incident Name",
+      'COMMENTS':"Comments",
+      'GISACRES':"Acres",
+      'FIRE_YEAR':"Fire Year",
+      'CREATEDATE':"Create Date",
+      'ACRES':"Acres",
+      'AGENCY':"Agency",
+      'SOURCE':"Source",
+      'INCIDENT':"Incident",
+      'FIRE_ID':"Fire ID",
+      'FIRE_NAME':"Fire Name",
+      'YEAR':"Year",
+      'STARTMONTH':"Start Month",
+      'STARTDAY':"Start Day",
+      'FIRE_TYPE':"Fire Type",					  
+      'POLY_INCIDENTNAME':"Incident Name",
+      'POLY_GISACRES':"Acres",
+      'POLY_DATECURRENT':"Modified Date",
+      'IRWIN_FIRECAUSE':"Fire Cause",
+      'IRWIN_FIRECAUSEGENERAL':"Fire Cause-General",
+      'IRWIN_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
+      'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
+      'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
+  };
     if (error) {
       this.createMessage('Error occurred.','error');
       this._loaderService.hideFullPageLoad();
     } else if (results && results.features.length > 0) {
       this.foundFire = true;
-      results.features.forEach(feat => {
+      var properties = {}
+      results.features.forEach((feat, index) => {
         popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
         if (layerName === 'MTBS Fire Boundaries') {
           let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
           if (date.indexOf('undefined') > -1) date = 'N/A';
         }
         Object.keys(feat.properties).forEach(prop => {
-          if (shownFields.indexOf(prop.toUpperCase()) > -1) {
+          if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
+            let label = shownFields[prop.toUpperCase()]
             let val = feat.properties[prop];
             if (prop.toLowerCase().indexOf('date') > -1) {
               val = new Date(val).toLocaleDateString();
             }
-            popupcontent += '<b>' + prop.toUpperCase() + ':</b> ' + val + '<br>';
-          }
+            properties[label] = val
+            popupcontent += '<b>' + label + ':</b> ' + val + '<br>';
+          } 
         });
         popupcontent += '<br>';
         if (layerName === 'MTBS Fire Boundaries') {
@@ -526,6 +553,7 @@ export class MapComponent implements OnInit {
         }
         this.firePerimeterLayer.addTo(this._mapService.map);
         this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
+        feat.properties = properties
       });
       this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
       this.traceData.push(results);
