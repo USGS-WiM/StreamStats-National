@@ -7,8 +7,6 @@ import {WorkflowService} from 'src/app/shared/services/workflow.service';
 @Component({selector: 'app-report', templateUrl: './report.component.html', styleUrls: ['./report.component.scss']})
 export class ReportComponent implements OnInit {
     public workflowData : any;
-    
-
     public reportMaps = [];
     public printMaps = [];
     public marker : L.Marker;

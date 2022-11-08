@@ -13,7 +13,6 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
 import area from '@turf/area';
-import { unescapeIdentifier } from '@angular/compiler';
 
 @Component({
   selector: 'app-map',
@@ -526,8 +525,8 @@ export class MapComponent implements OnInit {
       this._loaderService.hideFullPageLoad();
     } else if (results && results.features.length > 0) {
       this.foundFire = true;
-      var properties = {}
-      results.features.forEach((feat, index) => {
+      var properties = {};
+      results.features.forEach(feat => {
         popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
         if (layerName === 'MTBS Fire Boundaries') {
           let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
@@ -535,12 +534,12 @@ export class MapComponent implements OnInit {
         }
         Object.keys(feat.properties).forEach(prop => {
           if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
-            let label = shownFields[prop.toUpperCase()]
+            let label = shownFields[prop.toUpperCase()];
             let val = feat.properties[prop];
             if (prop.toLowerCase().indexOf('date') > -1) {
               val = new Date(val).toLocaleDateString();
             }
-            properties[label] = val
+            properties[label] = val;
             popupcontent += '<b>' + label + ':</b> ' + val + '<br>';
           } 
         });
@@ -553,7 +552,7 @@ export class MapComponent implements OnInit {
         }
         this.firePerimeterLayer.addTo(this._mapService.map);
         this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
-        feat.properties = properties
+        feat.properties = properties;
       });
       this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
       this.traceData.push(results);
