@@ -233,7 +233,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public setCurrentStep(step:number) {
-    if (step == null ){
+    if (step == null) {
       this._workflowService.setCurrentStep(null);
     } else {
       this._workflowService.setCurrentStep(this.workflowForm.value.steps[step]);
@@ -245,7 +245,7 @@ export class WorkflowComponent implements OnInit {
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
-      this.setCurrentStep(null)
+      this.setCurrentStep(null);
     } else {
       this.setCurrentStep(step + 1);
     }

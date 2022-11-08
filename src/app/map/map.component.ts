@@ -192,10 +192,10 @@ export class MapComponent implements OnInit {
 
     // Subscribe to current step
     this._workflowService.currentStep.subscribe(step => {
-      if(step){
-        this.cursor = step.cursor
+      if (step) {
+        this.cursor = step.cursor;
       } else {
-        this.cursor = "auto"
+        this.cursor = "auto";
       }
     });
 

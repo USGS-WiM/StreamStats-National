@@ -22,6 +22,7 @@ describe('MapComponent', () => {
           "name": "selectFireHydroProcess",
           "description":"",
           "type": "checkbox",
+          "cursor": "auto",
           "value": "",
           "options":
           [
@@ -36,6 +37,7 @@ describe('MapComponent', () => {
                           "name": "selectFireHydroBasin",
                           "type": "subscription",
                           "value": "",
+                          "cursor": "auto",
                           "validators": 
                           {
                               "required": true
@@ -61,6 +63,7 @@ describe('MapComponent', () => {
                         "description": "",
                         "type": "subscription",
                         "value": "",
+                        "cursor": "auto",
                         "validators": 
                         {
                             "required": true
