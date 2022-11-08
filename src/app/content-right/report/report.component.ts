@@ -19,7 +19,6 @@ export class ReportComponent implements OnInit {
     constructor(private _workflowService : WorkflowService, private _configService : ConfigService) {}
     ngOnInit(): void {
         this._workflowService.completedData.subscribe(data => {
-            console.log(data)
             this.workflowData = data;
         });
 
