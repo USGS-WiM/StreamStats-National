@@ -119,6 +119,7 @@ export class WorkflowComponent implements OnInit {
         name: step.name,
         type: step.type,
         description: step.description,
+        cursor: step.cursor,
         completed: [],
         clickPoint: [],
         output: [],
@@ -126,6 +127,7 @@ export class WorkflowComponent implements OnInit {
       }));
     });
     this.numberOfSteps = this.stepsArray.value.length;
+    this.setCurrentStep(0);
   }
 
   public addSteps(optionSelection: string) {
@@ -138,6 +140,7 @@ export class WorkflowComponent implements OnInit {
               label: s.label,
               name: s.name,
               type: s.type,
+              cursor: s.cursor,
               description: s.description,
               completed: [],
               clickPoint: [],
@@ -229,12 +232,23 @@ export class WorkflowComponent implements OnInit {
     });
   }
 
+  public setCurrentStep(step:number) {
+    if (step == null ){
+      this._workflowService.setCurrentStep(null);
+    } else {
+      this._workflowService.setCurrentStep(this.workflowForm.value.steps[step]);
+    }
+  }
+
   public nextStep(step: number) {
     this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
-    } 
+      this.setCurrentStep(null)
+    } else {
+      this.setCurrentStep(step + 1);
+    }
   }
 
   public finishedWorkflow(formValue: any) {
