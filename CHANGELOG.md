@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two seperate steps. The first is to select your fire perimeter the second it to start the trace. 
 - Updated layout
 - Fire perimeters labels 
+- 'Overview' to 'Report'
+- Print modal - spacing, moved buttons to bottom
 
 ### Deprecated 
 
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed  
 
 - USGS search API library reference
+- In print modal, description text not up taking full width of modal
 
 ### Security  
 
