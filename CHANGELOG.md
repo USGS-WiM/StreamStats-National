@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two separate steps. The first is to select your fire perimeter the second it to start the trace
 - Updated layout
+- Fire perimeters labels 
 - Pointer marker now points to clicked point instead of being centered on clicked point
 
 ### Deprecated 
