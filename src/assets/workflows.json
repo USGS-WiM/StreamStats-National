@@ -10,7 +10,7 @@
                 "label": "Select Delineation Process",
                 "description": "",
                 "name": "selectDelineationProcess",
-                "type": "checkbox",
+                "type": "radio",
                 "cursor": "auto",
                 "options":
                 [
@@ -37,6 +37,32 @@
                         "selected": false
                     }
                 ]
+            },
+            {
+                "label": "Select Basin Characteristics",
+                "description": "",
+                "name": "selectBasinCharacteristics",
+                "type": "checkbox",
+                "cursor": "auto",
+                "options":
+                [
+                    {
+                        "text": "i2y30: Mean maximum 30-minute 2-year precipitation",
+                        "selected": false
+                    },
+                    {
+                        "text": "jantmin: Mean January minimum temperature",
+                        "selected": false
+                    },
+                    {
+                        "text": "jantmax: Mean January maximum temperature",
+                        "selected": false
+                    },
+                    {
+                        "text": "forests: Forested area",
+                        "selected": false
+                    }
+                ]
             }
         ]
     },
@@ -51,7 +77,7 @@
                 "label": "Select a Fire Hydrology Query Method",
                 "description": "",
                 "name": "selectFireHydroProcess",
-                "type": "checkbox",
+                "type": "radio",
                 "cursor": "auto",
                 "options":
                 [

@@ -45,10 +45,16 @@
 						<div
 							*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
 	
-							<!-- Checkboxes -->
-							<div class="workflow-radio-group" *ngIf="step.value.type === 'checkbox'">
-								<input type="checkbox" id="workflowRadio{{j}}" name="workflowRadioSelection" formControlName="selected" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
+							<!-- Radio Buttons -->
+							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
+								<input type="radio" id="workflowRadio{{j}}" name="workflowRadioSelection" formControlName="workflowRadioSelection" [checked]="option.value.selected" (change)="onRadioChange(option.value, step.value)">
 								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
+							</div>
+
+							<!-- Checkboxes -->
+							<div class="workflow-checkbox-group" *ngIf="step.value.type === 'checkbox'">
+								<input type="checkbox" id="workflowCheckbox{{j}}" name="workflowCheckboxSelection" formControlName="workflowCheckboxSelection" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
+								<label class="mleft-xs" for="workflowCheckbox{{j}}" >{{option.value.text}}</label>
 							</div>
 	
 							<!-- Subscription -->

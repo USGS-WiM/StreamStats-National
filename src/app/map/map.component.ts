@@ -169,6 +169,14 @@ export class MapComponent implements OnInit {
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
           this.checkAvailableLayers();
+          if (this.workflowData.steps[2].completed) {
+            // If at least one basin characteristic was selected
+            if (this.workflowData.steps[2].options.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.selected).length > 0) {
+              let selectedBasinCharacteristics = this.workflowData.steps[2].options.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.selected == true);
+              let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.text.substr(0, checkboxBasinCharacteristic.text.indexOf(':')));
+              this.queryBasinCharacteristics(selectedBasinCharacteristicCodes);
+            }
+          }
         }
         if (this.workflowData.title == "Fire Hydrology") {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
@@ -419,6 +427,16 @@ export class MapComponent implements OnInit {
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
     this._mapService.map?.addLayer(this.marker);
+  }
+
+  public async queryBasinCharacteristics(queryBasinCharacteristics: any[]) {
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Calculating basin characteristics. Please wait.");
+    let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+    computedBasinCharacteristics = computedBasinCharacteristics.filter(computedBasinCharacteristic => queryBasinCharacteristics.includes(computedBasinCharacteristic.fcpg_parameter));
+    this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
+    this.createMessage("Basin characteristics were successfully calculated.");
+    this._loaderService.hideFullPageLoad();
   }
 
   ////////////////////////////////

@@ -184,8 +184,8 @@ export class WorkflowComponent implements OnInit {
     return arr; 
   }
 
-  public onContinue(formValue: any) {
-    this._workflowService.setFormData(formValue);
+  public async onContinue(formValue: any) {
+      this._workflowService.setFormData(formValue);
   }
 
   public fillOutputs() {
@@ -196,6 +196,7 @@ export class WorkflowComponent implements OnInit {
         this.output = {
           'clickPoint': this.clickedPoint, 
           'layers': [this.splitCatchmentLayer],
+          'basinCharacteristics': this.basinCharacteristics,
         }
         break;
       case "Fire Hydrology":
@@ -258,7 +259,7 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setFormData(null);
   }
 
-  public onCheckboxChange(option, step) {
+  public onRadioChange(option, step) {
     step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = true;
@@ -273,6 +274,14 @@ export class WorkflowComponent implements OnInit {
       } else {
         opt.selected = false;
       }
+    });
+  }
+
+  public onCheckboxChange(option, step) {
+    step.options.forEach(opt => {
+      if (opt.text == option.text) {
+        option.selected = true;
+      } 
     });
   }
 
