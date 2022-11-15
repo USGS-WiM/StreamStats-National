@@ -185,7 +185,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onContinue(formValue: any) {
-      this._workflowService.setFormData(formValue);
+    this._workflowService.setFormData(formValue);
   }
 
   public fillOutputs() {
