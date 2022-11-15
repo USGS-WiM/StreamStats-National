@@ -21,7 +21,7 @@ export class WorkflowComponent implements OnInit {
   public numberOfSteps: number;
   public finalStep: boolean = false;
   // Delination output
-  public clickedPoint;
+  public clickedPoint = {};
   public splitCatchmentLayer;
   // Fire Hydrology: Query by Basin output
   public basinArea;
@@ -43,6 +43,9 @@ export class WorkflowComponent implements OnInit {
       outputs: []
     })
     this.stepsArray = this.workflowForm.get('steps') as FormArray;
+
+
+    console.log(this.clickedPoint)
   }
 
   ngOnInit(): void {
@@ -57,6 +60,7 @@ export class WorkflowComponent implements OnInit {
 
     // Get clicked point
     this._mapService.clickPoint.subscribe((point: {}) => {
+      console.log(point)
       this.clickedPoint = point;
     });
     // Get delineation and basin area
@@ -186,6 +190,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public fillOutputs() {
+    console.log('fillOutputs')
     this.output = {};
     switch (this.workflowForm.value.title) {
       case "Delineation":
@@ -216,6 +221,7 @@ export class WorkflowComponent implements OnInit {
         }
         break;
     }
+    console.log(this.output)
     this.workflowForm.value.outputs = this.output; 
   }
 
