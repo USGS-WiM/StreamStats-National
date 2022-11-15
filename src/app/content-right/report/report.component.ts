@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {create} from 'domain';
 import * as L from 'leaflet';
 import {ConfigService} from 'src/app/shared/config/config.service';
 import {WorkflowService} from 'src/app/shared/services/workflow.service';
@@ -17,20 +16,18 @@ export class ReportComponent implements OnInit {
     constructor(private _workflowService : WorkflowService, private _configService : ConfigService) {}
     ngOnInit(): void {
         this._workflowService.completedData.subscribe(data => {
-            console.log(data)
             this.workflowData = data;
+            if(this.workflowData.length > 0) {
+                setTimeout(() => {
+                    this.createReportMaps()
+                }, 500);
+            }
         });
-
-        setTimeout(() => {
-            this.createReportMaps();
-        }, 500);
-
     }
 
-    ngAfterViewChecked() {}
-
     public createReportMaps() {
-
+        
+        this.reportMaps = [];
         var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
 
         var configSettings = this._configService.getConfiguration();
@@ -56,6 +53,7 @@ export class ReportComponent implements OnInit {
 
     public createPrintMaps() {
 
+        this.printMaps = [];
         var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
 
         setTimeout(() => {
