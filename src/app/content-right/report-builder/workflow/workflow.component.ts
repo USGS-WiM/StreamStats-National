@@ -177,7 +177,7 @@ export class WorkflowComponent implements OnInit {
     step.options?.forEach((opt:any) => {
       arr.push(this._fb.group({
         text: opt.text,
-        selected: []
+        selected: opt.selected
       })
       );
     });
