@@ -6,6 +6,7 @@ export interface NestedSteps {
     description: string;
     value: string;
     type: string;
+    cursor: string;
     validators?: any;
     options?: Array<Options>;
 }

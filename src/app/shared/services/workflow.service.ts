@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
+import { Steps } from '../interfaces/workflow/steps';
 import { Workflow } from '../interfaces/workflow/workflow';
 
 @Injectable({
@@ -62,4 +63,12 @@ export class WorkflowService {
     return this._completedData.asObservable();
   }
 
+  //get current step
+  private _currentStep: Subject<Steps> = new Subject<Steps>();
+  public setCurrentStep(s: Steps) {
+    this._currentStep.next(s);
+  }
+  public get currentStep(): Observable<Steps> {
+    return this._currentStep.asObservable();
+  }
 }

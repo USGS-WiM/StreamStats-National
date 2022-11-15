@@ -7,31 +7,6 @@ import {WorkflowService} from 'src/app/shared/services/workflow.service';
 @Component({selector: 'app-report', templateUrl: './report.component.html', styleUrls: ['./report.component.scss']})
 export class ReportComponent implements OnInit {
     public workflowData : any;
-    public shownFields = [
-        'INCIDENTNAME',
-        'COMMENTS',
-        'GISACRES',
-        'FIRE_YEAR',
-        'CREATEDATE',
-        'ACRES',
-        'AGENCY',
-        'SOURCE',
-        'INCIDENT',
-        'FIRE_ID',
-        'FIRE_NAME',
-        'YEAR',
-        'STARTMONTH',
-        'STARTDAY',
-        'FIRE_TYPE',
-        'POLY_INCIDENTNAME',
-        'POLY_GISACRES',
-        'POLY_DATECURRENT',
-        'IRWIN_FIRECAUSE',
-        'IRWIN_FIRECAUSEGENERAL',
-        'IRWIN_FIREDISCOVERYDATETIME',
-        'IRWIN_FIREOUTDATETIME',
-        'IRWIN_UNIQUEFIREIDENTIFIER'
-    ];
     public reportMaps = [];
     public printMaps = [];
     public marker : L.Marker;

@@ -12,11 +12,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Allows users to enter downstream distance in "Query by Fire Perimeters" workflow
 - Descriptions to workflows and steps
+- Added cursor attribute to workflows
 
 ### Changed  
 
-- Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two seperate steps. The first is to select your fire perimeter the second it to start the trace. 
+- Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two separate steps. The first is to select your fire perimeter the second it to start the trace
 - Updated layout
+- Fire perimeters labels 
+- Pointer marker now points to clicked point instead of being centered on clicked point
+- 'Overview' to 'Report'
+- Print modal - spacing, moved buttons to bottom
 
 ### Deprecated 
 
@@ -29,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed  
 
 - USGS search API library reference
+- In print modal, description text not up taking full width of modal
 
 ### Security  
 

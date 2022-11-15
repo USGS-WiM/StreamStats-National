@@ -83,9 +83,7 @@
 								<div *ngFor="let feat of perimeter.Data.features; let k = index">
 									<div>Feature {{k+1}}</div>
 									<span *ngFor="let prop of feat.properties | keyvalue">
-										<div  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
-											<div>{{prop.key}}: {{prop.value}}</div>
-										</div>
+										<div>{{prop.key}}: {{prop.value}}</div>
 									</span> 
 								</div>
 						</span>
@@ -111,44 +109,35 @@
 		<h1 class="usa-modal__heading hide-print" id="printModalHeading">
 			Print Summary
 		</h1>
-		<div class="usa-prose hide-print">
+		<div class="hide-print">
 			<h3>Report Description</h3>
 			<p>
 				Enter a report title and/or comments here that will display on the printed report.
 			</p>
 			<div>
+				<h4>Report Title:</h4>
 				<p>
-					Report Title: 
 					<input type="text" placeholder="StreamStats National Report" style="width: 100%;" [(ngModel)]="reportTitle" >
 				</p>
+				<h4>Comments:</h4>
 				<p>
-					Comments: 
 					<input type="text" style="width: 100%;" [(ngModel)]="reportComments">
 				</p>
 
 			</div>
+			<br><br>
 
-			<button type="button" class="usa-button usa-button--secondary" (click)="showPrintModal = false">
-				Close Window
-			</button>
-			<button type="button" class="usa-button" (click)="onPrint()">
-				Print
-			</button>
+			<h3 class="hide-print">Report Contents</h3>
 
-			<!-- Report Parts -->
-			<h3>Report Contents</h3>
-			<br/>
-			
 		</div>
 
 		<!-- Actual print content -->
 		<div id="reportContent">
+
 			<div class="show-print">
 				<h1 *ngIf="reportTitle">{{reportTitle}}</h1>
 				<p *ngIf="reportComments">{{reportComments}}</p>
-				<div v-if="reportTitle">
-					<br/><br/>
-				</div>
+
 			</div>
 			<div *ngFor="let data of workflowData; let i = index" class="show-print"> 
 
@@ -227,11 +216,11 @@
 								<div *ngFor="let feat of perimeter.Data.features; let k = index">
 									<ul>
 										<li>Feature {{k+1}}</li>
-										<span *ngFor="let prop of feat.properties | keyvalue">
-											<ul  *ngIf="shownFields.indexOf(prop.key.toUpperCase()) > -1">
+										<ul>
+											<span *ngFor="let prop of feat.properties | keyvalue">
 												<li>{{prop.key}}: {{prop.value}}</li>
-											</ul>
-										</span> 
+											</span> 
+										</ul>
 									</ul>
 								</div>
 							</ul>
@@ -240,6 +229,16 @@
 				</div>
 			</div>
 		
+		</div>
+
+		<div class="hide-print">
+			<br><br>
+			<button type="button" class="usa-button usa-button--secondary" (click)="showPrintModal = false">
+				Close Window
+			</button>
+			<button type="button" class="usa-button" (click)="onPrint()">
+				Print
+			</button>
 		</div>
 			
 	
