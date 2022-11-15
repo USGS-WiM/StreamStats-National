@@ -169,7 +169,8 @@ export class MapComponent implements OnInit {
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
           this.checkAvailableLayers();
-          if (this.workflowData.steps[2].completed) {
+          // If Step #3 (Select Basin Characteristics) in the Delineation workflow has been completed
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
             // If at least one basin characteristic was selected
             if (this.workflowData.steps[2].options.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.selected).length > 0) {
               let selectedBasinCharacteristics = this.workflowData.steps[2].options.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.selected == true);
