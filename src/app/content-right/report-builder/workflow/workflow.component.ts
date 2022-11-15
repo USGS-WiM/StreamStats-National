@@ -280,7 +280,7 @@ export class WorkflowComponent implements OnInit {
   public onCheckboxChange(option, step) {
     step.options.forEach(opt => {
       if (opt.text == option.text) {
-        option.selected = true;
+        option.selected = option.selected ? false : true
       } 
     });
   }
