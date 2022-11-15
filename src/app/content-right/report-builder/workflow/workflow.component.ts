@@ -184,7 +184,7 @@ export class WorkflowComponent implements OnInit {
     return arr; 
   }
 
-  public async onContinue(formValue: any) {
+  public onContinue(formValue: any) {
       this._workflowService.setFormData(formValue);
   }
 
