@@ -20,7 +20,7 @@ export class WorkflowComponent implements OnInit {
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
-  // Delination output
+  // Delineation output
   public clickedPoint;
   public splitCatchmentLayer;
   // Fire Hydrology: Query by Basin output
