@@ -11,6 +11,7 @@
                 "description": "",
                 "name": "selectDelineationProcess",
                 "type": "checkbox",
+                "cursor": "auto",
                 "options":
                 [
                     {
@@ -24,6 +25,7 @@
                 "description": "",
                 "name": "selectDelineationPoint",
                 "type": "subscription",
+                "cursor": "crosshair",
                 "validators": 
                 {
                     "required": true
@@ -36,13 +38,7 @@
                     }
                 ]
             }
-        ],
-        "output": 
-        {
-            "value": "delineationPolygon",
-            "valueType": "geojson",
-            "displayType": "map"
-        }
+        ]
     },
     {
         "title": "Fire Hydrology",
@@ -56,6 +52,7 @@
                 "description": "",
                 "name": "selectFireHydroProcess",
                 "type": "checkbox",
+                "cursor": "auto",
                 "options":
                 [
                     {
@@ -68,6 +65,7 @@
                                 "description": "",
                                 "name": "selectFireHydroBasin",
                                 "type": "subscription",
+                                "cursor": "crosshair",
                                 "validators": 
                                 {
                                     "required": true
@@ -85,6 +83,7 @@
                                 "description": "Enter a start and end date for the burn area year range.",
                                 "name": "burnAreaYearRange",
                                 "type": "text",
+                                "cursor": "auto",
                                 "validators": 
                                 {
                                     "required": true
@@ -113,6 +112,7 @@
                                 "description": "",
                                 "name": "selectFireHydroPerimeter",
                                 "type": "subscription",
+                                "cursor": "auto",
                                 "validators": 
                                 {
                                     "required": true
@@ -130,6 +130,7 @@
                                 "description": "Enter the distance (kilometers) to trace stream lines downstream of the fire perimeter.",
                                 "name": "enterDownstreamDistance",
                                 "type": "text",
+                                "cursor": "auto",
                                 "validators": 
                                 {
                                     "required": true
@@ -146,6 +147,7 @@
                                 "description": "",
                                 "name": "traceFireHydroPerimeter",
                                 "type": "subscription",
+                                "cursor": "auto",
                                 "validators": 
                                 {
                                     "required": true

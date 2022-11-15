@@ -46,6 +46,7 @@ export class MapComponent implements OnInit {
   public firePerimeterLayer;
   public selectedPerimeters = [];
   public traceData = [];
+  public cursor = 'auto';
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
@@ -187,6 +188,15 @@ export class MapComponent implements OnInit {
     // Subscribe to loader state
     this._loaderService.loaderState.subscribe((state: boolean) => {
       this.loader = state;
+    });
+
+    // Subscribe to current step
+    this._workflowService.currentStep.subscribe(step => {
+      if (step) {
+        this.cursor = step.cursor;
+      } else {
+        this.cursor = "auto";
+      }
     });
 
     // Load Layers
