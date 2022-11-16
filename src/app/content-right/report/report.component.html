@@ -20,6 +20,7 @@
 					<!-- Display Map -->
 					<div *ngIf="data.outputs.layers" id="{{ 'reportMap' + i }}" class="reportMap"></div>
 
+
 					<!-- Click Point -->
 					<div class="data" *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): <b>{{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}}</b></div>
 					

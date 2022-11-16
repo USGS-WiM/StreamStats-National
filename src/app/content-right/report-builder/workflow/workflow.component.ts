@@ -4,7 +4,6 @@ import * as L from 'leaflet';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
-import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-workflow',
@@ -22,7 +21,7 @@ export class WorkflowComponent implements OnInit {
   public numberOfSteps: number;
   public finalStep: boolean = false;
   // Delination output
-  public clickedPoint = {};
+  public clickedPoint;
   public splitCatchmentLayer;
   // Fire Hydrology: Query by Basin output
   public basinArea;
@@ -44,7 +43,6 @@ export class WorkflowComponent implements OnInit {
       outputs: []
     })
     this.stepsArray = this.workflowForm.get('steps') as FormArray;
-
   }
 
   ngOnInit(): void {
@@ -58,7 +56,7 @@ export class WorkflowComponent implements OnInit {
     }
 
     // Get clicked point
-    this._mapService.clickPoint.pipe(take(1)).subscribe((point: {}) => {
+    this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
     });
     // Get delineation and basin area
