@@ -17,16 +17,31 @@ export class ReportComponent implements OnInit {
     ngOnInit(): void {
         this._workflowService.completedData.subscribe(data => {
             this.workflowData = data;
-            if(this.workflowData.length > 0) {
+            if (this.workflowData.length > 0) {
                 setTimeout(() => {
-                    this.createReportMaps()
+                    this.createReportMaps();
                 }, 500);
             }
         });
     }
 
+    ngAfterViewChecked(): void {
+        if (this.reportMaps.length > 0) {
+            this.reportMaps.forEach((map, index) => {
+                map.invalidateSize(true);
+                this.workflowData[index].outputs.layers.forEach(layer => {
+                    map.fitBounds(layer.getBounds());
+                });
+            });
+        }
+    }
+
     public createReportMaps() {
         
+        this.reportMaps.forEach(map => {
+            map.remove();
+        });
+
         this.reportMaps = [];
         var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});
 
@@ -34,13 +49,10 @@ export class ReportComponent implements OnInit {
         for (var i = 0; i < this.workflowData.length; ++ i) {
             if (this.workflowData[i].outputs.layers) {
                 if (this.reportMaps[i] == undefined || this.reportMaps[i] == null) {
-                    this.reportMaps[i] = L.map('reportMap' + i).setView([
-                        41.1, -98.7
-                    ], 8);
+                    this.reportMaps[i] = L.map('reportMap' + i);
                     L.tileLayer(configSettings.baseLayers[0].url, {maxZoom: configSettings.baseLayers[0].maxZoom}).addTo(this.reportMaps[i]);
                     this.workflowData[i].outputs.layers.forEach(layer => {
                         layer.addTo(this.reportMaps[i]);
-                        this.reportMaps[i].fitBounds(layer.getBounds());
                         if (this.workflowData[i].outputs.clickPoint) {
                             this.marker = L.marker(this.workflowData[i].outputs.clickPoint, {icon: RedIcon});
                             this.reportMaps[i].addLayer(this.marker);
