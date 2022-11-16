@@ -14,6 +14,7 @@ export class ReportComponent implements OnInit {
     public reportComments : string;
 
     constructor(private _workflowService : WorkflowService, private _configService : ConfigService) {}
+
     ngOnInit(): void {
         this._workflowService.completedData.subscribe(data => {
             this.workflowData = data;
@@ -29,9 +30,7 @@ export class ReportComponent implements OnInit {
         if (this.reportMaps.length > 0) {
             this.reportMaps.forEach((map, index) => {
                 map.invalidateSize(true);
-                this.workflowData[index].outputs.layers.forEach(layer => {
-                    map.fitBounds(layer.getBounds());
-                });
+                map.fitBounds(this.workflowData[index].outputs.layers[this.workflowData[index].outputs.layers.length - 1].getBounds());
             });
         }
     }
@@ -64,6 +63,10 @@ export class ReportComponent implements OnInit {
     }
 
     public createPrintMaps() {
+
+        this.printMaps.forEach(map => {
+            map.remove();
+        });
 
         this.printMaps = [];
         var RedIcon = L.divIcon({className: 'wmm-pin wmm-blue wmm-icon-noicon wmm-icon-white wmm-size-25'});

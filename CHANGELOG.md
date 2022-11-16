@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - USGS search API library reference
 - In print modal, description text not up taking full width of modal
+- Bug caused by switching between report and workflow that reset workflow variables which created errors
 
 ### Security  
 
