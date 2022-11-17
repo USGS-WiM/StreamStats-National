@@ -486,24 +486,40 @@ export class MapComponent implements OnInit {
     this.count = 0;
     this.foundFire = false;
     this.selectedPerimeters = [];
+    console.log(this.activeWorkflowLayers)
+    console.log(this.workflowLayers)
+
     Object.keys(this.workflowLayers).forEach(layerName => {
-      if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
-        this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
-          .run((error: any, results: any) => {
-            this.findFireFeatures(error,results,layerName);
+      console.log(layerName)
+      if (this.activeWorkflowLayers.find(layer => layer.name === layerName)) {
+        if(this.activeWorkflowLayers.find(layer => layer.name === layerName).visible == true) {
+          if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
+            this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
+              .run((error: any, results: any) => {
+                this.findFireFeatures(error, results, layerName);
+              }
+            );
+          } else if (layerName === 'MTBS Fire Boundaries') {
+            this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
+              .run(async (error: any, results: any) => {
+                this.findFireFeatures(error, results, layerName);
+              }
+            );
+          } else {
+            this.count ++;
+            this.checkCount(this.count, 6);
           }
-        );
-      } else if (layerName === 'MTBS Fire Boundaries') {
-        this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
-          .run(async (error: any, results: any) => {
-            this.findFireFeatures(error,results,layerName);
-          }
-        );
+        } else {
+          console.log(layerName)
+          this.count ++;
+          this.checkCount(this.count, 6);
+        }
       }
     });
   }
 
   public findFireFeatures(error, results, layerName) {
+    console.log(results)
     let popupcontent;
     const shownFields = {
       'INCIDENTNAME':"Incident Name",
@@ -568,8 +584,9 @@ export class MapComponent implements OnInit {
       this.traceData.push(results);
     } 
     this._mapService.setSelectedPerimeters(this.selectedPerimeters);
+    console.log(layerName)
     this.count ++;
-    this.checkCount(this.count, 5);
+    this.checkCount(this.count, 6);
   }
 
   public addTraceLayer(data) { 
@@ -602,6 +619,7 @@ export class MapComponent implements OnInit {
   }
 
   public checkCount(count, goal) {
+    console.log(count, goal)
     if (count === goal) {
       if (this.foundFire == false) {
         this.createMessage('Must select a fire perimeter.','error');
