@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
@@ -19,6 +19,7 @@ import area from '@turf/area';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
+
 export class MapComponent implements OnInit {
   public authHeader: HttpHeaders;
   private configSettings: Config;
@@ -42,11 +43,23 @@ export class MapComponent implements OnInit {
   public streamgageLayerStatus: boolean;
   public workflowData: any;
   public count: number = 0;
+  public numFiresInClick: number = 0;
+  public firesinClick = []
+  public selectedPerimeterHighlight;
   public foundFire:boolean = false; 
   public firePerimeterLayer;
-  public selectedPerimeters = [];
   public traceData = [];
   public cursor = 'auto';
+  selectedPerimeter: any;
+
+  @HostListener('document:click', ['$event']) 
+  clickout(event) 
+  { 
+    if(event.target.classList.contains("selectFire")) {
+      console.log(event)
+      this.selectFire(event.path[2].innerText); 
+    }
+  }
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
     HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
@@ -197,6 +210,19 @@ export class MapComponent implements OnInit {
       } else {
         this.cursor = "auto";
       }
+    });
+
+    // Get selected fire perimeters
+    this._mapService.selectedPerimeters.subscribe((perimeter) => {
+      this.selectedPerimeter = perimeter;
+
+      this.removeLayer(this.selectedPerimeterHighlight)
+
+      // highlighted select perimeter 
+      this.selectedPerimeterHighlight = L.geoJSON(this.selectedPerimeter.Data)
+      this.selectedPerimeterHighlight.addTo(this._mapService.map);
+      this.selectedPerimeterHighlight.setStyle({color: "#ff0000"});
+
     });
 
     // Load Layers
@@ -484,33 +510,25 @@ export class MapComponent implements OnInit {
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this._loaderService.showFullPageLoad();
     this.count = 0;
+    this.numFiresInClick = 0;
     this.foundFire = false;
-    this.selectedPerimeters = [];
-    console.log(this.activeWorkflowLayers)
-    console.log(this.workflowLayers)
+    this.firesinClick = [];
+    this.createMessage("Querying fire perimeters in click point. Please wait.");
 
     Object.keys(this.workflowLayers).forEach(layerName => {
-      console.log(layerName)
       if (this.activeWorkflowLayers.find(layer => layer.name === layerName)) {
-        if(this.activeWorkflowLayers.find(layer => layer.name === layerName).visible == true) {
-          if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
+        if (this.activeWorkflowLayers.find(layer => layer.name === layerName).visible == true) {
+          if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters' || layerName === 'MTBS Fire Boundaries') {
             this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
               .run((error: any, results: any) => {
                 this.findFireFeatures(error, results, layerName);
               }
             );
-          } else if (layerName === 'MTBS Fire Boundaries') {
-            this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
-              .run(async (error: any, results: any) => {
-                this.findFireFeatures(error, results, layerName);
-              }
-            );
-          } else {
+         } else {
             this.count ++;
             this.checkCount(this.count, 6);
           }
         } else {
-          console.log(layerName)
           this.count ++;
           this.checkCount(this.count, 6);
         }
@@ -519,8 +537,37 @@ export class MapComponent implements OnInit {
   }
 
   public findFireFeatures(error, results, layerName) {
-    console.log(results)
+    
+    if (error) {
+      this.createMessage('Error occurred.','error');
+      this._loaderService.hideFullPageLoad();
+    } else if (results && results.features.length > 0) {
+      this.foundFire = true;
+      console.log(results) 
+
+      if (results.features.length == 1) {
+        this.createContent(layerName, results.features[0]);
+      } else { // More than 1 feature 
+        console.log(results)
+
+        results.features.forEach((feat, index) => {
+        
+        });
+        // we only want layerid 63 for MTBS Fire Boundaries
+
+        // need to split into seperate fire perimeters
+      }
+
+
+      this.firesinClick.push({ 'Key': layerName, 'Data': results})
+    } 
+    this.count ++;
+    this.checkCount(this.count, 6);
+  }
+
+  public createContent(layerName, feat) {
     let popupcontent;
+    var properties = {};
     const shownFields = {
       'INCIDENTNAME':"Incident Name",
       'COMMENTS':"Comments",
@@ -546,58 +593,68 @@ export class MapComponent implements OnInit {
       'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
       'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
   };
-    if (error) {
-      this.createMessage('Error occurred.','error');
-      this._loaderService.hideFullPageLoad();
-    } else if (results && results.features.length > 0) {
-      this.foundFire = true;
-      var properties = {};
-      results.features.forEach(feat => {
-        popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-        if (layerName === 'MTBS Fire Boundaries') {
-          let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
-          if (date.indexOf('undefined') > -1) date = 'N/A';
+
+    popupcontent = '<hidden>' + this.numFiresInClick + '</hidden>'
+    popupcontent += '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
+    if (layerName === 'MTBS Fire Boundaries') {
+      let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
+      if (date.indexOf('undefined') > -1) date = 'N/A';
+    }
+    Object.keys(feat.properties).forEach(prop => {
+      if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
+        let label = shownFields[prop.toUpperCase()];
+        let val = feat.properties[prop];
+        if (prop.toLowerCase().indexOf('date') > -1) {
+          val = new Date(val).toLocaleDateString();
         }
-        Object.keys(feat.properties).forEach(prop => {
-          if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
-            let label = shownFields[prop.toUpperCase()];
-            let val = feat.properties[prop];
-            if (prop.toLowerCase().indexOf('date') > -1) {
-              val = new Date(val).toLocaleDateString();
-            }
-            properties[label] = val;
-            popupcontent += '<b>' + label + ':</b> ' + val + '<br>';
-          } 
-        });
-        popupcontent += '<br>';
-        if (layerName === 'MTBS Fire Boundaries') {
-          this.firePerimeterLayer = L.geoJSON(feat.geometry);
-        } else if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
-          const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
-          this.firePerimeterLayer = L.geoJSON(feat.geometry, {style: {color: col}});
-        }
-        this.firePerimeterLayer.addTo(this._mapService.map);
-        this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
-        feat.properties = properties;
-      });
-      this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
-      this.traceData.push(results);
-    } 
-    this._mapService.setSelectedPerimeters(this.selectedPerimeters);
-    console.log(layerName)
-    this.count ++;
-    this.checkCount(this.count, 6);
+        properties[label] = val;
+        popupcontent += '<b>' + label + ':</b> ' + val + '<br>';
+      } 
+    });
+    popupcontent += '<br>'; 
+    popupcontent += '<center><button class="selectFire">Select Fire</button></center>'
+
+    this.firePerimeterLayer = L.geoJSON(feat.geometry);
+    this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
+    feat.properties = properties;
+    this.numFiresInClick ++
   }
 
-  public addTraceLayer(data) { 
-    var dataLength = (data.length);
+
+  public selectFire(text) {
+
+    var firstLine = text.split('\n')[0];
+
+    console.log(firstLine)
+    
+    console.log(this.firesinClick)
+
+    // figure out which perimeter they selected
+    // unselect all other perimieters (or just select new perimeter)
+    this._mapService.setSelectedPerimeters(this.firesinClick[firstLine]);
+
+    
+
+
+    // set trace data to be selectedperminteres.data
+    this.traceData = this.firesinClick[firstLine].Data
+
+    console.log('selectedFire:')
+    console.log(this.selectedPerimeter) 
+    console.log('trace data:')
+    console.log(this.traceData)
+  }
+
+  public async addTraceLayer(data) { 
+    console.log(data)
+
     var downstreamDist = this.workflowData.steps[2].options[0].text
     this._mapService.setDownstreamDist(downstreamDist);
 
-    data.forEach(async (trace, index) => {
-      var data = await this._mapService.trace(trace, downstreamDist).toPromise();
-      if (data && data.features) {
-        data.features.forEach((feature) => {
+      var response = await this._mapService.trace(data, downstreamDist).toPromise();
+
+      if (response && response.features) {
+        response.features.forEach((feature) => {
           if (feature.id == "flowlinesGeom") { // Only print out the flow lines
             this.traceLayer = L.geoJSON(feature.geometry);
           }
@@ -606,20 +663,17 @@ export class MapComponent implements OnInit {
       this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
       this.traceLayer.addTo(this._mapService.map);
       this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
-      if (index + 1 == dataLength) {
-        this._loaderService.hideFullPageLoad();
-      }
-    }); 
+      this._loaderService.hideFullPageLoad();
+   
   }
 
   public addBurnPoint(latlng, popupcontent) {
-    this.marker = L.marker(latlng).bindPopup(popupcontent).openPopup();
+    this.marker = L.marker(latlng).bindPopup(popupcontent, {"autoClose": false}).openPopup();
     this._mapService.map?.addLayer(this.marker);
     this.marker.openPopup();
   }
 
   public checkCount(count, goal) {
-    console.log(count, goal)
     if (count === goal) {
       if (this.foundFire == false) {
         this.createMessage('Must select a fire perimeter.','error');
