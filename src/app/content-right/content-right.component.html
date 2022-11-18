@@ -17,7 +17,7 @@
 <div id="contentScroll">
 
 	<!-- Report Builder tab -->
-	<div class="padded relative" *ngIf="tab == 1">
+	<div class="padded relative" [hidden]="tab == 2">
 
 		<!-- Header -->
 		<h3 class="center">
@@ -40,7 +40,7 @@
 
 
 	<!-- Report Tab -->
-	<div class="padded relative" *ngIf="tab == 2">
+	<div class="padded relative" [hidden]="tab == 1">
 		<app-report></app-report>
 	</div>
 
