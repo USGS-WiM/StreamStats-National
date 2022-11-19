@@ -42,7 +42,7 @@ export class WorkflowComponent implements OnInit {
       steps: this._fb.array([]),
       outputs: []
     })
-    this.stepsArray = this.workflowForm.get('steps') as FormArray;
+    this.stepsArray = this.workflowForm.controls['steps'] as FormArray;
   }
 
   ngOnInit(): void {
@@ -175,11 +175,31 @@ export class WorkflowComponent implements OnInit {
   public setOptions(step: any) {
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
-      arr.push(this._fb.group({
-        text: opt.text,
-        selected: opt.selected
-      })
-      );
+      switch(step.type) {
+        case 'radio':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selectedRadio: opt.selected
+          }));
+          break;
+        case 'checkbox':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selectedCheckbox: opt.selected
+          }));
+          break;
+        case 'subscription':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+        case 'text':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+      }
+      
     });
     return arr; 
   }

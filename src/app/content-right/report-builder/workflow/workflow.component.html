@@ -42,23 +42,22 @@
 					<div formArrayName="options">
 	
 						<!-- Loop for each step -->
-						<div
-							*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+						<div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
 							<!-- Radio Buttons -->
 							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
-								<input type="radio" id="workflowRadio{{j}}" name="workflowRadioSelection" formControlName="workflowRadioSelection" [checked]="option.value.selected" (change)="onRadioChange(option.value, step.value)">
+								<input type="radio" id="workflowRadio{{j}}" formControlName="selectedRadio" [checked]="option.value.selected" (change)="onRadioChange(option.value, step.value)">
 								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
 							</div>
 
 							<!-- Checkboxes -->
 							<div class="workflow-checkbox-group" *ngIf="step.value.type === 'checkbox'">
-								<input type="checkbox" id="workflowCheckbox{{j}}" name="workflowCheckboxSelection" formControlName="workflowCheckboxSelection" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
+								<input type="checkbox" id="workflowCheckbox{{j}}" formControlName="selectedCheckbox" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
 								<label class="mleft-xs" for="workflowCheckbox{{j}}" >{{option.value.text}}</label>
 							</div>
 	
 							<!-- Subscription -->
 							<div *ngIf="step.value.type === 'subscription'">
-								<input type="hidden" formControlName="selected" />
+								<!-- <input type="hidden" formControlName="selectedSubscription" /> -->
 								<label class="step-body-instruction">
 									{{option.value.text}}
 								</label>
