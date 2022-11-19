@@ -1,11 +1,5 @@
 import {Component, OnInit, ViewChildren} from '@angular/core';
-import {MapService} from 'src/app/shared/services/map.service';
-declare let search_api: any;
-import * as L from 'leaflet';
-import {ConfigService} from '../shared/config/config.service';
-import {Config} from '../shared/interfaces/config/config';
 import {WorkflowService} from '../shared/services/workflow.service';
-// import { ConsoleReporter } from 'jasmine';
 
 @Component({selector: 'app-content-right', templateUrl: './content-right.component.html', styleUrls: ['./content-right.component.scss']})
 export class ContentRightComponent implements OnInit {
@@ -31,11 +25,6 @@ export class ContentRightComponent implements OnInit {
         this._workflowService.formData.subscribe(data => {
             this.formData = data;
         })
-
-        // Get current workflow
-        // this._workflowService.selectedWorkflow.subscribe(res => {
-        // this.selectedWorkflow = res;
-        // })
 
     }
 
