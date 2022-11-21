@@ -13,7 +13,6 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
 import area from '@turf/area';
-import { features } from 'process';
 
 @Component({
   selector: 'app-map',
@@ -45,18 +44,18 @@ export class MapComponent implements OnInit {
   public workflowData: any;
   public count: number = 0;
   public numFiresInClick: number = 0;
-  public firesinClick = []
+  public firesinClick = [];
   public selectedPerimeterHighlight;
   public foundFire:boolean = false; 
   public firePerimeterLayer;
   public traceData = [];
   public cursor = 'auto';
-  selectedPerimeter: any;
+  public selectedPerimeter: any;
 
   @HostListener('document:click', ['$event']) 
   clickout(event) 
   { 
-    if(event.target.classList.contains("selectFire")) {
+    if (event.target.classList.contains("selectFire")) {
       this.selectFire(event.path[2].innerText); 
     }
   }
@@ -216,10 +215,10 @@ export class MapComponent implements OnInit {
     this._mapService.selectedPerimeters.subscribe((perimeter) => {
       this.selectedPerimeter = perimeter;
 
-      this.removeLayer(this.selectedPerimeterHighlight)
+      this.removeLayer(this.selectedPerimeterHighlight); //remove old highlight
 
       // highlighted select perimeter 
-      this.selectedPerimeterHighlight = L.geoJSON(this.selectedPerimeter.Data)
+      this.selectedPerimeterHighlight = L.geoJSON(this.selectedPerimeter.Data);
       this.selectedPerimeterHighlight.addTo(this._mapService.map);
       this.selectedPerimeterHighlight.setStyle({color: "#ff0000"});
 
@@ -614,7 +613,7 @@ export class MapComponent implements OnInit {
     this.firePerimeterLayer = L.geoJSON(feat.geometry);
     this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
     feat.properties = properties;
-    this.numFiresInClick ++
+    this.numFiresInClick ++;
   }
 
 
@@ -622,9 +621,9 @@ export class MapComponent implements OnInit {
     // figure out which perimeter they selected
     var firstLine = text.split('\n')[0];
     //  select new perimeter
-    this._mapService.setSelectedPerimeters(this.firesinClick[firstLine])
+    this._mapService.setSelectedPerimeters(this.firesinClick[firstLine]);
     // set trace data 
-    this.traceData = this.firesinClick[firstLine].Data
+    this.traceData = this.firesinClick[firstLine].Data;
   }
 
   public async addTraceLayer(data) { 
