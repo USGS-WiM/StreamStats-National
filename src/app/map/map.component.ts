@@ -51,12 +51,13 @@ export class MapComponent implements OnInit {
   public traceData = [];
   public cursor = 'auto';
   public selectedPerimeter: any;
+  public outputLayers: L.LayerGroup;
 
   @HostListener('document:click', ['$event']) 
   clickout(event) 
   { 
     if (event.target.classList.contains("selectFire")) {
-      this.selectFire(event.path[2].innerText); 
+      this.selectFire(event.path[2].innerHTML); 
     }
   }
 
@@ -76,6 +77,7 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       zoomControl: false
     });
+    this.outputLayers = L.layerGroup().addTo(this._mapService.map)
 
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
@@ -166,12 +168,14 @@ export class MapComponent implements OnInit {
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
       if (this.selectedWorkflow) {
+        this.outputLayers = L.layerGroup().addTo(this._mapService.map)
         if(this.selectedWorkflow.title != "Delineation") {
           this.checkAvailableLayers();
         }
       }
       if (!this.selectedWorkflow){
         this.removeWorkFlowLayers();
+        this.removeLayer(this.outputLayers)
       }
     });
 
@@ -214,13 +218,15 @@ export class MapComponent implements OnInit {
     // Get selected fire perimeters
     this._mapService.selectedPerimeters.subscribe((perimeter) => {
       this.selectedPerimeter = perimeter;
-
-      this.removeLayer(this.selectedPerimeterHighlight); //remove old highlight
-
+      //remove old highlight
+      if (this.selectedPerimeterHighlight) {
+        var x_id = L.stamp(this.selectedPerimeterHighlight); // Retrieve the x layer ID
+        this.outputLayers.removeLayer(x_id);
+      }
       // highlighted select perimeter 
       this.selectedPerimeterHighlight = L.geoJSON(this.selectedPerimeter.Data);
-      this.selectedPerimeterHighlight.addTo(this._mapService.map);
       this.selectedPerimeterHighlight.setStyle({color: "#ff0000"});
+      this.outputLayers.addLayer(this.selectedPerimeterHighlight);
 
     });
 
@@ -425,7 +431,7 @@ export class MapComponent implements OnInit {
       if (this.basin) {  
         this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-        this.splitCatchmentLayer.addTo(this._mapService.map);
+        this.outputLayers.addLayer(this.splitCatchmentLayer);
         if (!this.splitCatchmentLayer.getBounds().isValid()) {
           this.createMessage("Error. Basin cannot be delineated.");
         } else {
@@ -443,7 +449,7 @@ export class MapComponent implements OnInit {
     this.removeLayer(this.marker);
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
-    this._mapService.map?.addLayer(this.marker);
+    this.outputLayers.addLayer(this.marker);
   }
 
   ////////////////////////////////
@@ -510,6 +516,7 @@ export class MapComponent implements OnInit {
     this._loaderService.showFullPageLoad();
     this.count = 0;
     this.numFiresInClick = 0;
+    this.selectedPerimeterHighlight = null;
     this.foundFire = false;
     this.firesinClick = [];
     this.createMessage("Querying fire perimeters in click point. Please wait.");
@@ -590,7 +597,7 @@ export class MapComponent implements OnInit {
       'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
   };
 
-    popupcontent = '<hidden>' + this.numFiresInClick + '</hidden>'
+    popupcontent = '<p hidden>' + this.numFiresInClick + '</p>'
     popupcontent += '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
     if (layerName === 'MTBS Fire Boundaries') {
       let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
@@ -619,11 +626,12 @@ export class MapComponent implements OnInit {
 
   public selectFire(text) {
     // figure out which perimeter they selected
-    var firstLine = text.split('\n')[0];
+    var regex = /(?<=\>)(\d*)(?=\<\/p>)/g
+    var result = text.match(regex)[0];
     //  select new perimeter
-    this._mapService.setSelectedPerimeters(this.firesinClick[firstLine]);
+    this._mapService.setSelectedPerimeters(this.firesinClick[result]);
     // set trace data 
-    this.traceData = this.firesinClick[firstLine].Data;
+    this.traceData = this.firesinClick[result].Data;
   }
 
   public async addTraceLayer(data) { 
@@ -640,7 +648,7 @@ export class MapComponent implements OnInit {
         });   
       } 
       this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
-      this.traceLayer.addTo(this._mapService.map);
+      this.outputLayers.addLayer(this.traceLayer);
       this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();
    
@@ -648,7 +656,7 @@ export class MapComponent implements OnInit {
 
   public addBurnPoint(latlng, popupcontent) {
     this.marker = L.marker(latlng).bindPopup(popupcontent, {"autoClose": false}).openPopup();
-    this._mapService.map?.addLayer(this.marker);
+    this.outputLayers.addLayer(this.marker);
     this.marker.openPopup();
   }
 
