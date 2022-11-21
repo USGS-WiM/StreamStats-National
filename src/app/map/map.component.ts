@@ -77,7 +77,7 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       zoomControl: false
     });
-    this.outputLayers = L.layerGroup().addTo(this._mapService.map)
+    this.outputLayers = L.layerGroup().addTo(this._mapService.map);
 
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
@@ -168,14 +168,14 @@ export class MapComponent implements OnInit {
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
       if (this.selectedWorkflow) {
-        this.outputLayers = L.layerGroup().addTo(this._mapService.map)
-        if(this.selectedWorkflow.title != "Delineation") {
+        this.outputLayers = L.layerGroup().addTo(this._mapService.map);
+        if (this.selectedWorkflow.title != "Delineation") {
           this.checkAvailableLayers();
         }
       }
-      if (!this.selectedWorkflow){
+      if (!this.selectedWorkflow) {
         this.removeWorkFlowLayers();
-        this.removeLayer(this.outputLayers)
+        this.removeLayer(this.outputLayers);
       }
     });
 
@@ -626,7 +626,7 @@ export class MapComponent implements OnInit {
 
   public selectFire(text) {
     // figure out which perimeter they selected
-    var regex = /(?<=\>)(\d*)(?=\<\/p>)/g
+    var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
     var result = text.match(regex)[0];
     //  select new perimeter
     this._mapService.setSelectedPerimeters(this.firesinClick[result]);

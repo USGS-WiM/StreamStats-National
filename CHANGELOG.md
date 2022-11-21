@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - 'Overview' to 'Report'
 - Print modal - spacing, moved buttons to bottom
 - Only able to trace/select once fire perimeter at a time
-- Remove all output workflow layers with workflow is complete
+- Remove all output workflow layers when workflow is complete
 
 ### Deprecated 
 
