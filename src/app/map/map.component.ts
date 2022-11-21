@@ -13,6 +13,7 @@ import { Workflow } from '../shared/interfaces/workflow/workflow';
 import { LoaderService } from '../shared/services/loader.service';
 import { AppService } from '../shared/services/app.service';
 import area from '@turf/area';
+import { features } from 'process';
 
 @Component({
   selector: 'app-map',
@@ -56,7 +57,6 @@ export class MapComponent implements OnInit {
   clickout(event) 
   { 
     if(event.target.classList.contains("selectFire")) {
-      console.log(event)
       this.selectFire(event.path[2].innerText); 
     }
   }
@@ -543,23 +543,20 @@ export class MapComponent implements OnInit {
       this._loaderService.hideFullPageLoad();
     } else if (results && results.features.length > 0) {
       this.foundFire = true;
-      console.log(results) 
 
       if (results.features.length == 1) {
         this.createContent(layerName, results.features[0]);
-      } else { // More than 1 feature 
-        console.log(results)
-
-        results.features.forEach((feat, index) => {
-        
-        });
-        // we only want layerid 63 for MTBS Fire Boundaries
-
-        // need to split into seperate fire perimeters
+        this.firesinClick.push({ 'Key': layerName, 'Data': results})
+      } else { // More than 1 of the same fire perimeter in click point
+        var temp = { 'crs': null, 'type': null, 'features': null }
+        var index = results.features.length;
+        for (let i = 0; i < index; i++) {         // need to split into seperate fire perimeters
+          temp = { crs: results.crs, type: results.type, features: [results.features[i]] }
+          this.createContent(layerName, temp.features[0]);
+          this.firesinClick.push({ 'Key': layerName, 'Data': temp})
+          temp = { 'crs': null, 'type': null, 'features': null }
+        }
       }
-
-
-      this.firesinClick.push({ 'Key': layerName, 'Data': results})
     } 
     this.count ++;
     this.checkCount(this.count, 6);
@@ -622,32 +619,15 @@ export class MapComponent implements OnInit {
 
 
   public selectFire(text) {
-
-    var firstLine = text.split('\n')[0];
-
-    console.log(firstLine)
-    
-    console.log(this.firesinClick)
-
     // figure out which perimeter they selected
-    // unselect all other perimieters (or just select new perimeter)
-    this._mapService.setSelectedPerimeters(this.firesinClick[firstLine]);
-
-    
-
-
-    // set trace data to be selectedperminteres.data
+    var firstLine = text.split('\n')[0];
+    //  select new perimeter
+    this._mapService.setSelectedPerimeters(this.firesinClick[firstLine])
+    // set trace data 
     this.traceData = this.firesinClick[firstLine].Data
-
-    console.log('selectedFire:')
-    console.log(this.selectedPerimeter) 
-    console.log('trace data:')
-    console.log(this.traceData)
   }
 
   public async addTraceLayer(data) { 
-    console.log(data)
-
     var downstreamDist = this.workflowData.steps[2].options[0].text
     this._mapService.setDownstreamDist(downstreamDist);
 
