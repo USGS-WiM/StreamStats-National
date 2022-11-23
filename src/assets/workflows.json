@@ -44,25 +44,7 @@
                 "name": "selectBasinCharacteristics",
                 "type": "checkbox",
                 "cursor": "auto",
-                "options":
-                [
-                    {
-                        "text": "i2y30: Mean maximum 30-minute 2-year precipitation",
-                        "selected": false
-                    },
-                    {
-                        "text": "jantmin: Mean January minimum temperature",
-                        "selected": false
-                    },
-                    {
-                        "text": "jantmax: Mean January maximum temperature",
-                        "selected": false
-                    },
-                    {
-                        "text": "forests: Forested area",
-                        "selected": false
-                    }
-                ]
+                "options": []
             }
         ]
     },
