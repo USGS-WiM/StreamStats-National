@@ -77,16 +77,13 @@
 					</div>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->
 					<div *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</div>
-					<div *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
-						<span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
-								<div>{{perimeter.Key}}:</div>
-								<div *ngFor="let feat of perimeter.Data.features; let k = index">
-									<div>Feature {{k+1}}</div>
-									<span *ngFor="let prop of feat.properties | keyvalue">
-										<div>{{prop.key}}: {{prop.value}}</div>
-									</span> 
-								</div>
-						</span>
+					<div *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeter Information:
+						<div>{{workflowData[i].outputs.selectedPerimetersInfo.Key}}:</div>
+						<div *ngFor="let feat of workflowData[i].outputs.selectedPerimetersInfo.Data.features">
+							<span *ngFor="let prop of feat.properties | keyvalue">
+								<div>{{prop.key}}: {{prop.value}}</div>
+							</span> 
+						</div>
 					</div>
 
 				</span>
@@ -209,22 +206,19 @@
 					</li>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->	
 					<li *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</li>					
-					<li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeters Information:
-						<span *ngFor="let perimeter of workflowData[i].outputs.selectedPerimetersInfo">
-							<ul>
-								<li>{{perimeter.Key}}:</li>
-								<div *ngFor="let feat of perimeter.Data.features; let k = index">
+					<li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeter Information:
+						<ul>
+							<li>{{workflowData[i].outputs.selectedPerimetersInfo.Key}}:</li>
+							<div *ngFor="let feat of workflowData[i].outputs.selectedPerimetersInfo.Data.features">
+								<ul>
 									<ul>
-										<li>Feature {{k+1}}</li>
-										<ul>
-											<span *ngFor="let prop of feat.properties | keyvalue">
-												<li>{{prop.key}}: {{prop.value}}</li>
-											</span> 
-										</ul>
+										<span *ngFor="let prop of feat.properties | keyvalue">
+											<li>{{prop.key}}: {{prop.value}}</li>
+										</span> 
 									</ul>
-								</div>
-							</ul>
-						</span>
+								</ul>
+							</div>
+						</ul>
 					</li>
 				</div>
 			</div>

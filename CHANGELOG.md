@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Pointer marker now points to clicked point instead of being centered on clicked point
 - 'Overview' to 'Report'
 - Print modal - spacing, moved buttons to bottom
+- Only able to trace/select once fire perimeter at a time
+- Remove all output workflow layers when workflow is complete
 
 ### Deprecated 
 
@@ -35,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - USGS search API library reference
 - In print modal, description text not up taking full width of modal
+- Only query fire perimeters that are visible
 - Bug caused by switching between report and workflow that reset workflow variables which created errors
 
 ### Security  
