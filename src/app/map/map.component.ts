@@ -598,7 +598,7 @@ export class MapComponent implements OnInit {
   };
 
     popupcontent = '<p hidden>' + this.numFiresInClick + '</p>'
-    popupcontent += '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
+    popupcontent += '<div class="popup-header"><b>' + layerName + '</b></div><hr>';
     if (layerName === 'MTBS Fire Boundaries') {
       let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
       if (date.indexOf('undefined') > -1) date = 'N/A';
@@ -615,7 +615,7 @@ export class MapComponent implements OnInit {
       } 
     });
     popupcontent += '<br>'; 
-    popupcontent += '<center><button class="selectFire">Select Fire</button></center>'
+    popupcontent += '<center><button class="selectFire usa-button">Select Fire</button></center>'
 
     this.firePerimeterLayer = L.geoJSON(feat.geometry);
     this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
