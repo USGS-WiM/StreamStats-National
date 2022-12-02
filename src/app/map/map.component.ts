@@ -115,7 +115,7 @@ export class MapComponent implements OnInit {
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
       if (this.latestDischarge) {
-        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature);
+        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature, this.latestDischarge);
       }
     });
 
@@ -388,15 +388,15 @@ export class MapComponent implements OnInit {
     }
   }
 
-  public updatePopup(site:any, popup:any, feature:any){
+  public updatePopup(site:any, popup:any, feature:any, latestDischarge:any){
     //Set dynamic content for popup
     var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + site + '.htm';
     var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + site;
     var innerHTML =  feature.properties['Name'] + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
-    feature.properties.StationType.name + '</br><strong>Discharge, cfs: </strong>' +
-    this.latestDischarge + '<br><strong>NWIS page: </strong><a href="' + 
-    NWISpage +' "target="_blank">link</a></br><strong>StreamStats Gage page: </strong><a href="' + 
-    SSgagepage + '" target="_blank">link</a></br>';
+    feature.properties.StationType.name + '<br>' +
+    (latestDischarge ? '<strong>Discharge, cfs: </strong>' + latestDischarge + '<br>' : '' ) +
+    '<strong>NWIS page: </strong><a href="' + 
+    NWISpage +' "target="_blank">link</a></br>';
     popup.setContent( innerHTML );
   }
 
@@ -625,6 +625,14 @@ export class MapComponent implements OnInit {
 
 
   public selectFire(text) {
+    // if there was a fire perimeter previously selected, clear that from the map
+    let outputLayers = this.outputLayers;
+    console.log(outputLayers);
+    this.outputLayers.eachLayer(function (layer) {
+      if (!(layer instanceof L.Marker)) {
+        outputLayers.removeLayer(layer);
+      }
+    });
     // figure out which perimeter they selected
     var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
     var result = text.match(regex)[0];
@@ -633,7 +641,6 @@ export class MapComponent implements OnInit {
     // set trace data 
     this.traceData = this.firesinClick[result].Data;
     // remove point markers for fire polygons
-    let outputLayers = this.outputLayers;
     this.outputLayers.eachLayer(function (layer) {
       if (layer instanceof L.Marker) {
         outputLayers.removeLayer(layer);
@@ -651,17 +658,33 @@ export class MapComponent implements OnInit {
 
       var response = await this._mapService.trace(data, downstreamDist).toPromise();
 
+      console.log(response);                                              
+
       this.traceLayerGroup =  new L.FeatureGroup();
-      if (response && response[1].features) {
-        response[1].features.forEach((feature) => {
-            this.traceLayerGroup.addLayer(L.geoJSON(feature.geometry));
-        });   
-      } 
+      if (response) {
+        // show flowlines
+        if (response[1].features) {
+          response[1].features.forEach((feature) => {
+              this.traceLayerGroup.addLayer(L.geoJSON(feature.geometry));
+          });   
+        }
+        // show gages
+        if (response[2].features) {
+          response[2].features.filter(feature => feature.properties.Code).forEach((feature) => {
+            let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+            let gageMarkerPopup = L.popup();
+            gageMarker.bindPopup(gageMarkerPopup);
+            console.log(feature);
+            this.updatePopup(feature.properties.Code, gageMarkerPopup, feature, null);
+            this.traceLayerGroup.addLayer(gageMarker);
+          });  
+        }
+      }
       this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayerGroup);
       this.outputLayers.addLayer(this.traceLayerGroup);
       this._mapService.map.fitBounds(this.traceLayerGroup.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();
-   
+
   }
 
   public addBurnPoint(latlng, popupcontent) {
