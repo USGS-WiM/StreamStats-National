@@ -66,11 +66,9 @@ export class WorkflowService {
   //get current step
   private _currentStep: Subject<Steps> = new Subject<Steps>();
   public setCurrentStep(s: Steps) {
-    console.log("workflow service setCurrentStep: ", s);
     this._currentStep.next(s);
   }
   public get currentStep(): Observable<Steps> {
-    console.log("workflow service get currentStep");
     return this._currentStep.asObservable();
   }
 }

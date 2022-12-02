@@ -107,10 +107,8 @@ export class WorkflowComponent implements OnInit {
     this.onContinue(this.workflowForm.value);
     // Subscribe to workflow data
     this._workflowService.formData.subscribe(workflowData => {
-      console.log("workflow component subscribed to workflowData: ", workflowData);
       this.workflowData = workflowData;
     });
-    // this.setCurrentStep(0);
     
   }
 
@@ -178,7 +176,6 @@ export class WorkflowComponent implements OnInit {
     return form.controls.steps.controls;
   }
   public getOptions(form: any) {
-    // console.log(form);
     return form.controls.options.controls;
   }
 
@@ -215,8 +212,6 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onContinue(formValue: any) {
-    console.log(formValue);
-    console.log(this.workflowData);
     this._workflowService.setFormData(formValue);
   }
 
@@ -310,7 +305,6 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onCheckboxChange(option, step) {
-    console.log(step);
     step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = option.selected ? false : true

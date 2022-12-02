@@ -126,9 +126,6 @@ export class MapComponent implements OnInit {
 
     // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
-      console.log("hey");
-      console.log(this.selectedWorkflow);
-      console.log(this.workflowData);
       this._mapService.setClickPoint(evt.latlng);
       if (this.selectedWorkflow) {
         if (this.workflowData) {
@@ -174,7 +171,6 @@ export class MapComponent implements OnInit {
 
     // Subscribe to the form data
     this._workflowService.formData.subscribe(async data => {
-      console.log(data);
       this.workflowData = data;
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
@@ -194,7 +190,6 @@ export class MapComponent implements OnInit {
                   "selected": false
                 });
               });
-              console.log(this.workflowData.steps[2]);
             } else {
               this.workflowData.steps[2].description = "No basin characteristics available at the clicked point."
               this._mapService.setBasinCharacteristics(null);
@@ -202,15 +197,10 @@ export class MapComponent implements OnInit {
           }
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
             // If at least one basin characteristic was selected
-            console.log(this.workflowData.steps[2].options);
             if (this.workflowData.steps[2].options.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.selected).length > 0) {
-              console.log("ho");
               let selectedBasinCharacteristics = this.workflowData.steps[2].options.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.selected == true);
-              console.log(selectedBasinCharacteristics);
               let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.text.substr(0, checkboxBasinCharacteristic.text.indexOf(':')));
-              console.log(selectedBasinCharacteristicCodes);
               this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
-              console.log(this.basinCharacteristics);
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
               
             } else {
@@ -240,7 +230,6 @@ export class MapComponent implements OnInit {
 
     // Subscribe to current step
     this._workflowService.currentStep.subscribe(step => {
-      console.log("map component subscribed to step: ", step);
       if (step) {
         this.cursor = step.cursor;
       } else {
