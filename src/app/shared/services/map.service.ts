@@ -646,7 +646,8 @@ export class MapService {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' }) };
         var data = {
             "data": geojson,
-            "get_flowlines": true,
+            "return_flowlines": true,
+            "return_gages": true,
 	        "downstream_dist": downstreamDist
         }
 

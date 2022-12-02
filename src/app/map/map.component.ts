@@ -33,7 +33,7 @@ export class MapComponent implements OnInit {
   public marker: L.Marker;
   public basin: any;
   public splitCatchmentLayer: any;
-  public traceLayer;
+  public traceLayerGroup;
   public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
   public loader: boolean;
@@ -556,7 +556,7 @@ export class MapComponent implements OnInit {
       } else { // More than 1 of the same fire perimeter in click point
         var temp = { 'crs': null, 'type': null, 'features': null }
         var index = results.features.length;
-        for (let i = 0; i < index; i++) {         // need to split into seperate fire perimeters
+        for (let i = 0; i < index; i++) {         // need to split into separate fire perimeters
           temp = { crs: results.crs, type: results.type, features: [results.features[i]] }
           this.createContent(layerName, temp.features[0]);
           this.firesinClick.push({ 'Key': layerName, 'Data': temp})
@@ -628,10 +628,21 @@ export class MapComponent implements OnInit {
     // figure out which perimeter they selected
     var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
     var result = text.match(regex)[0];
-    //  select new perimeter
+    // select new perimeter
     this._mapService.setSelectedPerimeters(this.firesinClick[result]);
     // set trace data 
     this.traceData = this.firesinClick[result].Data;
+    // remove point markers for fire polygons
+    let outputLayers = this.outputLayers;
+    this.outputLayers.eachLayer(function (layer) {
+      if (layer instanceof L.Marker) {
+        outputLayers.removeLayer(layer);
+      }
+    });
+    // close all map popups
+    this._mapService.map.eachLayer(function (layer) {
+      layer.closePopup();
+    });
   }
 
   public async addTraceLayer(data) { 
@@ -640,16 +651,15 @@ export class MapComponent implements OnInit {
 
       var response = await this._mapService.trace(data, downstreamDist).toPromise();
 
-      if (response && response.features) {
-        response.features.forEach((feature) => {
-          if (feature.id == "flowlinesGeom") { // Only print out the flow lines
-            this.traceLayer = L.geoJSON(feature.geometry);
-          }
+      this.traceLayerGroup =  new L.FeatureGroup();
+      if (response && response[1].features) {
+        response[1].features.forEach((feature) => {
+            this.traceLayerGroup.addLayer(L.geoJSON(feature.geometry));
         });   
       } 
-      this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
-      this.outputLayers.addLayer(this.traceLayer);
-      this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
+      this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayerGroup);
+      this.outputLayers.addLayer(this.traceLayerGroup);
+      this._mapService.map.fitBounds(this.traceLayerGroup.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();
    
   }
