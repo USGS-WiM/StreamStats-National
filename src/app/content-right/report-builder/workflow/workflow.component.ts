@@ -274,7 +274,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public nextStep(step: number) {
-    this.workflowForm.value.steps[step].completed = true;
+    this.workflowData.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;

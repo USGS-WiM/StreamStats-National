@@ -126,6 +126,9 @@ export class MapComponent implements OnInit {
 
     // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
+      console.log("hey");
+      console.log(this.selectedWorkflow);
+      console.log(this.workflowData);
       this._mapService.setClickPoint(evt.latlng);
       if (this.selectedWorkflow) {
         if (this.workflowData) {
@@ -185,7 +188,7 @@ export class MapComponent implements OnInit {
             if (this.basinCharacteristics.length > 0) {
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
               this.basinCharacteristics.forEach(basinCharacteristic=> {
-                
+
                 this.workflowData.steps[2].options.push({
                   "text": basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
                   "selected": false
@@ -201,10 +204,15 @@ export class MapComponent implements OnInit {
             // If at least one basin characteristic was selected
             console.log(this.workflowData.steps[2].options);
             if (this.workflowData.steps[2].options.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.selected).length > 0) {
+              console.log("ho");
               let selectedBasinCharacteristics = this.workflowData.steps[2].options.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.selected == true);
+              console.log(selectedBasinCharacteristics);
               let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.text.substr(0, checkboxBasinCharacteristic.text.indexOf(':')));
               console.log(selectedBasinCharacteristicCodes);
               this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
+              console.log(this.basinCharacteristics);
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+              
             } else {
               this._mapService.setBasinCharacteristics(null);
             }
