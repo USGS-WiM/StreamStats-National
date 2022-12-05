@@ -25,6 +25,7 @@ export class MapComponent implements OnInit {
   private configSettings: Config;
   private messager: ToastrService;
   public clickPoint;
+  public basinCharacteristics;
   public currentZoom: number = 4;
   public latestDischarge: any;
 	public workflowLayers = [] as any;
@@ -132,6 +133,11 @@ export class MapComponent implements OnInit {
       this.clickPoint = point;
     });
 
+    // Setting local basin characteristics variable
+    this._mapService.basinCharacteristics.subscribe((bc: {}) => {
+      this.basinCharacteristics = bc;
+    });
+
     // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
@@ -185,6 +191,38 @@ export class MapComponent implements OnInit {
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
           this.checkAvailableLayers();
+          // If Step #2 (Select Delineation Point) in the Delineation workflow has been completed
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[1].completed && !this.workflowData.steps[2].completed) {
+            // Check to see what Basin Characteristics are available for this point
+            await this.queryBasinCharacteristics();
+            // If at least one basin characteristic is available
+            this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => basinCharacteristic.value != -9999.0 && basinCharacteristic.value != -19.998);
+            if (this.basinCharacteristics.length > 0) {
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+              this.basinCharacteristics.forEach(basinCharacteristic=> {
+
+                this.workflowData.steps[2].options.push({
+                  "text": basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
+                  "selected": false
+                });
+              });
+            } else {
+              this.workflowData.steps[2].description = "No basin characteristics available at the clicked point."
+              this._mapService.setBasinCharacteristics(null);
+            }
+          }
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
+            // If at least one basin characteristic was selected
+            if (this.workflowData.steps[2].options.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.selected).length > 0) {
+              let selectedBasinCharacteristics = this.workflowData.steps[2].options.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.selected == true);
+              let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.text.substr(0, checkboxBasinCharacteristic.text.indexOf(':')));
+              this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+              
+            } else {
+              this._mapService.setBasinCharacteristics(null);
+            }
+          }
         }
         if (this.workflowData.title == "Fire Hydrology") {
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
@@ -450,6 +488,15 @@ export class MapComponent implements OnInit {
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
     this.outputLayers.addLayer(this.marker);
+  }
+
+  public async queryBasinCharacteristics() {
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Checking available basin characteristics. Please wait.");
+    let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+    this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
+    this.createMessage("Available basin characteristics were successfully checked.");
+    this._loaderService.hideFullPageLoad();
   }
 
   ////////////////////////////////

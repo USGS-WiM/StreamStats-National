@@ -25,14 +25,14 @@
 		<!-- Form -->
 		<div formArrayName="steps" class="workflow-steps">
 	
-			<div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index' class="step" [ngClass]="{'completed': stepsCompleted > i}">
+			<div *ngFor='let step of workflowData.steps | slice:0:stepsCompleted+1; let i = index' class="step" [ngClass]="{'completed': stepsCompleted > i}">
 	
 				<!-- Step number, title, description -->
 				<div class="step-info">
 					<span class="step-number">{{i+1}}</span>
 					<span class="step-description">
-						<b>{{step.value.label}}</b>
-						<p>{{step.value.description}}</p>
+						<b>{{step.label}}</b>
+						<p>{{step.description}}</p>
 					</span>
 				</div>
 
@@ -42,25 +42,28 @@
 					<div formArrayName="options">
 	
 						<!-- Loop for each step -->
-						<div
-							*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
-	
+						<div *ngFor="let option of workflowData.steps[i].options; let j = index" formGroupName="{{j}}">
+							<!-- Radio Buttons -->
+							<div class="workflow-radio-group" *ngIf="step.type === 'radio'">
+								<input type="radio" id="workflowRadio{{j}}" formControlName="selectedRadio" [checked]="option.selected" (change)="onRadioChange(option, step)">
+								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.text}}</label>
+							</div>
+
 							<!-- Checkboxes -->
-							<div class="workflow-radio-group" *ngIf="step.value.type === 'checkbox'">
-								<input type="checkbox" id="workflowRadio{{j}}" name="workflowRadioSelection" formControlName="selected" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
-								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
+							<div class="workflow-checkbox-group" *ngIf="step.type === 'checkbox'">
+								<input type="checkbox" id="workflowCheckbox{{j}}" formControlName="selectedCheckbox" [checked]="option.selected" (change)="onCheckboxChange(option, step)">
+								<label class="mleft-xs" for="workflowCheckbox{{j}}" >{{option.text}}</label>
 							</div>
 	
 							<!-- Subscription -->
-							<div *ngIf="step.value.type === 'subscription'">
-								<input type="hidden" formControlName="selected" />
+							<div *ngIf="step.type === 'subscription'">
 								<label class="step-body-instruction">
-									{{option.value.text}}
+									{{option.text}}
 								</label>
 							</div>
 	
 							<!-- Text -->
-							<div *ngIf="step.value.type === 'text'">
+							<div *ngIf="step.type === 'text'">
 								<input type="text" class="usa-input" formControlName="text"/>
 							</div>
 						
@@ -75,7 +78,7 @@
 				<div class="step-actions">
 					<div></div>
 					<!-- Next Button -->
-					<button (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="stepsCompleted > i">Next</button>
+					<button type="button" (click)="nextStep(i); onContinue(workflowData)" class="usa-button mtop-xs" [disabled]="stepsCompleted > i">Next</button>
 				</div>
 	
 	
