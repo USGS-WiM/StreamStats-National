@@ -375,7 +375,7 @@ export class MapComponent implements OnInit {
           }
         },
         pointToLayer: function(feature, latlng) {
-          return L.marker(latlng,{icon: MyIcon});
+          return L.marker(latlng,{icon: MyIcon, pane: 'tilePane'});
         }
       }).addTo(this._mapService.map);
       this.configSettings.overlays.forEach((overlay: any) => {
@@ -672,7 +672,8 @@ export class MapComponent implements OnInit {
         // show gages
         if (response[2].features) {
           response[2].features.filter(feature => feature.properties.Code).forEach((feature) => {
-            let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+            let gageIcon = L.divIcon({className: 'fireGageMarker'});
+            let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: gageIcon});
             let gageMarkerPopup = L.popup();
             gageMarker.bindPopup(gageMarkerPopup);
             console.log(feature);
@@ -689,7 +690,8 @@ export class MapComponent implements OnInit {
   }
 
   public addBurnPoint(latlng, popupcontent) {
-    this.marker = L.marker(latlng).bindPopup(popupcontent, {"autoClose": false}).openPopup();
+    let firePerimeterIcon = L.divIcon({className: 'firePerimeterMarker'});
+    this.marker = L.marker(latlng, {icon: firePerimeterIcon}).bindPopup(popupcontent, {"autoClose": false}).openPopup();
     this.outputLayers.addLayer(this.marker);
     this.marker.openPopup();
   }

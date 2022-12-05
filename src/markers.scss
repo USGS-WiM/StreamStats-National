@@ -665,3 +665,94 @@
   .wmm-triangle.wmm-mutedpink:after {
     color: #ffb3ff;
   }
+
+/* Fire Hydrology - Query by Fire Perimeters markers */
+.fireGageMarker{
+  position: relative;
+}
+.fireGageMarker:after {
+  content: '';
+  overflow: visible;
+  display: block;
+  transition: 0.1s;
+  margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
+  transform-origin: 50% 50%;
+  margin-left: 5.5px;
+  
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 26.25px solid #000000;
+  background-color: transparent;
+  left: -15px;
+  top: -15px;
+  height: 0;
+  width: 0;
+}
+.fireGageMarker:before {
+  font-size: 13px;
+  color: #F0F2F5;
+  line-height: 13px;
+  font-weight: 600;
+  text-align: center;
+  height: 15px;
+  width: 15px;
+  
+  top: -7.5px;
+  left: -7.5px;
+  
+  margin-left: 5.5px;
+  z-index: 1;
+  position: absolute;
+  content: "🔥";
+}
+
+.firePerimeterMarker{
+  position: relative;
+}
+.firePerimeterMarker:after {
+  content: '';
+  overflow: visible;
+  display: block;
+  transition: 0.1s;
+  margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
+  transform-origin: 50% 50%;
+  margin-left: 5.5px;
+  left: -12.5px;
+  top: -12.5px;
+  background-color: #3092F4;
+  width: 25px;
+  height: 25px;
+  
+  top: -27.500000000000004px;
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+  transform: rotate(-45deg);
+  
+  /* Border */
+  border: 3px solid #000000;
+
+  /* Shadow */
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.35);
+}
+.firePerimeterMarker:before {
+  font-size: 13px;
+  color: #F0F2F5;
+  line-height: 13px;
+  font-weight: 600;
+  text-align: center;
+  height: 15px;
+  width: 15px;
+  top: -22.651515151515152px;
+  
+  left: -7.5px;
+  
+  margin-left: 5.5px;
+  z-index: 1;
+  position: absolute;
+  content: "🔥";
+}
