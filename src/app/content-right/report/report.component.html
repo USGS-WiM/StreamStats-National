@@ -77,7 +77,7 @@
 					</div>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->
 					<div *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</div>
-					<div *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeter Information:
+					<div *ngIf="output.key=='selectedPerimetersInfo'"><br> Selected Perimeter Information:
 						<div>{{workflowData[i].outputs.selectedPerimetersInfo.Key}}:</div>
 						<div *ngFor="let feat of workflowData[i].outputs.selectedPerimetersInfo.Data.features">
 							<span *ngFor="let prop of feat.properties | keyvalue">
@@ -206,7 +206,7 @@
 					</li>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->	
 					<li *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</li>					
-					<li *ngIf="output.key=='selectedPerimetersInfo'"> Selected Perimeter Information:
+					<li *ngIf="output.key=='selectedPerimetersInfo'"><br> Selected Perimeter Information:
 						<ul>
 							<li>{{workflowData[i].outputs.selectedPerimetersInfo.Key}}:</li>
 							<div *ngFor="let feat of workflowData[i].outputs.selectedPerimetersInfo.Data.features">
