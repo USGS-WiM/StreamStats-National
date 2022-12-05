@@ -671,6 +671,7 @@ export class MapComponent implements OnInit {
         }
         // show gages
         if (response[2].features) {
+          this._mapService.setDownstreamGages(response[2].features.filter(feature => feature.properties.Code));
           response[2].features.filter(feature => feature.properties.Code).forEach((feature) => {
             let gageIcon = L.divIcon({className: 'fireGageMarker'});
             let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: gageIcon});
@@ -679,7 +680,7 @@ export class MapComponent implements OnInit {
             console.log(feature);
             this.updatePopup(feature.properties.Code, gageMarkerPopup, feature, null);
             this.traceLayerGroup.addLayer(gageMarker);
-          });  
+          });
         }
       }
       this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayerGroup);

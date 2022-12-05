@@ -85,7 +85,18 @@
 							</span> 
 						</div>
 					</div>
-
+					<div *ngIf="output.key=='downstreamGages'"><br>Downstream Gages:
+						<table id="reportTableDownstreamGages">
+							<tr>
+								<th>Station ID</th>
+								<th><span>Station Name</span></th>
+							</tr>
+							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
+								<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+								<td>{{gage.properties.Name}}</td>
+							</tr>
+						</table>
+					</div>
 				</span>
 
 			<!-- Card footer -->
@@ -219,6 +230,18 @@
 								</ul>
 							</div>
 						</ul>
+					</li>
+					<li *ngIf="output.key=='downstreamGages'">Downstream Gages:
+						<table id="reportTableDownstreamGages">
+							<tr>
+								<th>Station ID</th>
+								<th><span>Station Name</span></th>
+							</tr>
+							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
+								<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+								<td>{{gage.properties.Name}}</td>
+							</tr>
+						</table>
 					</li>
 				</div>
 			</div>

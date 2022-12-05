@@ -675,6 +675,14 @@ export class MapService {
     public get selectedPerimeters(): any {
         return this._selectedPerimeters.asObservable();
     }
+    // Get downstream gages
+    private _downstreamGages: Subject<any> = new Subject<any>();
+    public setDownstreamGages(gages: any) {
+        this._downstreamGages.next(gages);
+    }
+    public get downstreamGages(): any {
+        return this._downstreamGages.asObservable();
+    }
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {
         try {
