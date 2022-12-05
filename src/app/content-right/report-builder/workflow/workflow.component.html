@@ -75,7 +75,7 @@
 				<div class="step-actions">
 					<div></div>
 					<!-- Next Button -->
-					<button (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="stepsCompleted > i">Next</button>
+					<button (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="!checkStep(step.value.type, i) || stepsCompleted > i">Next</button>
 				</div>
 	
 	

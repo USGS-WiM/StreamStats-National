@@ -251,6 +251,17 @@ export class WorkflowComponent implements OnInit {
     }
   }
 
+  public checkStep(type, stepNum) {
+    if (type == 'checkbox') {
+      const some = this.workflowForm.value.steps[stepNum].options.some((opt)=> opt.selected === true)
+      return(some)
+    } else if (type == "subscription") {
+
+    } else if (type == 'text') {
+
+    }
+  }
+
   public finishedWorkflow(formValue: any) {
     this.fillOutputs();
     this._workflowService.setCompletedData(formValue);
@@ -259,6 +270,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onCheckboxChange(option, step) {
+
     step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = true;
@@ -271,7 +283,7 @@ export class WorkflowComponent implements OnInit {
         }
 		
       } else {
-        opt.selected = false;
+        option.selected = false;
       }
     });
   }
