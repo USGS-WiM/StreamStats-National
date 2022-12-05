@@ -512,8 +512,6 @@ export class MapService {
         });
     }
 
-    // TODO: add argument to only compute selected basin characteristics
-    // https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/1
     public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
         return new Promise<any []>(async resolve => { 
             let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;

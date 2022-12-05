@@ -20,9 +20,7 @@ export class WorkflowComponent implements OnInit {
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
-  public workflowData: any;
-
-  // Delineation output
+  // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
   // Fire Hydrology: Query by Basin output
@@ -45,7 +43,7 @@ export class WorkflowComponent implements OnInit {
       steps: this._fb.array([]),
       outputs: []
     })
-    this.stepsArray = this.workflowForm.controls['steps'] as FormArray;
+    this.stepsArray = this.workflowForm.get('steps') as FormArray;
   }
 
   ngOnInit(): void {
@@ -109,12 +107,6 @@ export class WorkflowComponent implements OnInit {
     this._mapService.downstreamDist.subscribe((downstreamDist) => {
       this.downstreamDist = downstreamDist;
     });
-    this.onContinue(this.workflowForm.value);
-    // Subscribe to workflow data
-    this._workflowService.formData.subscribe(workflowData => {
-      this.workflowData = workflowData;
-    });
-    
   }
 
   public setTitle() {
@@ -187,31 +179,11 @@ export class WorkflowComponent implements OnInit {
   public setOptions(step: any) {
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
-      switch(step.type) {
-        case 'radio':
-          arr.push(this._fb.group({
-            text: opt.text,
-            selectedRadio: opt.selected
-          }));
-          break;
-        case 'checkbox':
-          arr.push(this._fb.group({
-            text: opt.text,
-            selectedCheckbox: opt.selected
-          }));
-          break;
-        case 'subscription':
-          arr.push(this._fb.group({
-            text: opt.text
-          }));
-          break;
-        case 'text':
-          arr.push(this._fb.group({
-            text: opt.text
-          }));
-          break;
-      }
-      
+      arr.push(this._fb.group({
+        text: opt.text,
+        selected: []
+      })
+      );
     });
     return arr; 
   }
@@ -228,7 +200,6 @@ export class WorkflowComponent implements OnInit {
         this.output = {
           'clickPoint': this.clickedPoint, 
           'layers': [this.splitCatchmentLayer],
-          'basinCharacteristics': this.basinCharacteristics,
         }
         break;
       case "Fire Hydrology":
@@ -276,7 +247,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public nextStep(step: number) {
-    this.workflowData.steps[step].completed = true;
+    this.workflowForm.value.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
@@ -293,7 +264,7 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setFormData(null);
   }
 
-  public onRadioChange(option, step) {
+  public onCheckboxChange(option, step) {
     step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = true;
@@ -308,14 +279,6 @@ export class WorkflowComponent implements OnInit {
       } else {
         opt.selected = false;
       }
-    });
-  }
-
-  public onCheckboxChange(option, step) {
-    step.options.forEach(opt => {
-      if (opt.text == option.text) {
-        option.selected = option.selected ? false : true
-      } 
     });
   }
 

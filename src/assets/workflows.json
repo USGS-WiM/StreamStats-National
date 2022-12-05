@@ -1,7 +1,7 @@
 [
     {
         "title": "Delineation",
-        "description": "Delineate a basin from a clicked point and compute basin characteristics.",
+        "description": "Delineate a basin based on a click point.",
         "functionality": "Core",
         "icon": "far fa-map-marker",
         "steps":
@@ -10,7 +10,7 @@
                 "label": "Select Delineation Process",
                 "description": "",
                 "name": "selectDelineationProcess",
-                "type": "radio",
+                "type": "checkbox",
                 "cursor": "auto",
                 "options":
                 [
@@ -37,14 +37,6 @@
                         "selected": false
                     }
                 ]
-            },
-            {
-                "label": "Select Basin Characteristics",
-                "description": "",
-                "name": "selectBasinCharacteristics",
-                "type": "checkbox",
-                "cursor": "auto",
-                "options": []
             }
         ]
     },
@@ -59,7 +51,7 @@
                 "label": "Select a Fire Hydrology Query Method",
                 "description": "",
                 "name": "selectFireHydroProcess",
-                "type": "radio",
+                "type": "checkbox",
                 "cursor": "auto",
                 "options":
                 [
