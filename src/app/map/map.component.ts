@@ -51,7 +51,7 @@ export class MapComponent implements OnInit {
   public traceData = [];
   public cursor = 'auto';
   public selectedPerimeter: any;
-  public outputLayers: L.LayerGroup;
+  public outputLayers: L.FeatureGroup;
 
   @HostListener('document:click', ['$event']) 
   clickout(event) 
@@ -77,7 +77,7 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       zoomControl: false
     });
-    this.outputLayers = L.layerGroup().addTo(this._mapService.map);
+    this.outputLayers = new L.FeatureGroup().addTo(this._mapService.map);
 
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
@@ -168,7 +168,7 @@ export class MapComponent implements OnInit {
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
       if (this.selectedWorkflow) {
-        this.outputLayers = L.layerGroup().addTo(this._mapService.map);
+        this.outputLayers = new L.FeatureGroup().addTo(this._mapService.map);
         if (this.selectedWorkflow.title != "Delineation") {
           this.checkAvailableLayers();
         }
@@ -566,6 +566,7 @@ export class MapComponent implements OnInit {
     } 
     this.count ++;
     this.checkCount(this.count, 6);
+    this._mapService.map.fitBounds(this.firePerimeterLayer.getBounds(), {padding: [75,75]});
   }
 
   public createContent(layerName, feat) {
@@ -595,7 +596,7 @@ export class MapComponent implements OnInit {
       'IRWIN_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
       'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
       'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
-  };
+    };
 
     popupcontent = '<p hidden>' + this.numFiresInClick + '</p>'
     popupcontent += '<div class="popup-header"><b>' + layerName + '</b></div><hr>';
