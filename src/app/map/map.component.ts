@@ -115,7 +115,7 @@ export class MapComponent implements OnInit {
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
       if (this.latestDischarge) {
-        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature, this.latestDischarge);
+        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature.properties['Name'], this.selectedFeature.properties.StationType.name, this.latestDischarge);
       }
     });
 
@@ -388,12 +388,12 @@ export class MapComponent implements OnInit {
     }
   }
 
-  public updatePopup(site:any, popup:any, feature:any, latestDischarge:any){
+  public updatePopup(site:any, popup:any, name:any, stationType:any, latestDischarge:any){
     //Set dynamic content for popup
     var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + site + '.htm';
     var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + site;
-    var innerHTML =  feature.properties['Name'] + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
-    feature.properties.StationType.name + '<br>' +
+    var innerHTML =  name + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
+    stationType + '<br>' +
     (latestDischarge ? '<strong>Discharge, cfs: </strong>' + latestDischarge + '<br>' : '' ) +
     '<strong>NWIS page: </strong><a href="' + 
     NWISpage +' "target="_blank">link</a></br>';
@@ -671,16 +671,28 @@ export class MapComponent implements OnInit {
         }
         // show gages
         if (response[2].features) {
-          // this._mapService.setDownstreamGages(response[2].features); // all surface water sites
-          this._mapService.setDownstreamGages(response[2].features.filter(feature => feature.properties.Code));
-          // response[2].features.forEach((feature) => { // all surface water sites
-          response[2].features.filter(feature => feature.properties.Code ).forEach((feature) => {
-            let gageIcon = L.divIcon({className: 'fireGageMarker'});
+          let gageIcon;
+          this._mapService.setDownstreamGages(response[2].features); 
+          response[2].features.forEach((feature) => { 
+            if (feature.properties.active == true) {
+              gageIcon = L.divIcon({className: 'fireGageMarkerActive'});
+            } else if (feature.properties.active == false) {
+              gageIcon = L.divIcon({className: 'fireGageMarkerInactive'});
+            } else {
+              // TODO DELETE THIS LATER
+              gageIcon = L.divIcon({className: 'fireGageMarkerActive'});
+            }
             let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: gageIcon});
             let gageMarkerPopup = L.popup();
             gageMarker.bindPopup(gageMarkerPopup);
             console.log(feature);
-            this.updatePopup(feature.properties.Code, gageMarkerPopup, feature, null);
+            if (feature.properties.Code) {
+              // Gage came from GageStatsServices
+              this.updatePopup(feature.properties.Code, gageMarkerPopup, feature.properties['Name'], feature.properties.StationType.name, null);
+            } else if (feature.properties.identifier) {
+              // Gage came from NavigationServices
+              this.updatePopup(feature.properties.identifier.substring(feature.properties.identifier.indexOf('-') + 1), gageMarkerPopup, feature.properties['name'], "Undefined", null);
+            }
             this.traceLayerGroup.addLayer(gageMarker);
           });
         }
@@ -689,7 +701,6 @@ export class MapComponent implements OnInit {
       this.outputLayers.addLayer(this.traceLayerGroup);
       this._mapService.map.fitBounds(this.traceLayerGroup.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();
-
   }
 
   public addBurnPoint(latlng, popupcontent) {

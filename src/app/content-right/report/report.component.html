@@ -92,8 +92,14 @@
 								<th><span>Station Name</span></th>
 							</tr>
 							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
-								<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
-								<td>{{gage.properties.Name}}</td>
+								<span *ngIf="gage.properties.Code">
+									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+									<td>{{gage.properties.Name}}</td>
+								</span>
+								<span *ngIf="gage.properties.identifier">
+									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
+									<td>{{gage.properties.name}}</td>
+								</span>
 							</tr>
 						</table>
 					</div>
@@ -238,8 +244,14 @@
 								<th><span>Station Name</span></th>
 							</tr>
 							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
-								<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
-								<td>{{gage.properties.Name}}</td>
+								<span *ngIf="gage.properties.Code">
+									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+									<td>{{gage.properties.Name}}</td>
+								</span>
+								<span *ngIf="gage.properties.identifier">
+									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
+									<td>{{gage.properties.name}}</td>
+								</span>
 							</tr>
 						</table>
 					</li>
