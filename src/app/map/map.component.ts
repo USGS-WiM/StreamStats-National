@@ -276,7 +276,7 @@ export class MapComponent implements OnInit {
                     this.addLayers('2021 Wildland Fire Perimeters', true);
                     this.addLayers('2022 Wildland Fire Perimeters', true);
                     this.addLayers('MTBS Fire Boundaries', true);
-                    this.addLayers('Burn Severity', true);
+                    this.addLayers('Burn Severity', false);
                   }
                 }
               })
