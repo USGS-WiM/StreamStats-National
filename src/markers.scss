@@ -667,10 +667,10 @@
   }
 
 /* Fire Hydrology - Query by Fire Perimeters markers */
-.fireGageMarker{
+.fireGageMarkerActive, .fireGageMarkerInactive{
   position: relative;
 }
-.fireGageMarker:after {
+.fireGageMarkerActive:after {
   content: '';
   overflow: visible;
   display: block;
@@ -683,14 +683,34 @@
   
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
-  border-bottom: 26.25px solid #000000;
+  border-bottom: 26.25px solid #3092F4;
   background-color: transparent;
   left: -15px;
   top: -15px;
   height: 0;
   width: 0;
 }
-.fireGageMarker:before {
+.fireGageMarkerInactive:after {
+  content: '';
+  overflow: visible;
+  display: block;
+  transition: 0.1s;
+  margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
+  transform-origin: 50% 50%;
+  margin-left: 5.5px;
+  
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 26.25px solid #f1f135;
+  background-color: transparent;
+  left: -15px;
+  top: -15px;
+  height: 0;
+  width: 0;
+}
+.fireGageMarkerActive:before, .fireGageMarkerInactive:before {
   font-size: 13px;
   color: #F0F2F5;
   line-height: 13px;
