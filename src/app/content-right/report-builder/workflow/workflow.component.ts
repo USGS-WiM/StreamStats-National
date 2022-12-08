@@ -175,11 +175,30 @@ export class WorkflowComponent implements OnInit {
   public setOptions(step: any) {
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
-      arr.push(this._fb.group({
-        text: opt.text,
-        selected: []
-      })
-      );
+      switch(step.type) {
+        case 'radio':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selectedRadio: opt.selected
+          }));
+          break;
+        case 'checkbox':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selectedCheckbox: opt.selected
+          }));
+          break;
+        case 'subscription':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+        case 'text':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+      }
     });
     return arr; 
   }
@@ -242,7 +261,7 @@ export class WorkflowComponent implements OnInit {
 
   public nextStep(step: number) {
     this.workflowForm.value.steps[step].completed = true;
-    this.stepsCompleted = this.stepsCompleted + 1;
+    this.stepsCompleted += 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
       this.setCurrentStep(null);
@@ -258,21 +277,29 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setFormData(null);
   }
 
-  public onCheckboxChange(option, step) {
-    step.options.forEach(opt => {
-      if (opt.text == option.text) {
-        option.selected = true;
+  public onRadioChange(option, step) {
+    step.value.options.forEach(opt => {
+      if (opt.text == option.value.text) {
+        option.value.selected = true;
 
         // TODO: Update this once delineation has more routes/branches/paths to take with in the workflow
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
-        if (step.name === "selectFireHydroProcess") {
-          this.resetStepsArray(step);
+        if (step.value.name === "selectFireHydroProcess") {
+          this.resetStepsArray(step.value);
           this.addSteps(opt.text);
         }
 		
       } else {
         opt.selected = false;
       }
+    });
+  }
+
+  public onCheckboxChange(option, step) {
+    step.options.forEach(opt => {
+      if (opt.text == option.text) {
+        option.selected = option.selected ? false : true
+      } 
     });
   }
 
