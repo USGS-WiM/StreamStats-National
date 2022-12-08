@@ -85,7 +85,7 @@
                 "zIndex": 9999,
                 "minZoom": 10
             },
-            "visible": true
+            "visible": false
         },
         {
             "name": "GeologyFeatures",

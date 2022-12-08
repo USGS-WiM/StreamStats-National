@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Only able to trace/select once fire perimeter at a time
 - Remove all output workflow layers when workflow is complete
 - Updated to google analytics 4
+- Burn Severity is turned off by default for Fire Hydrology workflows
 
 ### Deprecated 
 
