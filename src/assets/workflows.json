@@ -37,6 +37,14 @@
                         "selected": false
                     }
                 ]
+            },
+            {
+                "label": "Select Basin Characteristics",
+                "description": "",
+                "name": "selectBasinCharacteristics",
+                "type": "checkbox",
+                "cursor": "auto",
+                "options": []
             }
         ]
     },
