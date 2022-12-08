@@ -110,7 +110,7 @@ describe('WorkflowComponent', () => {
     expect(component.stepsArray.value.length).toEqual(1);
     const optionSelection = "Query by Fire Perimeters";
     component.addSteps(optionSelection);
-    expect(component.stepsArray.value.length).toEqual(2);
+    expect(component.workflowData.steps.length).toEqual(2);
   });
 
   it('#nextStep should count completed steps and determine step type', () => {
