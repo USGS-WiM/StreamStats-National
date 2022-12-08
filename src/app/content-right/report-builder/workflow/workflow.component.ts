@@ -275,7 +275,11 @@ export class WorkflowComponent implements OnInit {
     if (step == null) {
       this._workflowService.setCurrentStep(null);
     } else {
-      this._workflowService.setCurrentStep(this.workflowForm.value.steps[step]);
+      if (this.workflowData) {
+        this._workflowService.setCurrentStep(this.workflowData.steps[step]);
+      } else {
+        this._workflowService.setCurrentStep(this.workflowForm.value.steps[step]);
+      }
     }
   }
 

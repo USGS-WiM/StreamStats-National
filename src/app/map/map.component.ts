@@ -225,7 +225,6 @@ export class MapComponent implements OnInit {
           }
         }
         if (this.workflowData.title == "Fire Hydrology") {
-          console.log(this.workflowData);
           if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
             this.queryBurnYear();
           }
@@ -247,6 +246,7 @@ export class MapComponent implements OnInit {
 
     // Subscribe to current step
     this._workflowService.currentStep.subscribe(step => {
+      console.log(step);
       if (step) {
         this.cursor = step.cursor;
       } else {
@@ -304,7 +304,6 @@ export class MapComponent implements OnInit {
         case "Fire Hydrology":
           if (!this.activeWorkflowLayers.length) {
             if (this.workflowData && this.workflowData.steps) {
-              console.log(this.workflowData.steps[0].options);
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
                 if (o.selected == true) {
                   if (o.text === "Query by Fire Perimeters" || o.text === "Query by Basin") {
@@ -513,7 +512,6 @@ export class MapComponent implements OnInit {
     this._loaderService.showFullPageLoad();
 
     // Check for valid burn years
-    console.log(this.workflowData.steps);
     let startBurnYear = this.workflowData.steps[2].options[0].text;
     let endBurnYear = this.workflowData.steps[2].options[1].text;
     if (this.validateBurnYears(startBurnYear, endBurnYear)) {
@@ -688,6 +686,8 @@ export class MapComponent implements OnInit {
     var downstreamDist = this.workflowData.steps[2].options[0].text
     this._mapService.setDownstreamDist(downstreamDist);
 
+      console.log(data);
+      console.log(downstreamDist);
       var response = await this._mapService.trace(data, downstreamDist).toPromise();
 
       if (response && response.features) {
