@@ -20,6 +20,8 @@ export class WorkflowComponent implements OnInit {
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
+  public workflowData: any;
+  
   // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
@@ -42,16 +44,18 @@ export class WorkflowComponent implements OnInit {
       steps: this._fb.array([]),
       outputs: []
     })
-    this.stepsArray = this.workflowForm.get('steps') as FormArray;
+    this.stepsArray = this.workflowForm.controls['steps'] as FormArray;
   }
 
   ngOnInit(): void {
 
     if (this.formData === null) {
+      console.log("here1");
       // Set steps if there is no prior form data
       this.setSteps();
     } else {
       // Set step and set values of prior form data
+      console.log("here2");
       this.populateForm();
     }
 
@@ -98,10 +102,14 @@ export class WorkflowComponent implements OnInit {
     this._mapService.firePerimetersLayers.subscribe((layers) => {
       this.firePerimetersLayers = layers;
     });
-
     // Get downstream trace distance
     this._mapService.downstreamDist.subscribe((downstreamDist) => {
       this.downstreamDist = downstreamDist;
+    });
+    this.onContinue(this.workflowForm.value);
+    // Subscribe to workflow data
+    this._workflowService.formData.subscribe(workflowData => {
+      this.workflowData = workflowData;
     });
   }
 
@@ -113,7 +121,10 @@ export class WorkflowComponent implements OnInit {
 
   public setSteps() {
     this.setTitle();
+    console.log(this.workflow.steps);
+    console.log(this.workflowData);
     this.workflow.steps.forEach(step => {
+      console.log(step);
       this.stepsArray.push(this._fb.group({
         label: step.label,
         name: step.name,
@@ -128,39 +139,46 @@ export class WorkflowComponent implements OnInit {
     });
     this.numberOfSteps = this.stepsArray.value.length;
     this.setCurrentStep(0);
+    console.log(this.stepsArray);
   }
 
   public addSteps(optionSelection: string) {
     // Add nested steps depending on prior step selection
+    console.log(this.workflow.steps);
     this.workflow.steps.forEach(step => {
       step.options?.forEach(opt => {
         if (opt.text === optionSelection) {
           opt.nestedSteps.forEach(s => {
-            this.stepsArray.push(this._fb.group({
+            this.workflowData.steps.push({
               label: s.label,
               name: s.name,
               type: s.type,
               cursor: s.cursor,
               description: s.description,
-              completed: [],
+              completed: false,
               clickPoint: [],
               output: [],
-              options: this.setOptions(s)
-            }));
+              options: s.options
+            });
           });
         };
       });
     });
-    this.numberOfSteps = this.stepsArray.value.length;
+    this.numberOfSteps = this.workflowData.steps.length;
   }
 
   public resetStepsArray(step: any) {
     // If prior selection was made on a nested step workflow, 
     // keep only that step then overwrite the other steps.
-    let stepIndex = this.stepsArray.value.indexOf(step);
-    const primaryStep = this.stepsArray.at(stepIndex);
-    this.stepsArray.clear();
-    this.stepsArray.push(primaryStep);
+    console.log(this.stepsArray);
+    console.log(this._workflowService.formData);
+    console.log(this.workflowData);
+    let stepIndex = this.workflowData.steps.indexOf(step);
+    console.log(stepIndex);
+    const primaryStep = this.workflowData.steps.at(stepIndex);
+    console.log(primaryStep);
+    this.workflowData.steps = [];
+    this.workflowData.steps.push(primaryStep);
     this.stepsCompleted = 0; // reset steps completed counter
     this.finalStep = false; // reset final step boolean
   }
@@ -175,11 +193,31 @@ export class WorkflowComponent implements OnInit {
   public setOptions(step: any) {
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
-      arr.push(this._fb.group({
-        text: opt.text,
-        selected: []
-      })
-      );
+      switch(step.type) {
+        case 'radio':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selectedRadio: opt.selected
+          }));
+          break;
+        case 'checkbox':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selectedCheckbox: opt.selected
+          }));
+          break;
+        case 'subscription':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+        case 'text':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+      }
+
     });
     return arr; 
   }
@@ -196,6 +234,7 @@ export class WorkflowComponent implements OnInit {
         this.output = {
           'clickPoint': this.clickedPoint, 
           'layers': [this.splitCatchmentLayer],
+          'basinCharacteristics': this.basinCharacteristics
         }
         break;
       case "Fire Hydrology":
@@ -241,7 +280,10 @@ export class WorkflowComponent implements OnInit {
   }
 
   public nextStep(step: number) {
-    this.workflowForm.value.steps[step].completed = true;
+    console.log(step);
+    console.log(this.workflowData);
+    console.log(this._workflowService.formData);
+    this.workflowData.steps[step].completed = true;
     this.stepsCompleted = this.stepsCompleted + 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
@@ -258,7 +300,7 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setFormData(null);
   }
 
-  public onCheckboxChange(option, step) {
+  public onRadioChange(option, step) {
     step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = true;
@@ -273,6 +315,14 @@ export class WorkflowComponent implements OnInit {
       } else {
         opt.selected = false;
       }
+    });
+  }
+
+  public onCheckboxChange(option, step) {
+    step.options.forEach(opt => {
+      if (opt.text == option.text) {
+        option.selected = option.selected ? false : true
+      } 
     });
   }
 
