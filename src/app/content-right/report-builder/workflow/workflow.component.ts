@@ -228,7 +228,7 @@ export class WorkflowComponent implements OnInit {
 
   public fillOutputs() {
     this.output = {};
-    switch (this.workflowForm.value.title) {
+    switch (this.workflowData.title) {
       case "Delineation":
         this.getOutputs();
         this.output = {
@@ -238,7 +238,7 @@ export class WorkflowComponent implements OnInit {
         }
         break;
       case "Fire Hydrology":
-        if (this.workflowForm.value.steps[1].name === "selectFireHydroBasin") {
+        if (this.workflowData.steps[1].name === "selectFireHydroBasin") {
           this.output = {
             'clickPoint': this.clickedPoint, 
             'layers': [this.splitCatchmentLayer],
@@ -249,7 +249,7 @@ export class WorkflowComponent implements OnInit {
             'basinCharacteristics': this.basinCharacteristics,
             'streamflowEstimates': this.streamflowEstimates
           };
-        } else if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
+        } else if (this.workflowData.steps[1].name === "selectFireHydroPerimeter") {
           this.output = {
             'clickPoint': this.clickedPoint, 
             'layers': this.firePerimetersLayers,
