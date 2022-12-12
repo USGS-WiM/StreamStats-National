@@ -52,12 +52,7 @@ export class WorkflowComponent implements OnInit {
     if (this.formData === null) {
       // Set steps if there is no prior form data
       this.setSteps();
-    } 
-    
-    // else {
-    //   // Set step and set values of prior form data
-    //   this.populateForm();
-    // }
+    }
 
     // Get clicked point
     this._mapService.clickPoint.subscribe((point: {}) => {
@@ -88,7 +83,6 @@ export class WorkflowComponent implements OnInit {
     });
     // Get basin characteristics
     this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
-      console.log(this.basinCharacteristics);
       this.basinCharacteristics = basinCharacteristics;
     });
     // Get streamflow estimates
@@ -114,7 +108,6 @@ export class WorkflowComponent implements OnInit {
     });
     // Subscribe to workflow form
     this._workflowService.workflowForm.subscribe(workflowForm => {
-      // console.log(workflowForm);
       this.workflowForm = workflowForm;
     });
   }
@@ -180,26 +173,13 @@ export class WorkflowComponent implements OnInit {
   }
 
   public getSteps(form: any) {
-    // console.log(form.controls.steps.controls);
     return form.controls.steps.controls;
   }
 
   get workflowFormData() { 
     let stepsArray = this.workflowForm.get('steps') as FormArray;
-    // console.log(stepsArray.controls);
     return stepsArray.controls; 
   }
-
-  // public getOptions(step: any) {
-  //   console.log(step.controls.options.controls);
-  //   // console.log(this.workflowFormData[2]['controls'].options.controls);
-  //   return step.controls.options.controls;
-  // }
-
-  // get stepOptions() {
-  //   let stepsArray = this.workflowForm.get('steps') as FormArray;
-  //   return stepsArray[index]
-  // }
 
   public setOptions(step: any) {
     let arr = new FormArray([])
@@ -235,10 +215,6 @@ export class WorkflowComponent implements OnInit {
   public onContinue(formValue: any) {
     this._workflowService.setFormData(formValue);
     this._workflowService.setWorkflowForm(this.workflowForm);
-    // console.log("onContinue");
-    // console.log("formValue", formValue);
-    // console.log("workflowForm", this.workflowForm);
-    // console.log("formData", this.formData);
   }
 
   public fillOutputs() {
@@ -274,7 +250,6 @@ export class WorkflowComponent implements OnInit {
         break;
     }
     this.workflowForm.value.outputs = this.output; 
-    console.log(this.workflowForm);
   }
 
   public getOutputs(){

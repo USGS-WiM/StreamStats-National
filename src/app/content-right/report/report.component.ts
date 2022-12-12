@@ -18,7 +18,6 @@ export class ReportComponent implements OnInit {
     ngOnInit(): void {
         this._workflowService.completedData.subscribe(data => {
             this.workflowData = data;
-            console.log(this.workflowData);
             if (this.workflowData.length > 0) {
                 setTimeout(() => {
                     this.createReportMaps();

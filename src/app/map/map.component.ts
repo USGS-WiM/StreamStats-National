@@ -3,7 +3,7 @@ import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WorkflowService } from '../shared/services/workflow.service';
 import "leaflet/dist/images/marker-shadow.png";
@@ -201,34 +201,21 @@ export class MapComponent implements OnInit {
           // If Step #2 (Select Delineation Point) in the Delineation workflow has been completed
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[1].completed && !this.workflowData.steps[2].completed) {
             // Check to see what Basin Characteristics are available for this point
-            // console.log(this.selectedWorkflow);
             await this.queryBasinCharacteristics();
-            // console.log(this.basinCharacteristics);
             // If at least one basin characteristic is available
             // TODO: change these values from -9999.0 and -19.998 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
             this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => basinCharacteristic.value != -9999.0 && basinCharacteristic.value != -19.998);
-            // console.log(this.basinCharacteristics);
             if (this.basinCharacteristics.length > 0) {
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
               let basinCharacteristicArray = [];
               this.basinCharacteristics.forEach(basinCharacteristic=> {
-                // debugger;
                 basinCharacteristicArray.push(this._fb.group({
                   text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
                   selectedCheckbox: false
                 }));
-                // this.workflowForm.controls.steps.value[2].options.push({
-                //   "text": basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
-                //   "selected": false
-                // });
               });
-              // console.log(this.workflowForm);
               this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
-              // console.log(this.workflowForm);
               this._workflowService.setWorkflowForm(this.workflowForm);
-              // console.log("selectedWorkflow", this.selectedWorkflow);
-              // debugger;
-              // this._workflowService.setSelectedWorkflow(this.selectedWorkflow);
             } else {
               this.selectedWorkflow.steps[2].description = "No basin characteristics available at the clicked point."
               this._mapService.setBasinCharacteristics(null);
