@@ -42,7 +42,7 @@
 					<div formArrayName="options">
 	
 						<!-- Loop for each step -->
-						<div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+						<div *ngFor="let option of workflowFormData[i].controls.options.controls; let j = index" formGroupName="{{j}}">
 
 							<!-- Radio Buttons -->
 							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">

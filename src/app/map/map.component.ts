@@ -3,7 +3,7 @@ import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WorkflowService } from '../shared/services/workflow.service';
 import "leaflet/dist/images/marker-shadow.png";
@@ -65,7 +65,7 @@ export class MapComponent implements OnInit {
   }
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-    HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
+    HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService, private _fb: FormBuilder) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -203,21 +203,31 @@ export class MapComponent implements OnInit {
             // Check to see what Basin Characteristics are available for this point
             // console.log(this.selectedWorkflow);
             await this.queryBasinCharacteristics();
+            // console.log(this.basinCharacteristics);
             // If at least one basin characteristic is available
             // TODO: change these values from -9999.0 and -19.998 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
             this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => basinCharacteristic.value != -9999.0 && basinCharacteristic.value != -19.998);
+            // console.log(this.basinCharacteristics);
             if (this.basinCharacteristics.length > 0) {
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+              let basinCharacteristicArray = [];
               this.basinCharacteristics.forEach(basinCharacteristic=> {
-                debugger;
-                this.workflowForm.controls.steps.value[2].options.push({
-                  "text": basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
-                  "selected": false
-                });
+                // debugger;
+                basinCharacteristicArray.push(this._fb.group({
+                  text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
+                  selectedCheckbox: false
+                }));
+                // this.workflowForm.controls.steps.value[2].options.push({
+                //   "text": basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
+                //   "selected": false
+                // });
               });
+              // console.log(this.workflowForm);
+              this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
+              // console.log(this.workflowForm);
               this._workflowService.setWorkflowForm(this.workflowForm);
               // console.log("selectedWorkflow", this.selectedWorkflow);
-              debugger;
+              // debugger;
               // this._workflowService.setSelectedWorkflow(this.selectedWorkflow);
             } else {
               this.selectedWorkflow.steps[2].description = "No basin characteristics available at the clicked point."
@@ -226,10 +236,16 @@ export class MapComponent implements OnInit {
           }
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
             // If at least one basin characteristic was selected
-            if (this.workflowData.steps[2].options.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.selected).length > 0) {
-              let selectedBasinCharacteristics = this.workflowData.steps[2].options.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.selected == true);
-              let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.text.substr(0, checkboxBasinCharacteristic.text.indexOf(':')));
+            console.log(this.workflowForm);
+            console.log(this.workflowForm.controls.steps.controls[2].controls.options.controls);
+            this.workflowForm.controls.steps.controls[2].controls.options.controls.forEach(element => {
+              console.log(element.value.selectedCheckbox);
+            });
+            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selectedCheckbox).length > 0) {
+              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selectedCheckbox == true);
+              let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.text.substr(0, checkboxBasinCharacteristic.value.text.indexOf(':')));
               this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
+              console.log(this.basinCharacteristics);
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
 
             } else {
