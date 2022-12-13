@@ -314,21 +314,4 @@ export class WorkflowComponent implements OnInit {
     });
   }
 
-  public populateForm() {
-    this.setSteps();
-    this.formData.steps.forEach((storedStep: any, index: any) => {
-      storedStep.options.forEach((option: any) => {
-        if (option.selected) {
-          if (storedStep.name === "selectFireHydroProcess") {
-            this.addSteps(option.text);
-          };
-        };
-      });
-      if (storedStep.completed) {
-        this.nextStep(index);
-      };
-    });
-    this.workflowForm.patchValue(this.formData);
-  }
-
 }
