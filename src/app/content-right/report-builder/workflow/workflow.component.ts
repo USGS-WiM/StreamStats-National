@@ -16,10 +16,12 @@ export class WorkflowComponent implements OnInit {
   @Input() formData: any;
 
   public workflowForm: FormGroup;
+  public selectedWorkflow: any;
   public stepsArray: FormArray;
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
+  public workflowData: any;
   // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
@@ -50,9 +52,6 @@ export class WorkflowComponent implements OnInit {
     if (this.formData === null) {
       // Set steps if there is no prior form data
       this.setSteps();
-    } else {
-      // Set step and set values of prior form data
-      this.populateForm();
     }
 
     // Get clicked point
@@ -98,10 +97,18 @@ export class WorkflowComponent implements OnInit {
     this._mapService.firePerimetersLayers.subscribe((layers) => {
       this.firePerimetersLayers = layers;
     });
-
     // Get downstream trace distance
     this._mapService.downstreamDist.subscribe((downstreamDist) => {
       this.downstreamDist = downstreamDist;
+    });
+    this.onContinue(this.workflowForm.value);
+    // Subscribe to workflow data
+    this._workflowService.formData.subscribe(workflowData => {
+      this.workflowData = workflowData;
+    });
+    // Subscribe to workflow form
+    this._workflowService.workflowForm.subscribe(workflowForm => {
+      this.workflowForm = workflowForm;
     });
   }
 
@@ -168,8 +175,10 @@ export class WorkflowComponent implements OnInit {
   public getSteps(form: any) {
     return form.controls.steps.controls;
   }
-  public getOptions(form: any) {
-    return form.controls.options.controls;
+
+  get workflowFormData() { 
+    let stepsArray = this.workflowForm.get('steps') as FormArray;
+    return stepsArray.controls; 
   }
 
   public setOptions(step: any) {
@@ -205,6 +214,7 @@ export class WorkflowComponent implements OnInit {
 
   public onContinue(formValue: any) {
     this._workflowService.setFormData(formValue);
+    this._workflowService.setWorkflowForm(this.workflowForm);
   }
 
   public fillOutputs() {
@@ -215,6 +225,7 @@ export class WorkflowComponent implements OnInit {
         this.output = {
           'clickPoint': this.clickedPoint, 
           'layers': [this.splitCatchmentLayer],
+          'basinCharacteristics': this.basinCharacteristics
         }
         break;
       case "Fire Hydrology":
@@ -278,14 +289,14 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onRadioChange(option, step) {
-    step.value.options.forEach(opt => {
-      if (opt.text == option.value.text) {
-        option.value.selected = true;
+    step.options.forEach(opt => {
+      if (opt.text == option.text) {
+        option.selected = true;
 
         // TODO: Update this once delineation has more routes/branches/paths to take with in the workflow
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
-        if (step.value.name === "selectFireHydroProcess") {
-          this.resetStepsArray(step.value);
+        if (step.name === "selectFireHydroProcess") {
+          this.resetStepsArray(step);
           this.addSteps(opt.text);
         }
 		
@@ -301,23 +312,6 @@ export class WorkflowComponent implements OnInit {
         option.selected = option.selected ? false : true
       } 
     });
-  }
-
-  public populateForm() {
-    this.setSteps();
-    this.formData.steps.forEach((storedStep: any, index: any) => {
-      storedStep.options.forEach((option: any) => {
-        if (option.selected) {
-          if (storedStep.name === "selectFireHydroProcess") {
-            this.addSteps(option.text);
-          };
-        };
-      });
-      if (storedStep.completed) {
-        this.nextStep(index);
-      };
-    });
-    this.workflowForm.patchValue(this.formData);
   }
 
 }

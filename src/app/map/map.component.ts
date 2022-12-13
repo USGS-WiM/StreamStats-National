@@ -3,6 +3,7 @@ import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
+import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WorkflowService } from '../shared/services/workflow.service';
 import "leaflet/dist/images/marker-shadow.png";
@@ -25,6 +26,7 @@ export class MapComponent implements OnInit {
   private configSettings: Config;
   private messager: ToastrService;
   public clickPoint;
+  public basinCharacteristics;
   public currentZoom: number = 4;
   public latestDischarge: any;
 	public workflowLayers = [] as any;
@@ -42,6 +44,7 @@ export class MapComponent implements OnInit {
   public streamgageLayer: any;
   public streamgageLayerStatus: boolean;
   public workflowData: any;
+  public workflowForm: any;
   public count: number = 0;
   public numFiresInClick: number = 0;
   public firesinClick = [];
@@ -62,7 +65,7 @@ export class MapComponent implements OnInit {
   }
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-    HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
+    HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService, private _fb: FormBuilder) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -132,6 +135,11 @@ export class MapComponent implements OnInit {
       this.clickPoint = point;
     });
 
+    // Setting local basin characteristics variable
+    this._mapService.basinCharacteristics.subscribe((bc: {}) => {
+      this.basinCharacteristics = bc;
+    });
+
     // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
@@ -179,20 +187,62 @@ export class MapComponent implements OnInit {
       }
     });
 
+    // Subscribe to the workflow form
+    this._workflowService.workflowForm.subscribe((workflowForm: any) => {
+      this.workflowForm = workflowForm;
+    });
+
     // Subscribe to the form data
     this._workflowService.formData.subscribe(async data => {
       this.workflowData = data;
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
           this.checkAvailableLayers();
+          // If Step #2 (Select Delineation Point) in the Delineation workflow has been completed
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[1].completed && !this.workflowData.steps[2].completed) {
+            // Check to see what Basin Characteristics are available for this point
+            await this.queryBasinCharacteristics();
+            // If at least one basin characteristic is available
+            // TODO: change these values from -9999.0 and -19.998 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
+            this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => basinCharacteristic.value != -9999.0 && basinCharacteristic.value != -19.998);
+            if (this.basinCharacteristics.length > 0) {
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+              let basinCharacteristicArray = [];
+              this.basinCharacteristics.forEach(basinCharacteristic=> {
+                basinCharacteristicArray.push(this._fb.group({
+                  text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
+                  selectedCheckbox: false
+                }));
+              });
+              this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
+              this._workflowService.setWorkflowForm(this.workflowForm);
+            } else {
+              this.selectedWorkflow.steps[2].description = "No basin characteristics available at the clicked point."
+              this._mapService.setBasinCharacteristics(null);
+            }
+          }
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
+            // If at least one basin characteristic was selected
+            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selectedCheckbox).length > 0) {
+              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selectedCheckbox == true);
+              let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.text.substr(0, checkboxBasinCharacteristic.value.text.indexOf(':')));
+              this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+
+            } else {
+              this._mapService.setBasinCharacteristics(null);
+            }
+          }
         }
         if (this.workflowData.title == "Fire Hydrology") {
-          if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
-            this.queryBurnYear();
-          }
-          if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
-            this._loaderService.showFullPageLoad();
-            this.addTraceLayer(this.traceData);
+          if (this.workflowData.steps[1]) {
+            if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
+              this.queryBurnYear();
+            }
+            if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
+              this._loaderService.showFullPageLoad();
+              this.addTraceLayer(this.traceData);
+            }
           }
         }
       }
@@ -450,6 +500,15 @@ export class MapComponent implements OnInit {
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
     this.outputLayers.addLayer(this.marker);
+  }
+
+  public async queryBasinCharacteristics() {
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Checking available basin characteristics. Please wait.");
+    let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+    this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
+    this.createMessage("Available basin characteristics were successfully checked.");
+    this._loaderService.hideFullPageLoad();
   }
 
   ////////////////////////////////

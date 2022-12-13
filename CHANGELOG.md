@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allows users to enter downstream distance in "Query by Fire Perimeters" workflow
 - Descriptions to workflows and steps
 - Added cursor attribute to workflows
+- Basin characteristics computation to "Delineation" workflow
 
 ### Changed  
 

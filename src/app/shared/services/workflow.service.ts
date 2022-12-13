@@ -2,6 +2,7 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { Config } from '../interfaces/config/config';
@@ -51,6 +52,15 @@ export class WorkflowService {
   }
   public get formData(): Observable<Array<any>>{
     return this._formData.asObservable();
+  }
+
+  //get all completed current workflow form data
+  private _workflowForm: BehaviorSubject<FormGroup> = new BehaviorSubject<FormGroup>(null);
+  public setWorkflowForm(obj: FormGroup) {
+    this._workflowForm.next(obj);
+  }
+  public get workflowForm(): Observable<FormGroup>{
+    return this._workflowForm.asObservable();
   }
   
   //get all completed workflow data

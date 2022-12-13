@@ -25,7 +25,7 @@
 		<!-- Form -->
 		<div formArrayName="steps" class="workflow-steps">
 	
-			<div *ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index' class="step" [ngClass]="{'completed': stepsCompleted > i}">
+			<div *ngFor='let step of workflowFormData | slice:0:stepsCompleted+1; let i = index' class="step" [ngClass]="{'completed': stepsCompleted > i}">
 	
 				<!-- Step number, title, description -->
 				<div class="step-info">
@@ -42,11 +42,11 @@
 					<div formArrayName="options">
 	
 						<!-- Loop for each step -->
-						<div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+						<div *ngFor="let option of workflowFormData[i].controls.options.controls; let j = index" formGroupName="{{j}}">
 
 							<!-- Radio Buttons -->
 							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
-								<input type="radio" id="workflowRadio{{j}}" name="selectedRadio" formControlName="selectedRadio" (change)="onRadioChange(option, step)">
+								<input type="radio" id="workflowRadio{{j}}" name="selectedRadio" formControlName="selectedRadio" (change)="onRadioChange(option.value, step.value)">
 								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
 							</div>
 	
