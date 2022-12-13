@@ -223,16 +223,10 @@ export class MapComponent implements OnInit {
           }
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
             // If at least one basin characteristic was selected
-            console.log(this.workflowForm);
-            console.log(this.workflowForm.controls.steps.controls[2].controls.options.controls);
-            this.workflowForm.controls.steps.controls[2].controls.options.controls.forEach(element => {
-              console.log(element.value.selectedCheckbox);
-            });
             if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selectedCheckbox).length > 0) {
               let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selectedCheckbox == true);
               let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.text.substr(0, checkboxBasinCharacteristic.value.text.indexOf(':')));
               this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
-              console.log(this.basinCharacteristics);
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
 
             } else {
