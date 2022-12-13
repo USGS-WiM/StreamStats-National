@@ -46,7 +46,7 @@
 
 							<!-- Radio Buttons -->
 							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
-								<input type="radio" id="workflowRadio{{j}}" name="selectedRadio" formControlName="selectedRadio" (change)="onRadioChange(option, step)">
+								<input type="radio" id="workflowRadio{{j}}" name="selectedRadio" formControlName="selectedRadio" (change)="onRadioChange(option.value, step.value)">
 								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
 							</div>
 	

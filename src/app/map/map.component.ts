@@ -235,12 +235,14 @@ export class MapComponent implements OnInit {
           }
         }
         if (this.workflowData.title == "Fire Hydrology") {
-          if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
-            this.queryBurnYear();
-          }
-          if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
-            this._loaderService.showFullPageLoad();
-            this.addTraceLayer(this.traceData);
+          if (this.workflowData.steps[1]) {
+            if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
+              this.queryBurnYear();
+            }
+            if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
+              this._loaderService.showFullPageLoad();
+              this.addTraceLayer(this.traceData);
+            }
           }
         }
       }
