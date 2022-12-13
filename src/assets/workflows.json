@@ -15,8 +15,7 @@
                 "options":
                 [
                     {
-                        "text": "NLDI Delineation",
-                        "selected": false
+                        "text": "NLDI Delineation"
                     }
                 ]
             },
@@ -33,8 +32,7 @@
                 "options":
                 [
                     {
-                        "text":"Select a delineation point on a blue stream line on the map.",
-                        "selected": false
+                        "text":"Select a delineation point on a blue stream line on the map."
                     }
                 ]
             },
@@ -81,8 +79,7 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Select a delineation point on a blue stream line on the map.",
-                                        "selected": false
+                                        "text": "Select a delineation point on a blue stream line on the map."
                                     }
                                 ]
                             },
