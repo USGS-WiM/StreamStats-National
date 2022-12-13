@@ -42,18 +42,22 @@
 					<div formArrayName="options">
 	
 						<!-- Loop for each step -->
-						<div
-							*ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+						<div *ngFor="let option of getOptions(step); let j = index" formGroupName="{{j}}">
+
+							<!-- Radio Buttons -->
+							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
+								<input type="radio" id="workflowRadio{{j}}" name="selectedRadio" formControlName="selectedRadio" (change)="onRadioChange(option, step)">
+								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
+							</div>
 	
 							<!-- Checkboxes -->
-							<div class="workflow-radio-group" *ngIf="step.value.type === 'checkbox'">
-								<input type="checkbox" id="workflowRadio{{j}}" name="workflowRadioSelection" formControlName="selected" [checked]="option.value.selected" (change)="onCheckboxChange(option.value, step.value)">
-								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
+							<div class="workflow-checkbox-group" *ngIf="step.value.type === 'checkbox'">
+								<input type="checkbox" id="workflowCheckbox{{j}}" name="workflowRadioSelection" formControlName="selectedCheckbox" (change)="onCheckboxChange(option.value, step.value)">
+								<label class="mleft-xs" for="workflowCheckbox{{j}}" >{{option.value.text}}</label>
 							</div>
 	
 							<!-- Subscription -->
 							<div *ngIf="step.value.type === 'subscription'">
-								<input type="hidden" formControlName="selected" />
 								<label class="step-body-instruction">
 									{{option.value.text}}
 								</label>
@@ -75,7 +79,7 @@
 				<div class="step-actions">
 					<div></div>
 					<!-- Next Button -->
-					<button (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="stepsCompleted > i">Next</button>
+					<button type="button" (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="stepsCompleted > i">Next</button>
 				</div>
 	
 	

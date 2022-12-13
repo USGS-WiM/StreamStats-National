@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Remove all output workflow layers when workflow is complete
 - Updated to google analytics 4
 - Burn Severity is turned off by default for Fire Hydrology workflows
+- Some checkboxes are now radio buttons where appropriate
 
 ### Deprecated 
 
