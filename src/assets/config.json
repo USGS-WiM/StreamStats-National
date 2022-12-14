@@ -69,8 +69,8 @@
         },
         {
             "name": "MTBS Fire Boundaries",
-            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
-            "type": "agsDynamic",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer/63",
+            "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999,
                 "layers": [63]
@@ -85,7 +85,7 @@
                 "zIndex": 9999,
                 "minZoom": 10
             },
-            "visible": true
+            "visible": false
         },
         {
             "name": "GeologyFeatures",
@@ -165,6 +165,10 @@
         }
     ],
     "symbols": {
+        "MTBS Fire Boundaries": {
+            "color": "#3CB043",
+            "fillColor": "#3CB043"
+        },
         "2022 Wildland Fire Perimeters": {
             "color": "#EBCF26",
             "fillColor": "#EBCF26"

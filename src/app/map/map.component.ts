@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MapService } from '../shared/services/map.service';
 import * as L from 'leaflet';
 import { Config } from 'protractor';
 import { ConfigService } from '../shared/config/config.service';
+import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WorkflowService } from '../shared/services/workflow.service';
 import "leaflet/dist/images/marker-shadow.png";
@@ -19,11 +20,13 @@ import area from '@turf/area';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
+
 export class MapComponent implements OnInit {
   public authHeader: HttpHeaders;
   private configSettings: Config;
   private messager: ToastrService;
   public clickPoint;
+  public basinCharacteristics;
   public currentZoom: number = 4;
   public latestDischarge: any;
 	public workflowLayers = [] as any;
@@ -41,15 +44,28 @@ export class MapComponent implements OnInit {
   public streamgageLayer: any;
   public streamgageLayerStatus: boolean;
   public workflowData: any;
+  public workflowForm: any;
   public count: number = 0;
+  public numFiresInClick: number = 0;
+  public firesinClick = [];
+  public selectedPerimeterHighlight;
   public foundFire:boolean = false; 
   public firePerimeterLayer;
-  public selectedPerimeters = [];
   public traceData = [];
   public cursor = 'auto';
+  public selectedPerimeter: any;
+  public outputLayers: L.LayerGroup;
+
+  @HostListener('document:click', ['$event']) 
+  clickout(event) 
+  { 
+    if (event.target.classList.contains("selectFire")) {
+      this.selectFire(event.path[2].innerHTML); 
+    }
+  }
 
   constructor(public _mapService: MapService, private _configService: ConfigService, private _http:
-    HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService) { 
+    HttpClient, private _workflowService: WorkflowService, public toastr: ToastrService, private _loaderService: LoaderService, private _appService: AppService, private _fb: FormBuilder) { 
     this.configSettings = this._configService.getConfiguration();
     this.messager = toastr;
   }
@@ -64,6 +80,7 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       zoomControl: false
     });
+    this.outputLayers = L.layerGroup().addTo(this._mapService.map);
 
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
@@ -118,6 +135,11 @@ export class MapComponent implements OnInit {
       this.clickPoint = point;
     });
 
+    // Setting local basin characteristics variable
+    this._mapService.basinCharacteristics.subscribe((bc: {}) => {
+      this.basinCharacteristics = bc;
+    });
+
     // On map click, set click point value
     this._mapService.map.on("click", (evt: { latlng: { lat: number; lng: number; }; }) => {
       this._mapService.setClickPoint(evt.latlng);
@@ -154,13 +176,20 @@ export class MapComponent implements OnInit {
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
       if (this.selectedWorkflow) {
-        if(this.selectedWorkflow.title != "Delineation") {
+        this.outputLayers = L.layerGroup().addTo(this._mapService.map);
+        if (this.selectedWorkflow.title != "Delineation") {
           this.checkAvailableLayers();
         }
       }
-      if (!this.selectedWorkflow){
+      if (!this.selectedWorkflow) {
         this.removeWorkFlowLayers();
+        this.removeLayer(this.outputLayers);
       }
+    });
+
+    // Subscribe to the workflow form
+    this._workflowService.workflowForm.subscribe((workflowForm: any) => {
+      this.workflowForm = workflowForm;
     });
 
     // Subscribe to the form data
@@ -169,14 +198,51 @@ export class MapComponent implements OnInit {
       if (this.workflowData) {
         if (this.workflowData.title == "Delineation" || this.workflowData.title == "Fire Hydrology") {
           this.checkAvailableLayers();
+          // If Step #2 (Select Delineation Point) in the Delineation workflow has been completed
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[1].completed && !this.workflowData.steps[2].completed) {
+            // Check to see what Basin Characteristics are available for this point
+            await this.queryBasinCharacteristics();
+            // If at least one basin characteristic is available
+            // TODO: change these values from -9999.0 and -19.998 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
+            this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => basinCharacteristic.value != -9999.0 && basinCharacteristic.value != -19.998);
+            if (this.basinCharacteristics.length > 0) {
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+              let basinCharacteristicArray = [];
+              this.basinCharacteristics.forEach(basinCharacteristic=> {
+                basinCharacteristicArray.push(this._fb.group({
+                  text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
+                  selectedCheckbox: false
+                }));
+              });
+              this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
+              this._workflowService.setWorkflowForm(this.workflowForm);
+            } else {
+              this.selectedWorkflow.steps[2].description = "No basin characteristics available at the clicked point."
+              this._mapService.setBasinCharacteristics(null);
+            }
+          }
+          if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
+            // If at least one basin characteristic was selected
+            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selectedCheckbox).length > 0) {
+              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selectedCheckbox == true);
+              let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.text.substr(0, checkboxBasinCharacteristic.value.text.indexOf(':')));
+              this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
+              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+
+            } else {
+              this._mapService.setBasinCharacteristics(null);
+            }
+          }
         }
         if (this.workflowData.title == "Fire Hydrology") {
-          if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
-            this.queryBurnYear();
-          }
-          if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
-            this._loaderService.showFullPageLoad();
-            this.addTraceLayer(this.traceData);
+          if (this.workflowData.steps[1]) {
+            if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
+              this.queryBurnYear();
+            }
+            if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
+              this._loaderService.showFullPageLoad();
+              this.addTraceLayer(this.traceData);
+            }
           }
         }
       }
@@ -197,6 +263,21 @@ export class MapComponent implements OnInit {
       } else {
         this.cursor = "auto";
       }
+    });
+
+    // Get selected fire perimeters
+    this._mapService.selectedPerimeters.subscribe((perimeter) => {
+      this.selectedPerimeter = perimeter;
+      //remove old highlight
+      if (this.selectedPerimeterHighlight) {
+        var x_id = L.stamp(this.selectedPerimeterHighlight); // Retrieve the x layer ID
+        this.outputLayers.removeLayer(x_id);
+      }
+      // highlighted select perimeter 
+      this.selectedPerimeterHighlight = L.geoJSON(this.selectedPerimeter.Data);
+      this.selectedPerimeterHighlight.setStyle({color: "#ff0000"});
+      this.outputLayers.addLayer(this.selectedPerimeterHighlight);
+
     });
 
     // Load Layers
@@ -245,7 +326,7 @@ export class MapComponent implements OnInit {
                     this.addLayers('2021 Wildland Fire Perimeters', true);
                     this.addLayers('2022 Wildland Fire Perimeters', true);
                     this.addLayers('MTBS Fire Boundaries', true);
-                    this.addLayers('Burn Severity', true);
+                    this.addLayers('Burn Severity', false);
                   }
                 }
               })
@@ -400,7 +481,7 @@ export class MapComponent implements OnInit {
       if (this.basin) {  
         this.removeLayer(this.splitCatchmentLayer);  
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
-        this.splitCatchmentLayer.addTo(this._mapService.map);
+        this.outputLayers.addLayer(this.splitCatchmentLayer);
         if (!this.splitCatchmentLayer.getBounds().isValid()) {
           this.createMessage("Error. Basin cannot be delineated.");
         } else {
@@ -418,7 +499,16 @@ export class MapComponent implements OnInit {
     this.removeLayer(this.marker);
     const content = '<div><b>Latitude:</b> ' + latlng.lat + '<br><b>Longitude:</b> ' + latlng.lng;
     this.marker = L.marker(latlng, {icon: RedIcon}).bindPopup(content).openPopup();
-    this._mapService.map?.addLayer(this.marker);
+    this.outputLayers.addLayer(this.marker);
+  }
+
+  public async queryBasinCharacteristics() {
+    this._loaderService.showFullPageLoad();
+    this.createMessage("Checking available basin characteristics. Please wait.");
+    let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+    this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
+    this.createMessage("Available basin characteristics were successfully checked.");
+    this._loaderService.hideFullPageLoad();
   }
 
   ////////////////////////////////
@@ -484,27 +574,62 @@ export class MapComponent implements OnInit {
   public onMouseClickFireHydroQueryFirePerimeter() { 
     this._loaderService.showFullPageLoad();
     this.count = 0;
+    this.numFiresInClick = 0;
+    this.selectedPerimeterHighlight = null;
     this.foundFire = false;
-    this.selectedPerimeters = [];
+    this.firesinClick = [];
+    this.createMessage("Querying fire perimeters in click point. Please wait.");
+
     Object.keys(this.workflowLayers).forEach(layerName => {
-      if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
-        this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
-          .run((error: any, results: any) => {
-            this.findFireFeatures(error,results,layerName);
+      if (this.activeWorkflowLayers.find(layer => layer.name === layerName)) {
+        if (this.activeWorkflowLayers.find(layer => layer.name === layerName).visible == true) {
+          if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters' || layerName === 'MTBS Fire Boundaries') {
+            this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
+              .run((error: any, results: any) => {
+                this.findFireFeatures(error, results, layerName);
+              }
+            );
+         } else {
+            this.count ++;
+            this.checkCount(this.count, 6);
           }
-        );
-      } else if (layerName === 'MTBS Fire Boundaries') {
-        this.workflowLayers[layerName].identify().on(this._mapService.map).at(this.clickPoint).returnGeometry(true).tolerance(5)
-          .run(async (error: any, results: any) => {
-            this.findFireFeatures(error,results,layerName);
-          }
-        );
+        } else {
+          this.count ++;
+          this.checkCount(this.count, 6);
+        }
       }
     });
   }
 
   public findFireFeatures(error, results, layerName) {
+    
+    if (error) {
+      this.createMessage('Error occurred.','error');
+      this._loaderService.hideFullPageLoad();
+    } else if (results && results.features.length > 0) {
+      this.foundFire = true;
+
+      if (results.features.length == 1) {
+        this.createContent(layerName, results.features[0]);
+        this.firesinClick.push({ 'Key': layerName, 'Data': results})
+      } else { // More than 1 of the same fire perimeter in click point
+        var temp = { 'crs': null, 'type': null, 'features': null }
+        var index = results.features.length;
+        for (let i = 0; i < index; i++) {         // need to split into seperate fire perimeters
+          temp = { crs: results.crs, type: results.type, features: [results.features[i]] }
+          this.createContent(layerName, temp.features[0]);
+          this.firesinClick.push({ 'Key': layerName, 'Data': temp})
+          temp = { 'crs': null, 'type': null, 'features': null }
+        }
+      }
+    } 
+    this.count ++;
+    this.checkCount(this.count, 6);
+  }
+
+  public createContent(layerName, feat) {
     let popupcontent;
+    var properties = {};
     const shownFields = {
       'INCIDENTNAME':"Incident Name",
       'COMMENTS':"Comments",
@@ -530,74 +655,67 @@ export class MapComponent implements OnInit {
       'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
       'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
   };
-    if (error) {
-      this.createMessage('Error occurred.','error');
-      this._loaderService.hideFullPageLoad();
-    } else if (results && results.features.length > 0) {
-      this.foundFire = true;
-      var properties = {};
-      results.features.forEach(feat => {
-        popupcontent = '<div class="popup-header"><b>' + layerName + ':</b></div><br>';
-        if (layerName === 'MTBS Fire Boundaries') {
-          let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
-          if (date.indexOf('undefined') > -1) date = 'N/A';
+
+    popupcontent = '<p hidden>' + this.numFiresInClick + '</p>'
+    popupcontent += '<div class="popup-header"><b>' + layerName + '</b></div><hr>';
+    if (layerName === 'MTBS Fire Boundaries') {
+      let date = feat.properties.STARTMONTH + '/' + feat.properties.STARTDAY + '/' + feat.properties.YEAR;
+      if (date.indexOf('undefined') > -1) date = 'N/A';
+    }
+    Object.keys(feat.properties).forEach(prop => {
+      if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
+        let label = shownFields[prop.toUpperCase()];
+        let val = feat.properties[prop];
+        if (prop.toLowerCase().indexOf('date') > -1) {
+          val = new Date(val).toLocaleDateString();
         }
-        Object.keys(feat.properties).forEach(prop => {
-          if (Object.keys(shownFields).indexOf(prop.toUpperCase()) > -1) {
-            let label = shownFields[prop.toUpperCase()];
-            let val = feat.properties[prop];
-            if (prop.toLowerCase().indexOf('date') > -1) {
-              val = new Date(val).toLocaleDateString();
-            }
-            properties[label] = val;
-            popupcontent += '<b>' + label + ':</b> ' + val + '<br>';
-          } 
-        });
-        popupcontent += '<br>';
-        if (layerName === 'MTBS Fire Boundaries') {
-          this.firePerimeterLayer = L.geoJSON(feat.geometry);
-        } else if (layerName === '2022 Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters') {
-          const col = layerName.indexOf('Active') > -1 ? 'yellow' : 'red';
-          this.firePerimeterLayer = L.geoJSON(feat.geometry, {style: {color: col}});
-        }
-        this.firePerimeterLayer.addTo(this._mapService.map);
-        this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
-        feat.properties = properties;
-      });
-      this.selectedPerimeters.push({ 'Key': layerName, 'Data': results})
-      this.traceData.push(results);
-    } 
-    this._mapService.setSelectedPerimeters(this.selectedPerimeters);
-    this.count ++;
-    this.checkCount(this.count, 5);
+        properties[label] = val;
+        popupcontent += '<b>' + label + ':</b> ' + val + '<br>';
+      } 
+    });
+    popupcontent += '<br>'; 
+    popupcontent += '<center><button class="selectFire usa-button">Select Fire</button></center>'
+
+    this.firePerimeterLayer = L.geoJSON(feat.geometry);
+    this.addBurnPoint(this.firePerimeterLayer.getBounds().getCenter(), popupcontent);
+    feat.properties = properties;
+    this.numFiresInClick ++;
   }
 
-  public addTraceLayer(data) { 
-    var dataLength = (data.length);
+
+  public selectFire(text) {
+    // figure out which perimeter they selected
+    var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
+    var result = text.match(regex)[0];
+    //  select new perimeter
+    this._mapService.setSelectedPerimeters(this.firesinClick[result]);
+    // set trace data 
+    this.traceData = this.firesinClick[result].Data;
+  }
+
+  public async addTraceLayer(data) { 
     var downstreamDist = this.workflowData.steps[2].options[0].text
     this._mapService.setDownstreamDist(downstreamDist);
 
-    data.forEach(async (trace, index) => {
-      var data = await this._mapService.trace(trace, downstreamDist).toPromise();
-      if (data && data.features) {
-        data.features.forEach((feature) => {
+      var response = await this._mapService.trace(data, downstreamDist).toPromise();
+
+      if (response && response.features) {
+        response.features.forEach((feature) => {
           if (feature.id == "flowlinesGeom") { // Only print out the flow lines
             this.traceLayer = L.geoJSON(feature.geometry);
           }
         });   
       } 
       this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
-      this.traceLayer.addTo(this._mapService.map);
+      this.outputLayers.addLayer(this.traceLayer);
       this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
-      if (index + 1 == dataLength) {
-        this._loaderService.hideFullPageLoad();
-      }
-    }); 
+      this._loaderService.hideFullPageLoad();
+   
   }
 
   public addBurnPoint(latlng, popupcontent) {
-    this.marker = L.marker(latlng).bindPopup(popupcontent).openPopup();
-    this._mapService.map?.addLayer(this.marker);
+    this.marker = L.marker(latlng).bindPopup(popupcontent, {"autoClose": false}).openPopup();
+    this.outputLayers.addLayer(this.marker);
     this.marker.openPopup();
   }
 

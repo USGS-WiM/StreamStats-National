@@ -1,7 +1,7 @@
 [
     {
         "title": "Delineation",
-        "description": "Delineate a basin based on a click point.",
+        "description": "Delineate a basin from a clicked point and compute basin characteristics.",
         "functionality": "Core",
         "icon": "far fa-map-marker",
         "steps":
@@ -10,13 +10,12 @@
                 "label": "Select Delineation Process",
                 "description": "",
                 "name": "selectDelineationProcess",
-                "type": "checkbox",
+                "type": "radio",
                 "cursor": "auto",
                 "options":
                 [
                     {
-                        "text": "NLDI Delineation",
-                        "selected": false
+                        "text": "NLDI Delineation"
                     }
                 ]
             },
@@ -33,10 +32,17 @@
                 "options":
                 [
                     {
-                        "text":"Select a delineation point on a blue stream line on the map.",
-                        "selected": false
+                        "text":"Select a delineation point on a blue stream line on the map."
                     }
                 ]
+            },
+            {
+                "label": "Select Basin Characteristics",
+                "description": "",
+                "name": "selectBasinCharacteristics",
+                "type": "checkbox",
+                "cursor": "auto",
+                "options": []
             }
         ]
     },
@@ -51,7 +57,7 @@
                 "label": "Select a Fire Hydrology Query Method",
                 "description": "",
                 "name": "selectFireHydroProcess",
-                "type": "checkbox",
+                "type": "radio",
                 "cursor": "auto",
                 "options":
                 [
@@ -73,8 +79,7 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Select a delineation point on a blue stream line on the map.",
-                                        "selected": false
+                                        "text": "Select a delineation point on a blue stream line on the map."
                                     }
                                 ]
                             },
