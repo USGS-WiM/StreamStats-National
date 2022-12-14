@@ -87,7 +87,7 @@
                                 "label":"Burn Area Year Range",
                                 "description": "Enter a start and end date for the burn area year range.",
                                 "name": "burnAreaYearRange",
-                                "type": "text",
+                                "type": "textbox",
                                 "cursor": "auto",
                                 "validators": 
                                 {
@@ -134,7 +134,7 @@
                                 "label": "Enter Downstream Trace Distance",
                                 "description": "Enter the distance (kilometers) to trace stream lines downstream of the fire perimeter.",
                                 "name": "enterDownstreamDistance",
-                                "type": "text",
+                                "type": "textbox",
                                 "cursor": "auto",
                                 "validators": 
                                 {

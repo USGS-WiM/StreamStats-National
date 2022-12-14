@@ -6,22 +6,6 @@
 	
 	<form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
 	
-		<!-- USWDS Step Indicator -->
-		<!-- <div class="usa-step-indicator usa-step-indicator--counters-sm" aria-label="progress" formArrayName="steps">
-			<ol class="usa-step-indicator__segments">
-	
-				<li class="usa-step-indicator__segment usa-step-indicator__segment--complete" 
-					*ngFor='let step of getSteps(workflowForm)| slice:0:stepsCompleted+1; let i = index'>
-	
-					<span class="usa-step-indicator__segment-label">
-						Step {{i+1}}:
-						<span class="usa-sr-only">completed</span>
-					</span>
-				</li>
-	
-			</ol>
-		</div> -->
-	
 		<!-- Form -->
 		<div formArrayName="steps" class="workflow-steps">
 	
@@ -52,7 +36,7 @@
 	
 							<!-- Checkboxes -->
 							<div class="workflow-checkbox-group" *ngIf="step.value.type === 'checkbox'">
-								<input type="checkbox" id="workflowCheckbox{{j}}" name="workflowRadioSelection" formControlName="selectedCheckbox" (change)="onCheckboxChange(option.value, step.value)">
+								<input type="checkbox" id="workflowCheckbox{{j}}" name="selectedCheckbox" formControlName="selectedCheckbox" (change)="onCheckboxChange(option.value, step.value)">
 								<label class="mleft-xs" for="workflowCheckbox{{j}}" >{{option.value.text}}</label>
 							</div>
 	
