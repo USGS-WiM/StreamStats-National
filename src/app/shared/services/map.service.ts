@@ -660,21 +660,20 @@ export class MapService {
     }
 
     // Get selected Fire Perimeters layers
-    private _selectedPerimetersLayer: Subject<any> = new Subject<any>();
-    public setFirePerimetersLayers(firePerimeters: any, trace: any) {
-        this._selectedPerimetersLayer.next([firePerimeters, trace]);
+    private _fireLayers: Subject<any> = new Subject<any>();
+    public setFireTraceLayers(firePerimeters: any, trace: any) {
+        this._fireLayers.next([firePerimeters, trace]);
     }
-    public get firePerimetersLayers(): any {
-        return this._selectedPerimetersLayer.asObservable();
+    public get fireTraceLayers(): any {
+        return this._fireLayers.asObservable();
     }
     // Get selected Fire Perimeters
-    private _selectedPerimeters: Subject<any> = new Subject<any>();
-    public setSelectedPerimeters(array) {
-        console.log('hhi')
-        this._selectedPerimeters.next(array);
+    private _selectedFirePerimeter: Subject<any> = new Subject<any>();
+    public setSelectedFirePerimeter(perimeter) {
+        this._selectedFirePerimeter.next(perimeter);
     }
-    public get selectedPerimeters(): any {
-        return this._selectedPerimeters.asObservable();
+    public get selectedFirePerimeter(): any {
+        return this._selectedFirePerimeter.asObservable();
     }
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {

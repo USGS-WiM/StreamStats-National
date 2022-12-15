@@ -266,7 +266,7 @@ export class MapComponent implements OnInit {
     });
 
     // Get selected fire perimeters
-    this._mapService.selectedPerimeters.subscribe((perimeter) => {
+    this._mapService.selectedFirePerimeter.subscribe((perimeter) => {
       this.selectedPerimeter = perimeter;
       //remove old highlight
       if (this.selectedPerimeterHighlight) {
@@ -317,7 +317,7 @@ export class MapComponent implements OnInit {
             if (this.workflowData && this.workflowData.steps) {
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
                 if (o.selected == true) {
-                  if (o.text === "Query by Fire Perimeters" || o.text === "Query by Basin") {
+                  if (o.text === "Query by Fire Perimeter" || o.text === "Query by Basin") {
                     if (o.text === "Query by Basin") {
                       this.addLayers('NHD Flowlines', true);
                     }
@@ -688,7 +688,7 @@ export class MapComponent implements OnInit {
     var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
     var result = text.match(regex)[0];
     //  select new perimeter
-    this._mapService.setSelectedPerimeters(this.firesinClick[result]);
+    this._mapService.setSelectedFirePerimeter(this.firesinClick[result]);
     // set trace data 
     this.traceData = this.firesinClick[result].Data;
   }
@@ -706,7 +706,7 @@ export class MapComponent implements OnInit {
           }
         });   
       } 
-      this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
+      this._mapService.setFireTraceLayers(this.firePerimeterLayer, this.traceLayer);
       this.outputLayers.addLayer(this.traceLayer);
       this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();

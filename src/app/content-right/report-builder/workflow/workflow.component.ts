@@ -15,10 +15,8 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
 export class WorkflowComponent implements OnInit {
 
   @Input() workflow!: Workflow;
-  @Input() formData: any;
 
   public workflowForm: FormGroup;
-  public selectedWorkflow: any;
   public stepsArray: FormArray;
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
@@ -27,7 +25,7 @@ export class WorkflowComponent implements OnInit {
   public text;
   //Subscriptions 
   public downstreamSubscription;
-  public fireLayersSubscription;
+  public fireTraceSubscription;
   public streamflowSubscription;
   public bcSubscription;
   public geologyReportSubscription;
@@ -35,7 +33,7 @@ export class WorkflowComponent implements OnInit {
   public burnYearsSubscription;
   public basinAreaSubscription;
   public deleationSubscription;
-  public firePerimetersSubscription;
+  public firePerimeterSubscription;
   // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
@@ -47,8 +45,8 @@ export class WorkflowComponent implements OnInit {
   public basinCharacteristics;
   public streamflowEstimates;
   // Fire Hydrology: Query by Fire Perimeters output
-  public selectedPerimeters;
-  public firePerimetersLayers;
+  public selectedFirePerimeter;
+  public fireTraceLayer;
   public output:any = {};
   public downstreamDist;
   
@@ -64,18 +62,14 @@ export class WorkflowComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.formData === null) {
-      // Set steps if there is no prior form data
-      this.setSteps();
-    }
-
+    this.setSteps();
+    
     // Get clicked point
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
     });
     // Get delineation and basin area
     this.deleationSubscription = this._mapService.delineationPolygon.subscribe((poly: any) => {
-      console.log(poly)
       var basin = poly;
       if (basin) {  
         this.setSubComplete(this.stepsCompleted);
@@ -107,14 +101,13 @@ export class WorkflowComponent implements OnInit {
       this.streamflowEstimates = streamflowEstimates;
     });    
     // Get selected fire perimeters
-    this.firePerimetersSubscription =this._mapService.selectedPerimeters.subscribe((perimeters) => {
+    this.firePerimeterSubscription =this._mapService.selectedFirePerimeter.subscribe((perimeter) => {
       this.setSubComplete(this.stepsCompleted)
-      this.selectedPerimeters = perimeters;
+      this.selectedFirePerimeter = perimeter;
     });
     // Get selected fire perimeter layer
-    this.fireLayersSubscription =this._mapService.firePerimetersLayers.subscribe((layers) => {
-      console.log('firePerimetersLayers')
-      this.firePerimetersLayers = layers;
+    this.fireTraceSubscription =this._mapService.fireTraceLayers.subscribe((layers) => {
+      this.fireTraceLayer = layers;
     });
     // Get downstream trace distance
     this.downstreamSubscription =this._mapService.downstreamDist.subscribe((downstreamDist) => {
@@ -138,10 +131,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public setSubComplete(step) {
-    console.log(step)
-    console.log(this.workflowData)
     this.workflowData.steps[step].subComplete = true;
-
   }
 
   public setSteps() {
@@ -265,9 +255,9 @@ export class WorkflowComponent implements OnInit {
         } else if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
           this.output = {
             'clickPoint': this.clickedPoint, 
-            'layers': this.firePerimetersLayers,
+            'layers': this.fireTraceLayer,
             'downstreamDist' : this.downstreamDist,
-            'selectedPerimetersInfo': this.selectedPerimeters};
+            'selectedPerimetersInfo': this.selectedFirePerimeter};
         }
         break;
     }
@@ -304,7 +294,6 @@ export class WorkflowComponent implements OnInit {
   }
 
   public checkStep(type, stepNum) {
-    //console.log(this.workflowFormData[stepNum])
     if (type == 'checkbox') {
       let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
       var result;
@@ -346,7 +335,7 @@ export class WorkflowComponent implements OnInit {
     this.stepsCompleted = 0;
     // unsubscribe to subscriptions
     this.downstreamSubscription.unsubscribe();
-    this.fireLayersSubscription.unsubscribe();
+    this.fireTraceSubscription.unsubscribe();
     this.streamflowSubscription.unsubscribe();
     this.bcSubscription.unsubscribe();
     this.geologyReportSubscription.unsubscribe();
@@ -354,7 +343,7 @@ export class WorkflowComponent implements OnInit {
     this.burnYearsSubscription.unsubscribe();
     this.basinAreaSubscription.unsubscribe();
     this.deleationSubscription.unsubscribe();
-    this.firePerimetersSubscription.unsubscribe();
+    this.firePerimeterSubscription.unsubscribe();
   }
 
   public onRadioChange(option, step) {
