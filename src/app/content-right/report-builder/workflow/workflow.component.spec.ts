@@ -94,7 +94,6 @@ describe('WorkflowComponent', () => {
     fixture = TestBed.createComponent(WorkflowComponent);
     component = fixture.componentInstance;
     component.workflow = mockWorkflow;
-    component.formData = null;
     fixture.detectChanges();
   });
 
@@ -175,7 +174,6 @@ describe('WorkflowComponent', () => {
   });
 
   it('#finishedWorkflow should update services', () => {
-    component.formData = mockFormData;
     spyOn(component, 'finishedWorkflow').and.callThrough();
     const formData = {
       title: "Example Workflow",

@@ -1,8 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Console } from 'console';
 import * as L from 'leaflet';
-import { last, shareReplay, take } from 'rxjs/operators';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
@@ -294,7 +292,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public checkStep(type, stepNum) {
-    if (type == 'checkbox') {
+    if (type == 'checkbox' || type == 'radio') {
       let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
       var result;
       optionsArray.controls.forEach((element) => {
@@ -311,15 +309,6 @@ export class WorkflowComponent implements OnInit {
       if (this.text && this.text.length > 0) {
         return(true)
       }
-    } else if (type == 'radio') {
-      let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
-      var result;
-      optionsArray.controls.forEach((element) => {
-        if (element.value.selected == true) {
-          result = true
-        }
-      });
-      return(result)
     }
   }
 
