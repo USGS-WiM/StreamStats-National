@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Console } from 'console';
 import * as L from 'leaflet';
+import { last, shareReplay, take } from 'rxjs/operators';
 import { Workflow } from 'src/app/shared/interfaces/workflow/workflow';
 import { MapService } from 'src/app/shared/services/map.service';
 import { WorkflowService } from 'src/app/shared/services/workflow.service';
@@ -23,6 +25,17 @@ export class WorkflowComponent implements OnInit {
   public finalStep: boolean = false;
   public workflowData: any;
   public text;
+  //Subscriptions 
+  public downstreamSubscription;
+  public fireLayersSubscription;
+  public streamflowSubscription;
+  public bcSubscription;
+  public geologyReportSubscription;
+  public burnAreaSubscription;
+  public burnYearsSubscription;
+  public basinAreaSubscription;
+  public deleationSubscription;
+  public firePerimetersSubscription;
   // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
@@ -38,6 +51,7 @@ export class WorkflowComponent implements OnInit {
   public firePerimetersLayers;
   public output:any = {};
   public downstreamDist;
+  
 
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
@@ -60,54 +74,58 @@ export class WorkflowComponent implements OnInit {
       this.clickedPoint = point;
     });
     // Get delineation and basin area
-    this._mapService.delineationPolygon.subscribe((poly: any) => {
+    this.deleationSubscription = this._mapService.delineationPolygon.subscribe((poly: any) => {
+      console.log(poly)
       var basin = poly;
       if (basin) {  
+        this.setSubComplete(this.stepsCompleted);
         this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
       }
     });
     // Get basin area
-    this._mapService.basinArea.subscribe((basinArea) => {
+    this.basinAreaSubscription = this._mapService.basinArea.subscribe((basinArea) => {
       this.basinArea = basinArea;
     });
     // Get burn years
-    this._mapService.burnYears.subscribe((burnYears) => {
+    this.burnYearsSubscription =this._mapService.burnYears.subscribe((burnYears) => {
       this.burnYears = burnYears;
     });
     // Get burned area
-    this._mapService.burnedArea.subscribe((burnedArea) => {
+    this.burnAreaSubscription =this._mapService.burnedArea.subscribe((burnedArea) => {
       this.burnedArea = burnedArea;
     });
     // Get geology results
-    this._mapService.geologyReport.subscribe((geologyReport) => {
+    this.geologyReportSubscription =this._mapService.geologyReport.subscribe((geologyReport) => {
       this.geologyReport = geologyReport;
     });
     // Get basin characteristics
-    this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
+    this.bcSubscription =this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
       this.basinCharacteristics = basinCharacteristics;
     });
     // Get streamflow estimates
-    this._mapService.streamflowEstimates.subscribe((streamflowEstimates) => {
+    this.streamflowSubscription =this._mapService.streamflowEstimates.subscribe((streamflowEstimates) => {
       this.streamflowEstimates = streamflowEstimates;
-    });
+    });    
     // Get selected fire perimeters
-    this._mapService.selectedPerimeters.subscribe((perimeters) => {
+    this.firePerimetersSubscription =this._mapService.selectedPerimeters.subscribe((perimeters) => {
+      this.setSubComplete(this.stepsCompleted)
       this.selectedPerimeters = perimeters;
     });
     // Get selected fire perimeter layer
-    this._mapService.firePerimetersLayers.subscribe((layers) => {
+    this.fireLayersSubscription =this._mapService.firePerimetersLayers.subscribe((layers) => {
+      console.log('firePerimetersLayers')
       this.firePerimetersLayers = layers;
     });
     // Get downstream trace distance
-    this._mapService.downstreamDist.subscribe((downstreamDist) => {
+    this.downstreamSubscription =this._mapService.downstreamDist.subscribe((downstreamDist) => {
       this.downstreamDist = downstreamDist;
     });
-    this.onContinue(this.workflowForm.value);
     // Subscribe to workflow data
     this._workflowService.formData.subscribe(workflowData => {
       this.workflowData = workflowData;
     });
     // Subscribe to workflow form
+    this.onContinue(this.workflowForm.value);
     this._workflowService.workflowForm.subscribe(workflowForm => {
       this.workflowForm = workflowForm;
     });
@@ -117,6 +135,13 @@ export class WorkflowComponent implements OnInit {
     this.workflowForm.patchValue({
       title: this.workflow.title
     });
+  }
+
+  public setSubComplete(step) {
+    console.log(step)
+    console.log(this.workflowData)
+    this.workflowData.steps[step].subComplete = true;
+
   }
 
   public setSteps() {
@@ -290,8 +315,9 @@ export class WorkflowComponent implements OnInit {
       });
       return(result)
     } else if (type == "subscription") {
-      //console.log('subscription - not sure yet')
-      return(true)
+      if (this.workflowData.steps[stepNum].subComplete == true){
+        return(true)
+      }
     } else if (type == 'text') {
       if (this.text && this.text.length > 0) {
         return(true)
@@ -317,6 +343,18 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setCompletedData(formValue);
     this._workflowService.setSelectedWorkflow(null);
     this._workflowService.setFormData(null);
+    this.stepsCompleted = 0;
+    // unsubscribe to subscriptions
+    this.downstreamSubscription.unsubscribe();
+    this.fireLayersSubscription.unsubscribe();
+    this.streamflowSubscription.unsubscribe();
+    this.bcSubscription.unsubscribe();
+    this.geologyReportSubscription.unsubscribe();
+    this. burnAreaSubscription.unsubscribe();
+    this.burnYearsSubscription.unsubscribe();
+    this.basinAreaSubscription.unsubscribe();
+    this.deleationSubscription.unsubscribe();
+    this.firePerimetersSubscription.unsubscribe();
   }
 
   public onRadioChange(option, step) {

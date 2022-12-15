@@ -146,24 +146,6 @@
                                         "textLabel":"Downstream Trace Distance"
                                     }
                                 ]
-                            },
-                            {
-                                "label": "Trace Fire Perimeter",
-                                "description": "",
-                                "name": "traceFireHydroPerimeter",
-                                "type": "subscription",
-                                "cursor": "auto",
-                                "validators": 
-                                {
-                                    "required": true
-                                },
-                                "options": 
-                                [
-                                    {
-                                        "text": "Click 'Next' to trace downstream.",
-                                        "selected": false
-                                    }
-                                ]
                             }
                         ]
                     }

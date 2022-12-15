@@ -670,6 +670,7 @@ export class MapService {
     // Get selected Fire Perimeters
     private _selectedPerimeters: Subject<any> = new Subject<any>();
     public setSelectedPerimeters(array) {
+        console.log('hhi')
         this._selectedPerimeters.next(array);
     }
     public get selectedPerimeters(): any {
