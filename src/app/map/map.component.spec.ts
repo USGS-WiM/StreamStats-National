@@ -52,7 +52,7 @@ describe('MapComponent', () => {
                   ]
               },
               {
-                "text": "Query by Fire Perimeters",
+                "text": "Query by Fire Perimeter",
                 "selected": false,
                 "nestedSteps": 
                 [
