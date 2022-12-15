@@ -22,6 +22,7 @@ export class WorkflowComponent implements OnInit {
   public numberOfSteps: number;
   public finalStep: boolean = false;
   public workflowData: any;
+  public text;
   // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
@@ -184,13 +185,13 @@ export class WorkflowComponent implements OnInit {
         case 'radio':
           arr.push(this._fb.group({
             text: opt.text,
-            selectedRadio: false
+            selected: false
           }));
           break;
         case 'checkbox':
           arr.push(this._fb.group({
             text: opt.text,
-            selectedCheckbox: false
+            selected: false
           }));
           break;
         case 'subscription':
@@ -278,13 +279,12 @@ export class WorkflowComponent implements OnInit {
   }
 
   public checkStep(type, stepNum) {
-    //console.log(this.workflowFormData[1].controls.options.controls)
+    //console.log(this.workflowFormData[stepNum])
     if (type == 'checkbox') {
-      //console.log('checkbox - need to check for something checked')
       let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
       var result;
       optionsArray.controls.forEach((element) => {
-        if (element.value.selectedCheckbox == true) {
+        if (element.value.selected == true) {
           result = true
         }
       });
@@ -292,21 +292,24 @@ export class WorkflowComponent implements OnInit {
     } else if (type == "subscription") {
       //console.log('subscription - not sure yet')
       return(true)
-    } else if (type == 'textbox') {
-      //console.log('textbox - need to check text entered')
-
+    } else if (type == 'text') {
+      if (this.text && this.text.length > 0) {
+        return(true)
+      }
     } else if (type == 'radio') {
-      //console.log('radio - need to check for something checked')
       let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
       var result;
-
       optionsArray.controls.forEach((element) => {
-        if (element.value.selectedRadio == true) {
+        if (element.value.selected == true) {
           result = true
         }
       });
       return(result)
     }
+  }
+
+  public onChangeText(string: string) {
+    this.text = string; 
   }
 
   public finishedWorkflow(formValue: any) {
@@ -319,7 +322,7 @@ export class WorkflowComponent implements OnInit {
   public onRadioChange(option, step) {
     step.options.forEach(opt => {
       if (opt.text == option.text) {
-        option.selectedRadio = true;
+        option.selected = true;
         // TODO: Update this once delineation has more routes/branches/paths to take with in the workflow
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
         if (step.name === "selectFireHydroProcess") {
@@ -331,11 +334,9 @@ export class WorkflowComponent implements OnInit {
   }
 
   public onCheckboxChange(option, step) {
-    console.log(option)
-    console.log(step)
     step.options.forEach(opt => {
       if (opt.text == option.text) {
-        option.selectedCheckbox = option.selectedCheckbox ? false : true
+        option.selected = option.selected ? false : true
       } 
     });
   }

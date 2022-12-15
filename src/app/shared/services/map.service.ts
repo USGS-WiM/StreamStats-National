@@ -72,7 +72,6 @@ export class MapService {
             });
     
         }
-        // TODO: Load overlay layers?
         if (this.configSettings) {
             this.configSettings.overlays.forEach(ml => {
                 try {

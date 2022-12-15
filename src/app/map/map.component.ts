@@ -211,7 +211,7 @@ export class MapComponent implements OnInit {
               this.basinCharacteristics.forEach(basinCharacteristic=> {
                 basinCharacteristicArray.push(this._fb.group({
                   text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
-                  selectedCheckbox: false
+                  selected: false
                 }));
               });
               this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
@@ -223,8 +223,8 @@ export class MapComponent implements OnInit {
           }
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
             // If at least one basin characteristic was selected
-            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selectedCheckbox).length > 0) {
-              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selectedCheckbox == true);
+            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selected).length > 0) {
+              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selected == true);
               let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.text.substr(0, checkboxBasinCharacteristic.value.text.indexOf(':')));
               this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
