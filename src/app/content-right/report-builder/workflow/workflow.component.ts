@@ -30,7 +30,7 @@ export class WorkflowComponent implements OnInit {
   public burnAreaSubscription;
   public burnYearsSubscription;
   public basinAreaSubscription;
-  public deleationSubscription;
+  public delineationSubscription;
   public firePerimeterSubscription;
   // Delination output
   public clickedPoint;
@@ -67,7 +67,7 @@ export class WorkflowComponent implements OnInit {
       this.clickedPoint = point;
     });
     // Get delineation and basin area
-    this.deleationSubscription = this._mapService.delineationPolygon.subscribe((poly: any) => {
+    this.delineationSubscription = this._mapService.delineationPolygon.subscribe((poly: any) => {
       var basin = poly;
       if (basin) {  
         this.setSubComplete(this.stepsCompleted);
@@ -214,7 +214,7 @@ export class WorkflowComponent implements OnInit {
           break;
         case 'text':
           arr.push(this._fb.group({
-            text: opt.text
+            text: opt.text,
           }));
           break;
       }
@@ -292,7 +292,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   public checkStep(type, stepNum) {
-    if (type == 'checkbox' || type == 'radio') {
+    if (type == 'radio') {
       let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
       var result;
       optionsArray.controls.forEach((element) => {
@@ -306,9 +306,18 @@ export class WorkflowComponent implements OnInit {
         return(true)
       }
     } else if (type == 'text') {
-      if (this.text && this.text.length > 0) {
-        return(true)
-      }
+      var acceptable = [];
+      this.workflowForm.value.steps[stepNum].options.forEach(element => {
+        if (element.text && element.text.toString().length > 0) {
+          acceptable.push(true)
+        } else {
+          acceptable.push(false)
+        }
+      });
+      return acceptable.every(element => element === true);
+
+    } else if(type == 'checkbox'){
+      return(true) // currently don't have to select any checkboxes - if we need to at some point we might need to add a 'mustSelect' boolean to the workflows
     }
   }
 
@@ -331,7 +340,7 @@ export class WorkflowComponent implements OnInit {
     this. burnAreaSubscription.unsubscribe();
     this.burnYearsSubscription.unsubscribe();
     this.basinAreaSubscription.unsubscribe();
-    this.deleationSubscription.unsubscribe();
+    this.delineationSubscription.unsubscribe();
     this.firePerimeterSubscription.unsubscribe();
   }
 
