@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChildren} from '@angular/core';
+import {Component, OnInit, ViewChildren, ChangeDetectorRef} from '@angular/core';
 import {WorkflowService} from '../shared/services/workflow.service';
 
 @Component({selector: 'app-content-right', templateUrl: './content-right.component.html', styleUrls: ['./content-right.component.scss']})
@@ -12,7 +12,7 @@ export class ContentRightComponent implements OnInit {
     public reportBuilderTab = "selection";
     public formData : any;
 
-    constructor(private _workflowService : WorkflowService) {}
+    constructor(private _workflowService : WorkflowService, private changeDetector : ChangeDetectorRef) {}
 
     ngOnInit(): void {
 
@@ -26,6 +26,10 @@ export class ContentRightComponent implements OnInit {
             this.formData = data;
         })
 
+    }
+
+    ngAfterContentChecked() : void {
+        this.changeDetector.detectChanges();
     }
 
     public removeWorkFlow() {

@@ -97,18 +97,18 @@
                                 [
                                     {
                                         "textLabel":"Start Year",
-                                        "text":"1900"
+                                        "text": 1900
                                     },
                                     {
                                         "textLabel":"End Year",
-                                        "text":"2022"
+                                        "text": 2022
                                     }
                                 ]
                             }
                         ]
                     },
                     {
-                        "text": "Query by Fire Perimeters",
+                        "text": "Query by Fire Perimeter",
                         "selected": false,
                         "nestedSteps": 
                         [
@@ -144,24 +144,6 @@
                                 [
                                     {
                                         "textLabel":"Downstream Trace Distance"
-                                    }
-                                ]
-                            },
-                            {
-                                "label": "Trace Fire Perimeter",
-                                "description": "",
-                                "name": "traceFireHydroPerimeter",
-                                "type": "subscription",
-                                "cursor": "auto",
-                                "validators": 
-                                {
-                                    "required": true
-                                },
-                                "options": 
-                                [
-                                    {
-                                        "text": "Click 'Next' to trace downstream.",
-                                        "selected": false
                                     }
                                 ]
                             }

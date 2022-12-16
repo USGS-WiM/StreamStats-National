@@ -211,7 +211,7 @@ export class MapComponent implements OnInit {
               this.basinCharacteristics.forEach(basinCharacteristic=> {
                 basinCharacteristicArray.push(this._fb.group({
                   text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
-                  selectedCheckbox: false
+                  selected: false
                 }));
               });
               this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
@@ -223,8 +223,8 @@ export class MapComponent implements OnInit {
           }
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
             // If at least one basin characteristic was selected
-            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selectedCheckbox).length > 0) {
-              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selectedCheckbox == true);
+            if (this.workflowForm.controls.steps.controls[2].controls.options.controls.filter((checkboxBasinCharacteristic) => checkboxBasinCharacteristic.value.selected).length > 0) {
+              let selectedBasinCharacteristics = this.workflowForm.controls.steps.controls[2].controls.options.controls.filter(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.selected == true);
               let selectedBasinCharacteristicCodes = selectedBasinCharacteristics.map(checkboxBasinCharacteristic => checkboxBasinCharacteristic.value.text.substr(0, checkboxBasinCharacteristic.value.text.indexOf(':')));
               this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => selectedBasinCharacteristicCodes.includes(basinCharacteristic.fcpg_parameter));
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
@@ -239,7 +239,7 @@ export class MapComponent implements OnInit {
             if (this.workflowData.steps[1].name === "selectFireHydroBasin" && this.workflowData.steps[2].completed) {
               this.queryBurnYear();
             }
-            if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[3].completed) {
+            if (this.workflowData.steps[1].name === "selectFireHydroPerimeter"  && this.workflowData.steps[2].completed) {
               this._loaderService.showFullPageLoad();
               this.addTraceLayer(this.traceData);
             }
@@ -266,7 +266,7 @@ export class MapComponent implements OnInit {
     });
 
     // Get selected fire perimeters
-    this._mapService.selectedPerimeters.subscribe((perimeter) => {
+    this._mapService.selectedFirePerimeter.subscribe((perimeter) => {
       this.selectedPerimeter = perimeter;
       //remove old highlight
       if (this.selectedPerimeterHighlight) {
@@ -317,7 +317,7 @@ export class MapComponent implements OnInit {
             if (this.workflowData && this.workflowData.steps) {
               this.workflowData.steps[0].options.forEach((o: { text: string; selected: boolean; }) => {
                 if (o.selected == true) {
-                  if (o.text === "Query by Fire Perimeters" || o.text === "Query by Basin") {
+                  if (o.text === "Query by Fire Perimeter" || o.text === "Query by Basin") {
                     if (o.text === "Query by Basin") {
                       this.addLayers('NHD Flowlines', true);
                     }
@@ -688,7 +688,7 @@ export class MapComponent implements OnInit {
     var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
     var result = text.match(regex)[0];
     //  select new perimeter
-    this._mapService.setSelectedPerimeters(this.firesinClick[result]);
+    this._mapService.setSelectedFirePerimeter(this.firesinClick[result]);
     // set trace data 
     this.traceData = this.firesinClick[result].Data;
   }
@@ -706,7 +706,7 @@ export class MapComponent implements OnInit {
           }
         });   
       } 
-      this._mapService.setFirePerimetersLayers(this.firePerimeterLayer, this.traceLayer);
+      this._mapService.setFireTraceLayers(this.firePerimeterLayer, this.traceLayer);
       this.outputLayers.addLayer(this.traceLayer);
       this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();
