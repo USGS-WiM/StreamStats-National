@@ -258,9 +258,9 @@ export class WorkflowComponent implements OnInit {
         } else if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
           this.output = {
             'clickPoint': this.clickedPoint, 
-            'layers': this.firePerimetersLayers,
+            'layers': this.fireTraceLayer,
             'downstreamDist': this.downstreamDist,
-            'selectedPerimetersInfo': this.selectedPerimeters,
+            'selectedPerimetersInfo': this.selectedFirePerimeter,
             'downstreamGages': this.downstreamGages
           };
         }
