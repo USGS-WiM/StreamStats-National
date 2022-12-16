@@ -72,7 +72,6 @@ export class MapService {
             });
     
         }
-        // TODO: Load overlay layers?
         if (this.configSettings) {
             this.configSettings.overlays.forEach(ml => {
                 try {
@@ -512,6 +511,8 @@ export class MapService {
         });
     }
 
+    // TODO: add argument to only compute selected basin characteristics
+    // https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/1
     public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
         return new Promise<any []>(async resolve => { 
             let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;
@@ -660,20 +661,20 @@ export class MapService {
     }
 
     // Get selected Fire Perimeters layers
-    private _selectedPerimetersLayer: Subject<any> = new Subject<any>();
-    public setFirePerimetersLayers(firePerimeters: any, trace: any) {
-        this._selectedPerimetersLayer.next([firePerimeters, trace]);
+    private _fireLayers: Subject<any> = new Subject<any>();
+    public setFireTraceLayers(firePerimeters: any, trace: any) {
+        this._fireLayers.next([firePerimeters, trace]);
     }
-    public get firePerimetersLayers(): any {
-        return this._selectedPerimetersLayer.asObservable();
+    public get fireTraceLayers(): any {
+        return this._fireLayers.asObservable();
     }
     // Get selected Fire Perimeters
-    private _selectedPerimeters: Subject<any> = new Subject<any>();
-    public setSelectedPerimeters(array) {
-        this._selectedPerimeters.next(array);
+    private _selectedFirePerimeter: Subject<any> = new Subject<any>();
+    public setSelectedFirePerimeter(perimeter) {
+        this._selectedFirePerimeter.next(perimeter);
     }
-    public get selectedPerimeters(): any {
-        return this._selectedPerimeters.asObservable();
+    public get selectedFirePerimeter(): any {
+        return this._selectedFirePerimeter.asObservable();
     }
     // Get downstream gages
     private _downstreamGages: Subject<any> = new Subject<any>();

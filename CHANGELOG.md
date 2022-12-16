@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Allows users to enter downstream distance in "Query by Fire Perimeters" workflow
 - Descriptions to workflows and steps
 - Added cursor attribute to workflows
+- Basin characteristics computation to "Delineation" workflow
+- Disabled 'next' until user adequately completes the step
 - "Query by Fire Perimeters" workflow now shows downstream gages
 
 ### Changed  
@@ -25,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Print modal - spacing, moved buttons to bottom
 - Only able to trace/select once fire perimeter at a time
 - Remove all output workflow layers when workflow is complete
+- Updated to google analytics 4
+- Burn Severity is turned off by default for Fire Hydrology workflows
+- Some checkboxes are now radio buttons where appropriate
+- 'Query by Fire Perimeters' workflow to 'Query by Fire Perimeter' 
 
 ### Deprecated 
 
@@ -32,7 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed 
 
-- 
+- Removed 'Trace Fire Perimeter' step
 
 ### Fixed  
 

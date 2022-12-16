@@ -94,7 +94,6 @@ describe('WorkflowComponent', () => {
     fixture = TestBed.createComponent(WorkflowComponent);
     component = fixture.componentInstance;
     component.workflow = mockWorkflow;
-    component.formData = null;
     fixture.detectChanges();
   });
 
@@ -175,7 +174,6 @@ describe('WorkflowComponent', () => {
   });
 
   it('#finishedWorkflow should update services', () => {
-    component.formData = mockFormData;
     spyOn(component, 'finishedWorkflow').and.callThrough();
     const formData = {
       title: "Example Workflow",
@@ -220,12 +218,6 @@ describe('WorkflowComponent', () => {
         expect(opt.selected).toBe(false);
       });
     });
-  });
-
-  it('#populateForm should setSteps and addSteps when formData != null', () => {
-    component.formData = mockFormData;
-    component.populateForm();
-    expect(component.workflowForm.value.title).toBe("Fire Hydrology");
   });
 
   // TODO: update to make sure certain elements are loading in the DOM once more finalized. 
