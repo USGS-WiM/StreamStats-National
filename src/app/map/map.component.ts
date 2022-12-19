@@ -425,7 +425,7 @@ export class MapComponent implements OnInit {
           }
         },
         pointToLayer: function(feature, latlng) {
-          return L.marker(latlng,{icon: MyIcon, pane: 'tilePane'});
+          return L.marker(latlng,{icon: MyIcon});
         }
       }).addTo(this._mapService.map);
       this.configSettings.overlays.forEach((overlay: any) => {
