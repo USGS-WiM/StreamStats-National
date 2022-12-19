@@ -670,7 +670,7 @@
 .fireGageMarkerActive, .fireGageMarkerInactive{
   position: relative;
 }
-.fireGageMarkerActive:after {
+.fireGageMarkerActive:after, .fireGageMarkerInactive:after {
   content: '';
   overflow: visible;
   display: block;
@@ -680,35 +680,19 @@
   position: relative;
   transform-origin: 50% 50%;
   margin-left: 5.5px;
-  
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
-  border-bottom: 26.25px solid #3092F4;
   background-color: transparent;
   left: -15px;
   top: -15px;
   height: 0;
   width: 0;
 }
+.fireGageMarkerActive:after {
+  border-bottom: 26.25px solid #3092F4;
+}
 .fireGageMarkerInactive:after {
-  content: '';
-  overflow: visible;
-  display: block;
-  transition: 0.1s;
-  margin: 0 auto;
-  box-sizing: border-box;
-  position: relative;
-  transform-origin: 50% 50%;
-  margin-left: 5.5px;
-  
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 26.25px solid #f1f135;
-  background-color: transparent;
-  left: -15px;
-  top: -15px;
-  height: 0;
-  width: 0;
+  border-bottom: 26.25px solid #f1f135;;
 }
 .fireGageMarkerActive:before, .fireGageMarkerInactive:before {
   font-size: 13px;
@@ -718,16 +702,13 @@
   text-align: center;
   height: 15px;
   width: 15px;
-  
   top: -7.5px;
   left: -7.5px;
-  
   margin-left: 5.5px;
   z-index: 1;
   position: absolute;
   content: "🔥";
 }
-
 .firePerimeterMarker{
   position: relative;
 }
@@ -746,7 +727,6 @@
   background-color: #3092F4;
   width: 25px;
   height: 25px;
-  
   top: -27.500000000000004px;
   border-top-left-radius: 50%;
   border-top-right-radius: 50%;
