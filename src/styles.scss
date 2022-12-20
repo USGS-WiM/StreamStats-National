@@ -74,6 +74,25 @@ html,body{
 	max-width: unset !important;
 }
 
+.usa-modal__content{
+	position: relative;
+
+	.modal-x{
+		position: absolute;
+		font-size: 32px;
+		top: 8px;
+		right: 18px;
+		opacity: 0.25;
+
+		&:hover{
+			cursor: pointer;
+			opacity: 1;
+		}
+	}
+
+}
+
+
 
 @media print {
 	#appWrapper{

@@ -26,10 +26,10 @@ export class MapActionsComponent implements OnInit {
 	public currentZoom: number = 4;
 	public selectedWorkflow: any;
 
-  	constructor(private _mapService: MapService, private _configService: ConfigService, private _workflowService: WorkflowService) {
+	constructor(private _mapService: MapService, private _configService: ConfigService, private _workflowService: WorkflowService) {
 		this.MapService = _mapService;
 		this.configSettings = this._configService.getConfiguration();
-	  }
+	}
 
 	ngOnInit(): void {
 		

@@ -2,19 +2,19 @@
 	<nav id="mapActionButtons">
 		<!-- Basemaps -->
 		<button (click)="popout == 'map' ? popout = '' : popout = 'map'" [ngClass]="{'active': popout == 'map'}" aria-label="Base Maps">
-			<span><i [ngClass]="popout == 'map' ? 'fas fa-times' : 'fas fa-map' "></i>Base Maps</span>
+			<span><i [ngClass]="popout == 'map' ? 'fas fa-times' : 'fas fa-map' "></i> <b>Base Maps</b></span>
 		</button>
 		<!-- Map Layers -->
 		<button (click)="popout == 'layers' ? popout = '' : popout = 'layers'" [ngClass]="{'active': popout == 'layers'}" aria-label="Map Layers">
-			<span><i [ngClass]="popout == 'layers' ? 'fas fa-times' : 'fas fa-layer-group' "></i>Map Layers</span>
+			<span><i [ngClass]="popout == 'layers' ? 'fas fa-times' : 'fas fa-layer-group' "></i> <b>Map Layers</b></span>
 		</button>
 		<!-- Geosearch -->
 		<button (click)="popout == 'geosearch' ? popout = '' : popout = 'geosearch'; geosearch();" [ngClass]="{'active': popout == 'geosearch'}" aria-label="Location Search">
-			<span><i [ngClass]="popout == 'geosearch' ? 'fas fa-times' : 'fas fa-search' "></i>Geosearch</span>
+			<span><i [ngClass]="popout == 'geosearch' ? 'fas fa-times' : 'fas fa-search' "></i> <b>Geosearch</b></span>
 		</button>
 		<!-- Your Location -->
 		<button (click)="zoomLocation()" aria-label="Zoom to Your Location" id="geolocate">
-			<span><i class="fas fa-crosshairs"></i>Your Location</span>
+			<span><i class="fas fa-crosshairs"></i> <b>Your Location</b></span>
 		</button>
 	</nav>
 </header>
@@ -29,7 +29,11 @@
 			<label class="basemap-option">
 				<input type="radio" name="basemap" value="item[0]" (click)="SetBaselayer(item[0])">
 				<img src="assets/images/{{item[1]}}"> 
-				<span>{{item[0]}}</span>
+				<span><div>
+					{{item[0]}}
+					<!-- TODO - Write conditional if base layer is active -->
+					<i class="fas fa-check-circle" *ngIf="'<<BASELAYER>>' == item[0]" aria-label="Active Layer"></i>
+				</div></span>
 			</label>
 		</div>
 

@@ -8,35 +8,58 @@ import { MapService } from './shared/services/map.service';
 import USWDS from "../../node_modules/uswds/src/js/components";
 const { modal } = USWDS;
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
-})
-export class AppComponent implements OnInit{
-  title = 'StreamStats-National';
-  private configSettings: Config;
-  public version: string;
 
-  sidebarView = "visible";
+@Component({
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.scss']
+})
+
+
+
+
+
+export class AppComponent implements OnInit{
+	title = 'StreamStats-National';
+	private configSettings: Config;
+	public version: string;
+
+	sidebarView = "none";
 
 	constructor(private titleService: Title, private metaService: Meta, public mapService: MapService, private _configService: ConfigService) {
-    	this.configSettings = this._configService.getConfiguration();
+		this.configSettings = this._configService.getConfiguration();
 	}
 
-  ngOnInit() {
-    this.titleService.setTitle(this.title);
-    this.metaService.addTags([
-      {name: 'keywords', content: 'USGS, US Geological Survey, United States Geological Survey, Stream Stats, StreamStats, watershed, basin characteristics, delineation, wildland fire, fire hydrology'},
-      {name: 'description', content: 'The StreamStats National application provides users with access to analytical tools that are useful for a variety of purposes, including water-resources planning, management, engineering, and design.'}
-    ]);
-    this.version = this.configSettings.version;
+	ngOnInit() {
+		this.showSidebar();
+
+
+		this.titleService.setTitle(this.title);
+		this.metaService.addTags([
+			{name: 'keywords', content: 'USGS, US Geological Survey, United States Geological Survey, Stream Stats, StreamStats, watershed, basin characteristics, delineation, wildland fire, fire hydrology'},
+			{name: 'description', content: 'The StreamStats National application provides users with access to analytical tools that are useful for a variety of purposes, including water-resources planning, management, engineering, and design.'}
+		]);
+		this.version = this.configSettings.version;
 		// initialize USWDS components
 		modal.on(true);
-	}
 
-  // remove event listeners when component un-mounts.
-  ngOnDestroy() {
-	modal.off();
-  }
+		
+
+
+	}
+	
+// Show sidebar.
+showSidebar() {
+	setTimeout(() => {
+	this.sidebarView = "visible";
+	}, 500);
+}
+
+
+
+
+ 	 // remove event listeners when component un-mounts.
+	ngOnDestroy() {
+		modal.off();
+	}
 }
