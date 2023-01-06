@@ -625,7 +625,9 @@ export class MapComponent implements OnInit {
     } 
     this.count ++;
     this.checkCount(this.count, 6);
-    this._mapService.map.fitBounds(this.firePerimeterLayer.getBounds(), {padding: [75,75]});
+    if (this.firePerimeterLayer) {
+      this._mapService.map.fitBounds(this.firePerimeterLayer.getBounds(), {padding: [75,75]});
+    }
   }
 
   public createContent(layerName, feat) {
