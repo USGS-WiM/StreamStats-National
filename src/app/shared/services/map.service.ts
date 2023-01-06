@@ -451,7 +451,7 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == '2022 Wildland Fire Perimeters') {
+                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == 'Current Year Wildland Fire Perimeters') {
                     if (workflowLayer == "2000-2018 Wildland Fire Perimeters") {
                         // TO DO #194
                         if (startBurnYear >= (new Date()).getFullYear()) {
@@ -468,7 +468,7 @@ export class MapService {
                             count ++;
                         }
                         queryString = '1=1';
-                    } else if (workflowLayer == "2022 Wildland Fire Perimeters") {
+                    } else if (workflowLayer == "Current Year Wildland Fire Perimeters") {
                         if (endBurnYear <= (new Date()).getFullYear()) {
                             count ++;
                         }
