@@ -689,7 +689,6 @@ export class MapComponent implements OnInit {
   public selectFire(text) {
     // if there was a fire perimeter previously selected, clear that from the map
     let outputLayers = this.outputLayers;
-    console.log(outputLayers);
     this.outputLayers.eachLayer(function (layer) {
       if (!(layer instanceof L.Marker)) {
         outputLayers.removeLayer(layer);
@@ -720,8 +719,6 @@ export class MapComponent implements OnInit {
 
       var response = await this._mapService.trace(data, downstreamDist).toPromise();
 
-      console.log(response);                                              
-
       this.traceLayerGroup =  new L.FeatureGroup();
       if (response) {
         // show flowlines
@@ -746,7 +743,6 @@ export class MapComponent implements OnInit {
             let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: gageIcon});
             let gageMarkerPopup = L.popup();
             gageMarker.bindPopup(gageMarkerPopup);
-            console.log(feature);
             if (feature.properties.Code) {
               // Gage came from GageStatsServices
               this.updatePopup(feature.properties.Code, gageMarkerPopup, feature.properties['Name'], feature.properties.StationType.name, null);
