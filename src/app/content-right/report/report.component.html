@@ -92,14 +92,10 @@
 								<th><span>Station Name</span></th>
 							</tr>
 							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
-								<span *ngIf="gage.properties.Code">
-									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
-									<td>{{gage.properties.Name}}</td>
-								</span>
-								<span *ngIf="gage.properties.identifier">
-									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
-									<td>{{gage.properties.name}}</td>
-								</span>
+									<td *ngIf="gage.properties.Code"><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+									<td *ngIf="gage.properties.Code">{{gage.properties.Name}}</td>
+									<td *ngIf="gage.properties.identifier"><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
+									<td *ngIf="gage.properties.identifier">{{gage.properties.name}}</td>
 							</tr>
 						</table>
 					</div>
@@ -244,14 +240,10 @@
 								<th><span>Station Name</span></th>
 							</tr>
 							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
-								<span *ngIf="gage.properties.Code">
-									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
-									<td>{{gage.properties.Name}}</td>
-								</span>
-								<span *ngIf="gage.properties.identifier">
-									<td><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
-									<td>{{gage.properties.name}}</td>
-								</span>
+									<td *ngIf="gage.properties.Code"><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+									<td *ngIf="gage.properties.Code">{{gage.properties.Name}}</td>
+									<td *ngIf="gage.properties.identifier"><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
+									<td *ngIf="gage.properties.identifier">{{gage.properties.name}}</td>
 							</tr>
 						</table>
 					</li>
