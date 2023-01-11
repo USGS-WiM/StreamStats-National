@@ -1,5 +1,5 @@
 {
-    "version": "v1.2.0-beta",
+    "version": "v1.3.0-beta",
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/execution",
