@@ -4,7 +4,7 @@
 		<i class="fas fa-diagram-next"></i> Build Report
 	</button>
 	<button [ngClass]="{'active': tab == 2}" (click)="tab = 2">
-		<i class="fas fa-file-chart-column"></i> Overview
+		<i class="fas fa-file-chart-column"></i> Report
 	</button>
 
 	<!-- Print - Not currently used -->
@@ -17,7 +17,7 @@
 <div id="contentScroll">
 
 	<!-- Report Builder tab -->
-	<div class="padded relative" *ngIf="tab == 1">
+	<div class="padded relative" [hidden]="tab == 2">
 
 		<!-- Header -->
 		<h3 class="center">
@@ -39,8 +39,8 @@
 	</div>
 
 
-	<!-- Report Overview Tab -->
-	<div class="padded relative" *ngIf="tab == 2">
+	<!-- Report Tab -->
+	<div class="padded relative" [hidden]="tab == 1">
 		<app-report></app-report>
 	</div>
 

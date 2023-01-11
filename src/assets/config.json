@@ -1,9 +1,9 @@
 {
-    "version": "v1.2.0-beta",
+    "version": "v1.3.0-beta",
     "workflowsURL": "assets/workflows.json",
     "nldiBaseURL": "https://labs.waterdata.usgs.gov/api/nldi/pygeoapi/processes/",
     "nldiSplitCatchmentURL": "nldi-splitcatchment/execution",
-    "nldiPolygonQuery": "https://streamstats.usgs.gov/nldipolygonservices/nldi_poly_query/",
+    "nldiPolygonQuery": "https://streamstats.usgs.gov/nldipolygonservices/nldi_poly_query",
     "GageStatsServices": "https://streamstats.usgs.gov/gagestatsservices/",
     "NSSServices": "https://streamstats.usgs.gov/nssservices/",
     "GridQueryService": "https://test.streamstats.usgs.gov/gridqueryservices?",
@@ -32,7 +32,7 @@
         }
         },
         {
-            "name": "2022 Wildland Fire Perimeters",
+            "name": "Current Year Wildland Fire Perimeters",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
@@ -69,8 +69,8 @@
         },
         {
             "name": "MTBS Fire Boundaries",
-            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer",
-            "type": "agsDynamic",
+            "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_MTBS_01/MapServer/63",
+            "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999,
                 "layers": [63]
@@ -85,7 +85,7 @@
                 "zIndex": 9999,
                 "minZoom": 10
             },
-            "visible": true
+            "visible": false
         },
         {
             "name": "GeologyFeatures",
@@ -165,7 +165,11 @@
         }
     ],
     "symbols": {
-        "2022 Wildland Fire Perimeters": {
+        "MTBS Fire Boundaries": {
+            "color": "#3CB043",
+            "fillColor": "#3CB043"
+        },
+        "Current Year Wildland Fire Perimeters": {
             "color": "#EBCF26",
             "fillColor": "#EBCF26"
         },

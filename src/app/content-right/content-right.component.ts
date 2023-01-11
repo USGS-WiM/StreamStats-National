@@ -1,11 +1,5 @@
-import {Component, OnInit, ViewChildren} from '@angular/core';
-import {MapService} from 'src/app/shared/services/map.service';
-declare let search_api: any;
-import * as L from 'leaflet';
-import {ConfigService} from '../shared/config/config.service';
-import {Config} from '../shared/interfaces/config/config';
+import {Component, OnInit, ViewChildren, ChangeDetectorRef} from '@angular/core';
 import {WorkflowService} from '../shared/services/workflow.service';
-// import { ConsoleReporter } from 'jasmine';
 
 @Component({selector: 'app-content-right', templateUrl: './content-right.component.html', styleUrls: ['./content-right.component.scss']})
 export class ContentRightComponent implements OnInit {
@@ -18,7 +12,7 @@ export class ContentRightComponent implements OnInit {
     public reportBuilderTab = "selection";
     public formData : any;
 
-    constructor(private _workflowService : WorkflowService) {}
+    constructor(private _workflowService : WorkflowService, private changeDetector : ChangeDetectorRef) {}
 
     ngOnInit(): void {
 
@@ -32,11 +26,10 @@ export class ContentRightComponent implements OnInit {
             this.formData = data;
         })
 
-        // Get current workflow
-        // this._workflowService.selectedWorkflow.subscribe(res => {
-        // this.selectedWorkflow = res;
-        // })
+    }
 
+    ngAfterContentChecked() : void {
+        this.changeDetector.detectChanges();
     }
 
     public removeWorkFlow() {

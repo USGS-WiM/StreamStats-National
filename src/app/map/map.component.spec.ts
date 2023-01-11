@@ -1,10 +1,9 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { HttpClient } from '@angular/common/http';
+import { ReactiveFormsModule} from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToastrModule } from 'ngx-toastr';
 import { MapComponent } from './map.component';
 import { Workflow } from '../shared/interfaces/workflow/workflow';
-import { ConfigService } from '../shared/config/config.service';
 
 describe('MapComponent', () => {
   let component: MapComponent;
@@ -20,7 +19,9 @@ describe('MapComponent', () => {
       {
           "label": "Select a Fire Hydrology Query Method",
           "name": "selectFireHydroProcess",
+          "description":"",
           "type": "checkbox",
+          "cursor": "auto",
           "value": "",
           "options":
           [
@@ -31,9 +32,11 @@ describe('MapComponent', () => {
                   [
                       {
                           "label": "Select a Point",
+                          "description": "",
                           "name": "selectFireHydroBasin",
                           "type": "subscription",
                           "value": "",
+                          "cursor": "auto",
                           "validators": 
                           {
                               "required": true
@@ -49,15 +52,17 @@ describe('MapComponent', () => {
                   ]
               },
               {
-                "text": "Query by Fire Perimeters",
+                "text": "Query by Fire Perimeter",
                 "selected": false,
                 "nestedSteps": 
                 [
                     {
                         "label": "Select a Fire Perimeter",
                         "name": "selectFireHydroPerimeter",
+                        "description": "",
                         "type": "subscription",
                         "value": "",
+                        "cursor": "auto",
                         "validators": 
                         {
                             "required": true
@@ -82,6 +87,7 @@ describe('MapComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
+        ReactiveFormsModule,
         ToastrModule.forRoot(),
       ],
       declarations: [ MapComponent ],

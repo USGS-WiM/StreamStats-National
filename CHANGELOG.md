@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed  
 
-- Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two seperate steps. The first is to select your fire perimeter the second it to start the trace. 
+- 
 
 ### Deprecated 
 
@@ -26,11 +26,46 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed  
 
-- USGS search API library reference
-
+- 
 ### Security  
 
 - 
+## [v1.3.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.3.0-beta) - 2023-01-11
+
+### Added 
+
+- Allows users to enter downstream distance in "Query by Fire Perimeters" workflow
+- Descriptions to workflows and steps
+- Added cursor attribute to workflows
+- Basin characteristics computation to "Delineation" workflow
+- Disabled 'next' until user adequately completes the step
+- "Query by Fire Perimeters" workflow now shows downstream gages
+
+### Changed  
+
+- Split 'Select a Fire Perimeter' step in 'Query by Fire Perimeters' workflow into two separate steps. The first is to select your fire perimeter the second it to start the trace
+- Updated layout
+- Fire perimeters labels 
+- Pointer marker now points to clicked point instead of being centered on clicked point
+- 'Overview' to 'Report'
+- Print modal - spacing, moved buttons to bottom
+- Only able to trace/select once fire perimeter at a time
+- Remove all output workflow layers when workflow is complete
+- Updated to google analytics 4
+- Burn Severity is turned off by default for Fire Hydrology workflows
+- Some checkboxes are now radio buttons where appropriate
+- 'Query by Fire Perimeters' workflow to 'Query by Fire Perimeter' 
+- '2022 Wildland Fire Perimeters' renamed to 'Current Year Wildland Fire Perimeters'
+### Removed 
+
+- Removed 'Trace Fire Perimeter' step
+
+### Fixed  
+
+- USGS search API library reference
+- In print modal, description text not up taking full width of modal
+- Only query fire perimeters that are visible
+- Bug caused by switching between report and workflow that reset workflow variables which created errors
 
 ## [v1.2.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.2.0-beta) - 2022-07-14
 

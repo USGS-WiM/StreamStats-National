@@ -72,7 +72,6 @@ export class MapService {
             });
     
         }
-        // TODO: Load overlay layers?
         if (this.configSettings) {
             this.configSettings.overlays.forEach(ml => {
                 try {
@@ -452,7 +451,7 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == '2022 Wildland Fire Perimeters') {
+                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == 'Current Year Wildland Fire Perimeters') {
                     if (workflowLayer == "2000-2018 Wildland Fire Perimeters") {
                         // TO DO #194
                         if (startBurnYear >= (new Date()).getFullYear()) {
@@ -469,7 +468,7 @@ export class MapService {
                             count ++;
                         }
                         queryString = '1=1';
-                    } else if (workflowLayer == "2022 Wildland Fire Perimeters") {
+                    } else if (workflowLayer == "Current Year Wildland Fire Perimeters") {
                         if (endBurnYear <= (new Date()).getFullYear()) {
                             count ++;
                         }
@@ -512,6 +511,8 @@ export class MapService {
         });
     }
 
+    // TODO: add argument to only compute selected basin characteristics
+    // https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/1
     public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
         return new Promise<any []>(async resolve => { 
             let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;
@@ -632,13 +633,23 @@ export class MapService {
         return this._streamflowEstimates.asObservable();
     }
 
+    // Get downstream trace distance
+    private _downstreamDist: Subject<any> = new Subject<any>();
+    public setDownstreamDist(value) {
+        this._downstreamDist.next(value);
+    }
+    public get downstreamDist(): any {
+        return this._downstreamDist.asObservable();
+    }
+
     // Query Fire Perimeters
-    public trace(geojson: any) {
+    public trace(geojson: any, downstreamDist) {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' }) };
         var data = {
             "data": geojson,
-            "get_flowlines": true,
-	        "downstream_dist": 15
+            "return_flowlines": true,
+            "return_gages": true,
+	        "downstream_dist": downstreamDist
         }
 
         return this._http.post<any>(this.configSettings.nldiPolygonQuery, data, httpOptions)
@@ -650,20 +661,28 @@ export class MapService {
     }
 
     // Get selected Fire Perimeters layers
-    private _selectedPerimetersLayer: Subject<any> = new Subject<any>();
-    public setFirePerimetersLayers(firePerimeters: any, trace: any) {
-        this._selectedPerimetersLayer.next([firePerimeters, trace]);
+    private _fireLayers: Subject<any> = new Subject<any>();
+    public setFireTraceLayers(firePerimeters: any, trace: any) {
+        this._fireLayers.next([firePerimeters, trace]);
     }
-    public get firePerimetersLayers(): any {
-        return this._selectedPerimetersLayer.asObservable();
+    public get fireTraceLayers(): any {
+        return this._fireLayers.asObservable();
     }
     // Get selected Fire Perimeters
-    private _selectedPerimeters: Subject<any> = new Subject<any>();
-    public setSelectedPerimeters(array) {
-        this._selectedPerimeters.next(array);
+    private _selectedFirePerimeter: Subject<any> = new Subject<any>();
+    public setSelectedFirePerimeter(perimeter) {
+        this._selectedFirePerimeter.next(perimeter);
     }
-    public get selectedPerimeters(): any {
-        return this._selectedPerimeters.asObservable();
+    public get selectedFirePerimeter(): any {
+        return this._selectedFirePerimeter.asObservable();
+    }
+    // Get downstream gages
+    private _downstreamGages: Subject<any> = new Subject<any>();
+    public setDownstreamGages(gages: any) {
+        this._downstreamGages.next(gages);
+    }
+    public get downstreamGages(): any {
+        return this._downstreamGages.asObservable();
     }
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {

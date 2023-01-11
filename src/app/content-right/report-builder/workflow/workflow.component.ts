@@ -13,13 +13,25 @@ import { WorkflowService } from 'src/app/shared/services/workflow.service';
 export class WorkflowComponent implements OnInit {
 
   @Input() workflow!: Workflow;
-  @Input() formData: any;
 
   public workflowForm: FormGroup;
   public stepsArray: FormArray;
   public stepsCompleted: number = 0;
   public numberOfSteps: number;
   public finalStep: boolean = false;
+  public workflowData: any;
+  public text;
+  //Subscriptions 
+  public downstreamSubscription;
+  public fireTraceSubscription;
+  public streamflowSubscription;
+  public bcSubscription;
+  public geologyReportSubscription;
+  public burnAreaSubscription;
+  public burnYearsSubscription;
+  public basinAreaSubscription;
+  public delineationSubscription;
+  public firePerimeterSubscription;
   // Delination output
   public clickedPoint;
   public splitCatchmentLayer;
@@ -31,9 +43,12 @@ export class WorkflowComponent implements OnInit {
   public basinCharacteristics;
   public streamflowEstimates;
   // Fire Hydrology: Query by Fire Perimeters output
-  public selectedPerimeters;
-  public firePerimetersLayers;
+  public downstreamGages;
+  public selectedFirePerimeter;
+  public fireTraceLayer;
   public output:any = {};
+  public downstreamDist;
+  
 
   constructor(private _fb: FormBuilder, public _mapService: MapService, private _workflowService: WorkflowService) {
     this.workflowForm = this._fb.group({
@@ -46,64 +61,80 @@ export class WorkflowComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.formData === null) {
-      // Set steps if there is no prior form data
-      this.setSteps();
-    } else {
-      // Set step and set values of prior form data
-      this.populateForm();
-    }
-
+    this.setSteps();
+    
     // Get clicked point
     this._mapService.clickPoint.subscribe((point: {}) => {
       this.clickedPoint = point;
     });
     // Get delineation and basin area
-    this._mapService.delineationPolygon.subscribe((poly: any) => {
+    this.delineationSubscription = this._mapService.delineationPolygon.subscribe((poly: any) => {
       var basin = poly;
       if (basin) {  
+        this.setSubComplete(this.stepsCompleted);
         this.splitCatchmentLayer = L.geoJSON(basin.features[1]);
       }
     });
     // Get basin area
-    this._mapService.basinArea.subscribe((basinArea) => {
+    this.basinAreaSubscription = this._mapService.basinArea.subscribe((basinArea) => {
       this.basinArea = basinArea;
     });
     // Get burn years
-    this._mapService.burnYears.subscribe((burnYears) => {
+    this.burnYearsSubscription =this._mapService.burnYears.subscribe((burnYears) => {
       this.burnYears = burnYears;
     });
     // Get burned area
-    this._mapService.burnedArea.subscribe((burnedArea) => {
+    this.burnAreaSubscription =this._mapService.burnedArea.subscribe((burnedArea) => {
       this.burnedArea = burnedArea;
     });
     // Get geology results
-    this._mapService.geologyReport.subscribe((geologyReport) => {
+    this.geologyReportSubscription =this._mapService.geologyReport.subscribe((geologyReport) => {
       this.geologyReport = geologyReport;
     });
     // Get basin characteristics
-    this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
+    this.bcSubscription =this._mapService.basinCharacteristics.subscribe((basinCharacteristics) => {
       this.basinCharacteristics = basinCharacteristics;
     });
     // Get streamflow estimates
-    this._mapService.streamflowEstimates.subscribe((streamflowEstimates) => {
+    this.streamflowSubscription =this._mapService.streamflowEstimates.subscribe((streamflowEstimates) => {
       this.streamflowEstimates = streamflowEstimates;
-    });
+    });    
     // Get selected fire perimeters
-    this._mapService.selectedPerimeters.subscribe((perimeters) => {
-      this.selectedPerimeters = perimeters;
+    this.firePerimeterSubscription =this._mapService.selectedFirePerimeter.subscribe((perimeter) => {
+      this.setSubComplete(this.stepsCompleted)
+      this.selectedFirePerimeter = perimeter;
     });
     // Get selected fire perimeter layer
-    this._mapService.firePerimetersLayers.subscribe((layers) => {
-      this.firePerimetersLayers = layers;
+    this.fireTraceSubscription =this._mapService.fireTraceLayers.subscribe((layers) => {
+      this.fireTraceLayer = layers;
     });
-    
+    // Get downstream gages
+    this._mapService.downstreamGages.subscribe((gages) => {
+      this.downstreamGages = gages;
+    });
+    // Get downstream trace distance
+    this.downstreamSubscription =this._mapService.downstreamDist.subscribe((downstreamDist) => {
+      this.downstreamDist = downstreamDist;
+    });
+    // Subscribe to workflow data
+    this._workflowService.formData.subscribe(workflowData => {
+      this.workflowData = workflowData;
+    });
+    // Subscribe to workflow form
+    this.onContinue(this.workflowForm.value);
+    this._workflowService.workflowForm.subscribe(workflowForm => {
+      this.workflowForm = workflowForm;
+    });
   }
 
   public setTitle() {
     this.workflowForm.patchValue({
       title: this.workflow.title
     });
+  }
+
+  public setSubComplete(step) {
+    this.workflowData.steps[step].subComplete = true;
   }
 
   public setSteps() {
@@ -113,6 +144,8 @@ export class WorkflowComponent implements OnInit {
         label: step.label,
         name: step.name,
         type: step.type,
+        description: step.description,
+        cursor: step.cursor,
         completed: [],
         clickPoint: [],
         output: [],
@@ -120,6 +153,7 @@ export class WorkflowComponent implements OnInit {
       }));
     });
     this.numberOfSteps = this.stepsArray.value.length;
+    this.setCurrentStep(0);
   }
 
   public addSteps(optionSelection: string) {
@@ -132,6 +166,8 @@ export class WorkflowComponent implements OnInit {
               label: s.label,
               name: s.name,
               type: s.type,
+              cursor: s.cursor,
+              description: s.description,
               completed: [],
               clickPoint: [],
               output: [],
@@ -155,27 +191,45 @@ export class WorkflowComponent implements OnInit {
     this.finalStep = false; // reset final step boolean
   }
 
-  public getSteps(form: any) {
-    return form.controls.steps.controls;
-  }
-  public getOptions(form: any) {
-    return form.controls.options.controls;
+  get workflowFormData() { 
+    let stepsArray = this.workflowForm.get('steps') as FormArray;
+    return stepsArray.controls; 
   }
 
   public setOptions(step: any) {
     let arr = new FormArray([])
     step.options?.forEach((opt:any) => {
-      arr.push(this._fb.group({
-        text: opt.text,
-        selected: []
-      })
-      );
+      switch(step.type) {
+        case 'radio':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selected: false
+          }));
+          break;
+        case 'checkbox':
+          arr.push(this._fb.group({
+            text: opt.text,
+            selected: false
+          }));
+          break;
+        case 'subscription':
+          arr.push(this._fb.group({
+            text: opt.text
+          }));
+          break;
+        case 'text':
+          arr.push(this._fb.group({
+            text: opt.text,
+          }));
+          break;
+      }
     });
     return arr; 
   }
 
   public onContinue(formValue: any) {
     this._workflowService.setFormData(formValue);
+    this._workflowService.setWorkflowForm(this.workflowForm);
   }
 
   public fillOutputs() {
@@ -186,6 +240,7 @@ export class WorkflowComponent implements OnInit {
         this.output = {
           'clickPoint': this.clickedPoint, 
           'layers': [this.splitCatchmentLayer],
+          'basinCharacteristics': this.basinCharacteristics
         }
         break;
       case "Fire Hydrology":
@@ -203,8 +258,11 @@ export class WorkflowComponent implements OnInit {
         } else if (this.workflowForm.value.steps[1].name === "selectFireHydroPerimeter") {
           this.output = {
             'clickPoint': this.clickedPoint, 
-            'layers': this.firePerimetersLayers,
-            'selectedPerimetersInfo': this.selectedPerimeters};
+            'layers': this.fireTraceLayer,
+            'downstreamDist': this.downstreamDist,
+            'selectedPerimetersInfo': this.selectedFirePerimeter,
+            'downstreamGages': this.downstreamGages
+          };
         }
         break;
     }
@@ -221,12 +279,57 @@ export class WorkflowComponent implements OnInit {
     });
   }
 
+  public setCurrentStep(step:number) {
+    if (step == null) {
+      this._workflowService.setCurrentStep(null);
+    } else {
+      this._workflowService.setCurrentStep(this.workflowForm.value.steps[step]);
+    }
+  }
+
   public nextStep(step: number) {
     this.workflowForm.value.steps[step].completed = true;
-    this.stepsCompleted = this.stepsCompleted + 1;
+    this.stepsCompleted += 1;
     if (this.stepsCompleted == this.numberOfSteps) {
       this.finalStep = true;
-    } 
+      this.setCurrentStep(null);
+    } else {
+      this.setCurrentStep(step + 1);
+    }
+  }
+
+  public checkStep(type, stepNum) {
+    if (type == 'radio') {
+      let optionsArray = this.workflowFormData[stepNum].get('options') as FormArray;
+      var result;
+      optionsArray.controls.forEach((element) => {
+        if (element.value.selected == true) {
+          result = true
+        }
+      });
+      return(result)
+    } else if (type == "subscription") {
+      if (this.workflowData.steps[stepNum].subComplete == true){
+        return(true)
+      }
+    } else if (type == 'text') {
+      var acceptable = [];
+      this.workflowForm.value.steps[stepNum].options.forEach(element => {
+        if (element.text && element.text.toString().length > 0) {
+          acceptable.push(true)
+        } else {
+          acceptable.push(false)
+        }
+      });
+      return acceptable.every(element => element === true);
+
+    } else if(type == 'checkbox'){
+      return(true) // currently don't have to select any checkboxes - if we need to at some point we might need to add a 'mustSelect' boolean to the workflows
+    }
+  }
+
+  public onChangeText(string: string) {
+    this.text = string; 
   }
 
   public finishedWorkflow(formValue: any) {
@@ -234,41 +337,40 @@ export class WorkflowComponent implements OnInit {
     this._workflowService.setCompletedData(formValue);
     this._workflowService.setSelectedWorkflow(null);
     this._workflowService.setFormData(null);
+    this.stepsCompleted = 0;
+    // unsubscribe to subscriptions
+    this.downstreamSubscription.unsubscribe();
+    this.fireTraceSubscription.unsubscribe();
+    this.streamflowSubscription.unsubscribe();
+    this.bcSubscription.unsubscribe();
+    this.geologyReportSubscription.unsubscribe();
+    this. burnAreaSubscription.unsubscribe();
+    this.burnYearsSubscription.unsubscribe();
+    this.basinAreaSubscription.unsubscribe();
+    this.delineationSubscription.unsubscribe();
+    this.firePerimeterSubscription.unsubscribe();
   }
 
-  public onCheckboxChange(option, step) {
+  public onRadioChange(option, step) {
     step.options.forEach(opt => {
       if (opt.text == option.text) {
         option.selected = true;
-
         // TODO: Update this once delineation has more routes/branches/paths to take with in the workflow
         // such as State-Based Delineation or Open-Source Delineation. Or other future workflows. 
         if (step.name === "selectFireHydroProcess") {
           this.resetStepsArray(step);
           this.addSteps(opt.text);
         }
-		
-      } else {
-        opt.selected = false;
-      }
+      } 
     });
   }
 
-  public populateForm() {
-    this.setSteps();
-    this.formData.steps.forEach((storedStep: any, index: any) => {
-      storedStep.options.forEach((option: any) => {
-        if (option.selected) {
-          if (storedStep.name === "selectFireHydroProcess") {
-            this.addSteps(option.text);
-          };
-        };
-      });
-      if (storedStep.completed) {
-        this.nextStep(index);
-      };
+  public onCheckboxChange(option, step) {
+    step.options.forEach(opt => {
+      if (opt.text == option.text) {
+        option.selected = option.selected ? false : true
+      } 
     });
-    this.workflowForm.patchValue(this.formData);
   }
 
 }
