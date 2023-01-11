@@ -43,6 +43,7 @@ export class WorkflowComponent implements OnInit {
   public basinCharacteristics;
   public streamflowEstimates;
   // Fire Hydrology: Query by Fire Perimeters output
+  public downstreamGages;
   public selectedFirePerimeter;
   public fireTraceLayer;
   public output:any = {};
@@ -106,6 +107,10 @@ export class WorkflowComponent implements OnInit {
     // Get selected fire perimeter layer
     this.fireTraceSubscription =this._mapService.fireTraceLayers.subscribe((layers) => {
       this.fireTraceLayer = layers;
+    });
+    // Get downstream gages
+    this._mapService.downstreamGages.subscribe((gages) => {
+      this.downstreamGages = gages;
     });
     // Get downstream trace distance
     this.downstreamSubscription =this._mapService.downstreamDist.subscribe((downstreamDist) => {
@@ -254,8 +259,10 @@ export class WorkflowComponent implements OnInit {
           this.output = {
             'clickPoint': this.clickedPoint, 
             'layers': this.fireTraceLayer,
-            'downstreamDist' : this.downstreamDist,
-            'selectedPerimetersInfo': this.selectedFirePerimeter};
+            'downstreamDist': this.downstreamDist,
+            'selectedPerimetersInfo': this.selectedFirePerimeter,
+            'downstreamGages': this.downstreamGages
+          };
         }
         break;
     }

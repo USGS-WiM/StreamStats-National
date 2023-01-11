@@ -647,7 +647,8 @@ export class MapService {
         const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json; charset=utf-8' }) };
         var data = {
             "data": geojson,
-            "get_flowlines": true,
+            "return_flowlines": true,
+            "return_gages": true,
 	        "downstream_dist": downstreamDist
         }
 
@@ -674,6 +675,14 @@ export class MapService {
     }
     public get selectedFirePerimeter(): any {
         return this._selectedFirePerimeter.asObservable();
+    }
+    // Get downstream gages
+    private _downstreamGages: Subject<any> = new Subject<any>();
+    public setDownstreamGages(gages: any) {
+        this._downstreamGages.next(gages);
+    }
+    public get downstreamGages(): any {
+        return this._downstreamGages.asObservable();
     }
 
     private createMessage(msg: string, mType: string = messageType.INFO, title?: string, timeout?: number) {

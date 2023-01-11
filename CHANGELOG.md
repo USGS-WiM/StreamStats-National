@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Descriptions to workflows and steps
 - Added cursor attribute to workflows
 - Basin characteristics computation to "Delineation" workflow
-- Disabled 'next' until user adequately completes the step.
+- Disabled 'next' until user adequately completes the step
+- "Query by Fire Perimeters" workflow now shows downstream gages
 
 ### Changed  
 

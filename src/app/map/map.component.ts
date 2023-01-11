@@ -35,7 +35,7 @@ export class MapComponent implements OnInit {
   public marker: L.Marker;
   public basin: any;
   public splitCatchmentLayer: any;
-  public traceLayer;
+  public traceLayerGroup;
   public fitBounds: L.LatLngBounds;
   public selectedWorkflow: Workflow;
   public loader: boolean;
@@ -54,7 +54,7 @@ export class MapComponent implements OnInit {
   public traceData = [];
   public cursor = 'auto';
   public selectedPerimeter: any;
-  public outputLayers: L.LayerGroup;
+  public outputLayers: L.FeatureGroup;
 
   @HostListener('document:click', ['$event']) 
   clickout(event) 
@@ -80,7 +80,7 @@ export class MapComponent implements OnInit {
       renderer: L.canvas(),
       zoomControl: false
     });
-    this.outputLayers = L.layerGroup().addTo(this._mapService.map);
+    this.outputLayers = new L.FeatureGroup().addTo(this._mapService.map);
 
     // Add basemap
     this._mapService.SetBaselayer(this._mapService.chosenBaseLayerName);
@@ -118,7 +118,7 @@ export class MapComponent implements OnInit {
     this._mapService.waterData.subscribe((wd: {}) => {
       this.latestDischarge = wd;
       if (this.latestDischarge) {
-        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature);
+        this.updatePopup(this.selectedSite, this.selectedPopup, this.selectedFeature.properties['Name'], this.selectedFeature.properties.StationType.name, this.latestDischarge);
       }
     });
 
@@ -176,7 +176,7 @@ export class MapComponent implements OnInit {
     this._workflowService.selectedWorkflow.subscribe((res) => {
       this.selectedWorkflow = res;
       if (this.selectedWorkflow) {
-        this.outputLayers = L.layerGroup().addTo(this._mapService.map);
+        this.outputLayers = new L.FeatureGroup().addTo(this._mapService.map);
         if (this.selectedWorkflow.title != "Delineation") {
           this.checkAvailableLayers();
         }
@@ -438,15 +438,15 @@ export class MapComponent implements OnInit {
     }
   }
 
-  public updatePopup(site:any, popup:any, feature:any){
+  public updatePopup(site:any, popup:any, name:any, stationType:any, latestDischarge:any){
     //Set dynamic content for popup
     var SSgagepage = 'https://streamstatsags.cr.usgs.gov/gagepages/html/' + site + '.htm';
     var NWISpage = 'http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no=' + site;
-    var innerHTML =  feature.properties['Name'] + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
-    feature.properties.StationType.name + '</br><strong>Discharge, cfs: </strong>' +
-    this.latestDischarge + '<br><strong>NWIS page: </strong><a href="' + 
-    NWISpage +' "target="_blank">link</a></br><strong>StreamStats Gage page: </strong><a href="' + 
-    SSgagepage + '" target="_blank">link</a></br>';
+    var innerHTML =  name + ' ('  + site + ')' + '<hr><strong>Station Type</strong>: ' + 
+    stationType + '<br>' +
+    (latestDischarge ? '<strong>Discharge, cfs: </strong>' + latestDischarge + '<br>' : '' ) +
+    '<strong>NWIS page: </strong><a href="' + 
+    NWISpage +' "target="_blank">link</a></br>';
     popup.setContent( innerHTML );
   }
 
@@ -615,7 +615,7 @@ export class MapComponent implements OnInit {
       } else { // More than 1 of the same fire perimeter in click point
         var temp = { 'crs': null, 'type': null, 'features': null }
         var index = results.features.length;
-        for (let i = 0; i < index; i++) {         // need to split into seperate fire perimeters
+        for (let i = 0; i < index; i++) {         // need to split into separate fire perimeters
           temp = { crs: results.crs, type: results.type, features: [results.features[i]] }
           this.createContent(layerName, temp.features[0]);
           this.firesinClick.push({ 'Key': layerName, 'Data': temp})
@@ -625,6 +625,9 @@ export class MapComponent implements OnInit {
     } 
     this.count ++;
     this.checkCount(this.count, 6);
+    if (this.firePerimeterLayer) {
+      this._mapService.map.fitBounds(this.firePerimeterLayer.getBounds(), {padding: [75,75]});
+    }
   }
 
   public createContent(layerName, feat) {
@@ -654,7 +657,7 @@ export class MapComponent implements OnInit {
       'IRWIN_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
       'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
       'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
-  };
+    };
 
     popupcontent = '<p hidden>' + this.numFiresInClick + '</p>'
     popupcontent += '<div class="popup-header"><b>' + layerName + '</b></div><hr>';
@@ -684,6 +687,13 @@ export class MapComponent implements OnInit {
 
 
   public selectFire(text) {
+    // if there was a fire perimeter previously selected, clear that from the map
+    let outputLayers = this.outputLayers;
+    this.outputLayers.eachLayer(function (layer) {
+      if (!(layer instanceof L.Marker)) {
+        outputLayers.removeLayer(layer);
+      }
+    });
     // figure out which perimeter they selected
     var regex = /(?<=\>)(\d*)(?=\<\/p>)/g;
     var result = text.match(regex)[0];
@@ -691,6 +701,16 @@ export class MapComponent implements OnInit {
     this._mapService.setSelectedFirePerimeter(this.firesinClick[result]);
     // set trace data 
     this.traceData = this.firesinClick[result].Data;
+    // remove point markers for fire polygons
+    this.outputLayers.eachLayer(function (layer) {
+      if (layer instanceof L.Marker) {
+        outputLayers.removeLayer(layer);
+      }
+    });
+    // close all map popups
+    this._mapService.map.eachLayer(function (layer) {
+      layer.closePopup();
+    });
   }
 
   public async addTraceLayer(data) { 
@@ -699,22 +719,50 @@ export class MapComponent implements OnInit {
 
       var response = await this._mapService.trace(data, downstreamDist).toPromise();
 
-      if (response && response.features) {
-        response.features.forEach((feature) => {
-          if (feature.id == "flowlinesGeom") { // Only print out the flow lines
-            this.traceLayer = L.geoJSON(feature.geometry);
-          }
-        });   
-      } 
-      this._mapService.setFireTraceLayers(this.firePerimeterLayer, this.traceLayer);
-      this.outputLayers.addLayer(this.traceLayer);
-      this._mapService.map.fitBounds(this.traceLayer.getBounds(), { padding: [75,75] });
+      this.traceLayerGroup =  new L.FeatureGroup();
+      if (response) {
+        // show flowlines
+        if (response[1].features) {
+          response[1].features.forEach((feature) => {
+              this.traceLayerGroup.addLayer(L.geoJSON(feature.geometry));
+          });   
+        }
+        // show gages
+        if (response[2].features) {
+          let gageIcon;
+          this._mapService.setDownstreamGages(response[2].features); 
+          response[2].features.forEach((feature) => { 
+            if (feature.properties.active == true) {
+              gageIcon = L.divIcon({className: 'fireGageMarkerActive'});
+            } else if (feature.properties.active == false) {
+              gageIcon = L.divIcon({className: 'fireGageMarkerInactive'});
+            } else {
+              // TODO DELETE THIS LATER
+              gageIcon = L.divIcon({className: 'fireGageMarkerActive'});
+            }
+            let gageMarker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {icon: gageIcon});
+            let gageMarkerPopup = L.popup();
+            gageMarker.bindPopup(gageMarkerPopup);
+            if (feature.properties.Code) {
+              // Gage came from GageStatsServices
+              this.updatePopup(feature.properties.Code, gageMarkerPopup, feature.properties['Name'], feature.properties.StationType.name, null);
+            } else if (feature.properties.identifier) {
+              // Gage came from NavigationServices
+              this.updatePopup(feature.properties.identifier.substring(feature.properties.identifier.indexOf('-') + 1), gageMarkerPopup, feature.properties['name'], "Undefined", null);
+            }
+            this.traceLayerGroup.addLayer(gageMarker);
+          });
+        }
+      }
+      this._mapService.setFireTraceLayers(this.firePerimeterLayer, this.traceLayerGroup);
+      this.outputLayers.addLayer(this.traceLayerGroup);
+      this._mapService.map.fitBounds(this.traceLayerGroup.getBounds(), { padding: [75,75] });
       this._loaderService.hideFullPageLoad();
-   
   }
 
   public addBurnPoint(latlng, popupcontent) {
-    this.marker = L.marker(latlng).bindPopup(popupcontent, {"autoClose": false}).openPopup();
+    let firePerimeterIcon = L.divIcon({className: 'firePerimeterMarker'});
+    this.marker = L.marker(latlng, {icon: firePerimeterIcon}).bindPopup(popupcontent, {"autoClose": false}).openPopup();
     this.outputLayers.addLayer(this.marker);
     this.marker.openPopup();
   }
