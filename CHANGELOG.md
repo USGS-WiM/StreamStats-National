@@ -10,6 +10,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added 
 
+- 
+
+### Changed  
+
+- 
+
+### Deprecated 
+
+-
+
+### Removed 
+
+- 
+
+### Fixed  
+
+- 
+### Security  
+
+- 
+## [v1.3.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.3.0-beta) - 2023-01-11
+
+### Added 
+
 - Allows users to enter downstream distance in "Query by Fire Perimeters" workflow
 - Descriptions to workflows and steps
 - Added cursor attribute to workflows
@@ -32,11 +56,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Some checkboxes are now radio buttons where appropriate
 - 'Query by Fire Perimeters' workflow to 'Query by Fire Perimeter' 
 - '2022 Wildland Fire Perimeters' renamed to 'Current Year Wildland Fire Perimeters'
-
-### Deprecated 
-
--
-
 ### Removed 
 
 - Removed 'Trace Fire Perimeter' step
@@ -47,10 +66,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - In print modal, description text not up taking full width of modal
 - Only query fire perimeters that are visible
 - Bug caused by switching between report and workflow that reset workflow variables which created errors
-
-### Security  
-
-- 
 
 ## [v1.2.0-beta](https://github.com/USGS-WiM/StreamStats-National/releases/tag/v1.2.0-beta) - 2022-07-14
 
