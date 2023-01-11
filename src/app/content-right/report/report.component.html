@@ -1,0 +1,267 @@
+<div class="mtop-xs flex between mbottom-md">
+	<h3 class="">Completed Workflows</h3>
+	<button type="button" class="usa-button usa-button--default" (click)="showPrintModal = true; createPrintMaps();" *ngIf="workflowData[0]" >
+		Print Report
+	</button>
+</div>
+
+<p *ngIf="!workflowData[0]" id="emptyWorkflows">
+	<i class="fas fa-empty-set"></i>
+	Please complete a workflow to see results
+</p>
+
+
+<!-- Loop over completed workflows -->
+<div *ngFor="let data of workflowData; let i = index" class="completed-workflow">
+    <h4>{{data.title}}</h4>
+				
+				<!-- Card body -->
+				<span *ngFor="let output of data.outputs | keyvalue: unsortedKeys">
+					<!-- Display Map -->
+					<div *ngIf="data.outputs.layers" id="{{ 'reportMap' + i }}" class="reportMap"></div>
+
+
+					<!-- Click Point -->
+					<div class="data" *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): <b>{{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}}</b></div>
+					
+					<!-- Delineation -->
+					<div *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</div>
+					
+					<!-- Fire Hydrology: Query by Basin -->
+					<div *ngIf="output.key=='basinArea'">Drainage Area: {{output.value | number : '1.3'}} sq mi</div>
+					<div *ngIf="output.key=='burnYears'">Burn Year Range: {{output.value[0]}} to {{output.value[1]}}</div>
+					<div *ngIf="output.key=='burnedArea'">Burned Area: {{output.value[0] | number : '1.3'}} sq mi ({{output.value[1] | number : '1.3'}}%)</div>
+					<div *ngIf="output.key=='basinCharacteristics' && output.value && output.value.length > 0">Basin Characteristics:
+						<table id="reportTableBC2">
+							<tr>
+								<th><span>Basin Characteristic</span></th>
+								<th>Description</th>
+								<th>Value</th>
+								<th>Units</th>
+							</tr>
+							<tr *ngFor="let basin_characteristic of output.value">
+								<td>{{basin_characteristic.fcpg_parameter}}</td>
+								<td>{{basin_characteristic["description"]}}</td>
+								<td><span>{{basin_characteristic["value"] | number : '1.2'}}</span></td>
+								<td>{{basin_characteristic["units"]}}</td>
+							</tr>
+						</table>
+					</div>
+					<div *ngIf="output.key=='geologyInfo'">Surficial Geology:
+						<table id="reportTableSG">
+							<tr>
+								<th><span>Geologic Unit</span></th>
+								<th>Area (sq mi)</th>
+								<th>Area (%)</th>
+							</tr>
+							<tr *ngFor="let geologyType of workflowData[i].outputs.geologyInfo">
+								<td><span>{{geologyType[0]}}</span></td>
+								<td>{{geologyType[1] | number : '1.3'}}</td>
+								<td>{{geologyType[2] | number: '1.3'}}</td>
+							</tr>
+						</table>
+					</div>
+					<div *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+						<table id="reportTableSE">
+							<tr>
+								<th>Equation</th>
+								<th><span>Value</span></th>
+								<th><span>Units</span></th>
+							</tr>
+							<tr *ngFor="let streamflowEstimate of workflowData[i].outputs.streamflowEstimates">
+								<td><span>{{streamflowEstimate["name"]}}</span></td>
+								<td>{{streamflowEstimate["value"] | number : '1.3'}}</td>
+								<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
+							</tr>
+						</table>
+					</div>
+					<!-- Fire Hydrology: Query by Fire Perimeters-->
+					<div *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</div>
+					<div *ngIf="output.key=='selectedPerimetersInfo'"><br>Selected Perimeter Information:
+						<div>{{workflowData[i].outputs.selectedPerimetersInfo.Key}}:</div>
+						<div *ngFor="let feat of workflowData[i].outputs.selectedPerimetersInfo.Data.features">
+							<span *ngFor="let prop of feat.properties | keyvalue">
+								<div>{{prop.key}}: {{prop.value}}</div>
+							</span> 
+						</div>
+					</div>
+					<div *ngIf="output.key=='downstreamGages'"><br>Downstream Gages:
+						<table id="reportTableDownstreamGages">
+							<tr>
+								<th>Station ID</th>
+								<th><span>Station Name</span></th>
+							</tr>
+							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
+									<td *ngIf="gage.properties.Code"><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></span></td>
+									<td *ngIf="gage.properties.Code">{{gage.properties.Name}}</td>
+									<td *ngIf="gage.properties.identifier"><span><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></span></td>
+									<td *ngIf="gage.properties.identifier">{{gage.properties.name}}</td>
+							</tr>
+						</table>
+					</div>
+				</span>
+
+			<!-- Card footer -->
+				<!-- Download -->
+				<!-- <button class="usa-button usa-button--small usa-button--outline">Download</button> -->
+				<!-- Delete -->
+				<button class="usa-button usa-button--small usa-button--secondary" (click)="workflowData.splice(i, 1)" aria-label="Delete">
+					<i class="fas fa-trash-alt mright-xs"></i>
+					<span>Delete</span>
+				</button>
+</div>
+
+
+
+<!-- Print Report Modal -->
+<div id="printModal" *ngIf="showPrintModal">
+	<div id="printModalContent">
+		<h1 class="usa-modal__heading hide-print" id="printModalHeading">
+			Print Summary
+		</h1>
+		<div class="hide-print">
+			<h3>Report Description</h3>
+			<p>
+				Enter a report title and/or comments here that will display on the printed report.
+			</p>
+			<div>
+				<h4>Report Title:</h4>
+				<p>
+					<input type="text" placeholder="StreamStats National Report" style="width: 100%;" [(ngModel)]="reportTitle" >
+				</p>
+				<h4>Comments:</h4>
+				<p>
+					<input type="text" style="width: 100%;" [(ngModel)]="reportComments">
+				</p>
+
+			</div>
+			<br><br>
+
+			<h3 class="hide-print">Report Contents</h3>
+
+		</div>
+
+		<!-- Actual print content -->
+		<div id="reportContent">
+
+			<div class="show-print">
+				<h1 *ngIf="reportTitle">{{reportTitle}}</h1>
+				<p *ngIf="reportComments">{{reportComments}}</p>
+
+			</div>
+			<div *ngFor="let data of workflowData; let i = index" class="show-print"> 
+
+				<h4>{{data.title}}</h4>
+				<!-- Display Map -->
+				<div *ngIf="data.outputs.layers" id="{{ 'printMap' + i }}" class="printMap"></div>
+
+
+				<!-- Outputs -->
+				<p>{{data.title}} Outputs:</p>
+				<div *ngFor="let output of data.outputs | keyvalue: unsortedKeys">
+					<!-- Click Point -->
+					<li *ngIf="output.key=='clickPoint'">Clicked Point (Latitude, Longitude): {{output.value.lat | number : '1.5'}}, {{output.value.lng | number : '1.5'}}</li>
+					<!-- Delineation -->
+					<li *ngIf="output.key=='selectDelineationProcess'">Delineation Process: {{output.value}}</li>
+					<!-- Fire Hydrology: Query by Basin -->
+					<li *ngIf="output.key=='basinArea'">Drainage Area: {{output.value | number : '1.3'}} sq mi</li>
+					<li *ngIf="output.key=='burnYears'">Burn Year Range: {{output.value[0]}} to {{output.value[1]}}</li>
+					<li *ngIf="output.key=='burnedArea'">Burned Area: {{output.value[0] | number : '1.3'}} sq mi ({{output.value[1] | number : '1.3'}}%)</li>
+					<li *ngIf="output.key=='basinCharacteristics' && output.value && output.value.length > 0">Basin Characteristics:
+						<ul>
+							<table id="reportTableBC1">
+								<tr>
+									<th>Basin Characteristic</th>
+									<th><span>Description</span></th>
+									<th><span>Value</span></th>
+									<th>Units</th>
+								</tr>
+							<tr *ngFor="let basin_characteristic of output.value">
+								<td>{{basin_characteristic.fcpg_parameter}}</td>
+								<td><span>{{basin_characteristic["description"]}}</span></td>
+								<td>{{basin_characteristic["value"]}}</td>
+								<td><span>{{basin_characteristic["units"]}}</span></td>
+								</tr>
+							</table>
+						</ul>
+					</li>
+					<li *ngIf="output.key=='geologyInfo'">Surficial Geology:
+						<ul>
+							<table>
+								<tr>
+									<th>Geologic Unit</th>
+									<th>Area (sq mi)</th>
+									<th>Area (%)</th>
+								</tr>
+								<tr *ngFor="let geologyType of workflowData[i].outputs.geologyInfo">
+									<td>{{geologyType[0]}}</td>
+									<td>{{geologyType[1] | number : '1.3'}}</td>
+									<td>{{geologyType[2] | number: '1.3'}}</td>
+								</tr>
+							</table>
+						</ul>
+					</li>
+					<li *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+						<ul>
+							<table>
+								<tr>
+									<th>Equation</th>
+									<th>Value</th>
+									<th>Units</th>
+								</tr>
+								<tr *ngFor="let streamflowEstimate of workflowData[i].outputs.streamflowEstimates">
+									<td>{{streamflowEstimate["name"]}}</td>
+									<td>{{streamflowEstimate["value"] | number : '1.3'}}</td>
+									<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
+								</tr>
+							</table>
+						</ul>
+					</li>
+					<!-- Fire Hydrology: Query by Fire Perimeters-->	
+					<li *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</li>					
+					<li *ngIf="output.key=='selectedPerimetersInfo'">Selected Perimeter Information:
+						<ul>
+							<li>{{workflowData[i].outputs.selectedPerimetersInfo.Key}}:</li>
+							<div *ngFor="let feat of workflowData[i].outputs.selectedPerimetersInfo.Data.features">
+								<ul>
+									<ul>
+										<span *ngFor="let prop of feat.properties | keyvalue">
+											<li>{{prop.key}}: {{prop.value}}</li>
+										</span> 
+									</ul>
+								</ul>
+							</div>
+						</ul>
+					</li>
+					<li *ngIf="output.key=='downstreamGages'">Downstream Gages:
+						<table id="reportTableDownstreamGages2">
+							<tr>
+								<th>Station ID</th>
+								<th><span>Station Name</span></th>
+							</tr>
+							<tr *ngFor="let gage of workflowData[i].outputs.downstreamGages">
+									<td *ngIf="gage.properties.Code"><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.Code}}' target="_blank">{{gage.properties.Code}}</a></td>
+									<td *ngIf="gage.properties.Code"><span>{{gage.properties.Name}}</span></td>
+									<td *ngIf="gage.properties.identifier"><a href='http://nwis.waterdata.usgs.gov/nwis/inventory/?site_no={{gage.properties.identifier.replace("USGS-","")}}' target="_blank">{{gage.properties.identifier.replace("USGS-","")}}</a></td>
+									<td *ngIf="gage.properties.identifier"><span>{{gage.properties.name}}</span></td>
+							</tr>
+						</table>
+					</li>
+				</div>
+			</div>
+		
+		</div>
+
+		<div class="hide-print">
+			<br><br>
+			<button type="button" class="usa-button usa-button--secondary" (click)="showPrintModal = false">
+				Close Window
+			</button>
+			<button type="button" class="usa-button" (click)="onPrint()">
+				Print
+			</button>
+		</div>
+			
+	
+	</div>
+</div>

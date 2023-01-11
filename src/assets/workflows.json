@@ -1,27 +1,30 @@
 [
     {
         "title": "Delineation",
-        "description": "Delineate a basin based on a click point. Delineations available using state data, national datasets, etc.",
+        "description": "Delineate a basin from a clicked point and compute basin characteristics.",
         "functionality": "Core",
         "icon": "far fa-map-marker",
         "steps":
         [
             {
                 "label": "Select Delineation Process",
+                "description": "",
                 "name": "selectDelineationProcess",
-                "type": "checkbox",
+                "type": "radio",
+                "cursor": "auto",
                 "options":
                 [
                     {
-                        "text": "NLDI Delineation",
-                        "selected": false
+                        "text": "NLDI Delineation"
                     }
                 ]
             },
             {
                 "label":"Select Delineation Point",
+                "description": "",
                 "name": "selectDelineationPoint",
                 "type": "subscription",
+                "cursor": "crosshair",
                 "validators": 
                 {
                     "required": true
@@ -29,30 +32,33 @@
                 "options":
                 [
                     {
-                        "text":"Click on the map",
-                        "selected": false
+                        "text":"Select a delineation point on a blue stream line on the map."
                     }
                 ]
+            },
+            {
+                "label": "Select Basin Characteristics",
+                "description": "",
+                "name": "selectBasinCharacteristics",
+                "type": "checkbox",
+                "cursor": "auto",
+                "options": []
             }
-        ],
-        "output": 
-        {
-            "value": "delineationPolygon",
-            "valueType": "geojson",
-            "displayType": "map"
-        }
+        ]
     },
     {
         "title": "Fire Hydrology",
-        "description": "Fire hydrology description here.",
+        "description": "Query fire hydrology based on delineated basin or fire perimeter.",
         "functionality": "Core",
         "icon": "far fa-fire-alt",
         "steps":
         [
             {
                 "label": "Select a Fire Hydrology Query Method",
+                "description": "",
                 "name": "selectFireHydroProcess",
-                "type": "checkbox",
+                "type": "radio",
+                "cursor": "auto",
                 "options":
                 [
                     {
@@ -61,9 +67,11 @@
                         "nestedSteps": 
                         [
                             {
-                                "label": "Select a Point",
+                                "label": "Select Delineation Point",
+                                "description": "",
                                 "name": "selectFireHydroBasin",
                                 "type": "subscription",
+                                "cursor": "crosshair",
                                 "validators": 
                                 {
                                     "required": true
@@ -71,15 +79,16 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Click on the map",
-                                        "selected": false
+                                        "text": "Select a delineation point on a blue stream line on the map."
                                     }
                                 ]
                             },
                             {
                                 "label":"Burn Area Year Range",
-                                "name": "burnAreaStartYear",
+                                "description": "Enter a start and end date for the burn area year range.",
+                                "name": "burnAreaYearRange",
                                 "type": "text",
+                                "cursor": "auto",
                                 "validators": 
                                 {
                                     "required": true
@@ -88,25 +97,27 @@
                                 [
                                     {
                                         "textLabel":"Start Year",
-                                        "text":"1900"
+                                        "text": 1900
                                     },
                                     {
                                         "textLabel":"End Year",
-                                        "text":"2022"
+                                        "text": 2023
                                     }
                                 ]
                             }
                         ]
                     },
                     {
-                        "text": "Query by Fire Perimeters",
+                        "text": "Query by Fire Perimeter",
                         "selected": false,
                         "nestedSteps": 
                         [
                             {
                                 "label": "Select a Fire Perimeter",
+                                "description": "",
                                 "name": "selectFireHydroPerimeter",
                                 "type": "subscription",
+                                "cursor": "auto",
                                 "validators": 
                                 {
                                     "required": true
@@ -114,8 +125,25 @@
                                 "options": 
                                 [
                                     {
-                                        "text": "Click on the map",
+                                        "text": "Select a fire perimeter on the map.",
                                         "selected": false
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Enter Downstream Trace Distance",
+                                "description": "Enter the distance (kilometers) to trace stream lines downstream of the fire perimeter.",
+                                "name": "enterDownstreamDistance",
+                                "type": "text",
+                                "cursor": "auto",
+                                "validators": 
+                                {
+                                    "required": true
+                                },
+                                "options": 
+                                [
+                                    {
+                                        "textLabel":"Downstream Trace Distance"
                                     }
                                 ]
                             }

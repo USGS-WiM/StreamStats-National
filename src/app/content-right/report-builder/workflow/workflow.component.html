@@ -1,0 +1,94 @@
+<!-- Workflow Steps/Walkthru -->
+
+
+<div class="workflow-wrapper">
+	<h2 class="mtop-md">{{workflow.title}}</h2>
+	
+	<form [formGroup]="workflowForm" (ngSubmit)="onContinue(workflowForm.value)" #data>
+	
+		<!-- Form -->
+		<div formArrayName="steps" class="workflow-steps">
+	
+			<div *ngFor='let step of workflowFormData | slice:0:stepsCompleted+1; let i = index' class="step" [ngClass]="{'completed': stepsCompleted > i}">
+	
+				<!-- Step number, title, description -->
+				<div class="step-info">
+					<span class="step-number">{{i+1}}</span>
+					<span class="step-description">
+						<b>{{step.value.label}}</b>
+						<p>{{step.value.description}}</p>
+					</span>
+				</div>
+
+				<!-- Step content -->
+				<div formGroupName="{{i}}" class="step-body">
+	
+					<div formArrayName="options">
+	
+						<!-- Loop for each step -->
+						<div *ngFor="let option of workflowFormData[i].controls.options.controls; let j = index" formGroupName="{{j}}">
+
+							<!-- Radio Buttons -->
+							<div class="workflow-radio-group" *ngIf="step.value.type === 'radio'">
+								<input type="radio" id="workflowRadio{{j}}" name="selected" formControlName="selected" (change)="onRadioChange(option.value, step.value)">
+								<label class="mleft-xs" for="workflowRadio{{j}}" >{{option.value.text}}</label>
+							</div>
+	
+							<!-- Checkboxes -->
+							<div class="workflow-checkbox-group" *ngIf="step.value.type === 'checkbox'">
+								<input type="checkbox" id="workflowCheckbox{{j}}" name="selected" formControlName="selected" (change)="onCheckboxChange(option.value, step.value)">
+								<label class="mleft-xs" for="workflowCheckbox{{j}}" >{{option.value.text}}</label>
+							</div>
+	
+							<!-- Subscription -->
+							<div *ngIf="step.value.type === 'subscription'">
+								<label class="step-body-instruction">
+									{{option.value.text}}
+								</label>
+							</div>
+	
+							<!-- Text -->
+							<div *ngIf="step.value.type === 'text'">
+								<input type="number" class="usa-input" (input)="onChangeText($event.target.value)" formControlName="text"/>
+							</div>
+						
+						</div>
+	
+					</div>
+	
+				</div>
+	
+	
+				<!-- Step actions -->
+				<div class="step-actions">
+					<div></div>
+					<!-- Next Button -->
+					<button type="button" (click)="nextStep(i); onContinue(workflowForm.value)" class="usa-button mtop-xs" [disabled]="!checkStep(step.value.type, i) || stepsCompleted > i">Next</button>
+				</div>
+	
+	
+									
+			</div>
+	
+			<!-- Finish Button -->
+			<div class="step" *ngIf="finalStep">
+
+				<div class="step-info">
+					<span class="step-number green"><i class="fas fa-check"></i></span>
+					<span class="step-description">
+						<b>You've completed this {{workflow.title}} workflow</b>
+						Click finish to continue.
+					</span>
+				</div>
+				<div class="step-actions">
+					<div></div>
+					<button type="submit" class="usa-button mtop-xs" (click)="finishedWorkflow(workflowForm.value)">Finish</button>
+				</div>
+			</div>
+		</div>
+
+	
+	</form>
+	
+	
+	

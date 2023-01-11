@@ -1,3 +1,38 @@
+#emptyWorkflows{
+	display: block;
+	text-align: center;
+	color: var(--textFade);
+	font-size: 1em;
+	margin: 50px 0 0 0;
+
+	i{
+		display: block;
+		font-size: 50px;
+		color: var(--red);
+		margin-bottom: 15px;
+	}
+}
+
+// Completed Workflow card
+.completed-workflow{
+	box-sizing: border-box;
+	padding: 15px;
+	border: 1px solid var(--border);
+	border-radius: var(--borderRadius);
+	display: block;
+	width: 100%;
+	margin-bottom: 15px;
+
+	h4{
+		margin: 0 0 10px 0;
+	}
+	.data{
+		display: block;
+		font-size: 1em;
+		padding: 5px 0;
+	}
+}
+
 div.reportMap {
     width: 100%; 
     height: 120px;
@@ -69,4 +104,9 @@ table {
 	max-width: 1000px;
 	margin: 0 auto;
 	
+}
+.printMap{
+	display: block;
+	width: 100%;
+	height: 300px;
 }

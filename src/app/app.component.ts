@@ -18,8 +18,10 @@ export class AppComponent implements OnInit{
   private configSettings: Config;
   public version: string;
 
+  sidebarView = "visible";
+
 	constructor(private titleService: Title, private metaService: Meta, public mapService: MapService, private _configService: ConfigService) {
-    this.configSettings = this._configService.getConfiguration();
+    	this.configSettings = this._configService.getConfiguration();
 	}
 
   ngOnInit() {
