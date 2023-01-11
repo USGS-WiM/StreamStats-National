@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Burn Severity is turned off by default for Fire Hydrology workflows
 - Some checkboxes are now radio buttons where appropriate
 - 'Query by Fire Perimeters' workflow to 'Query by Fire Perimeter' 
+- '2022 Wildland Fire Perimeters' renamed to 'Current Year Wildland Fire Perimeters'
 
 ### Deprecated 
 

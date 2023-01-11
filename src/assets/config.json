@@ -32,7 +32,7 @@
         }
         },
         {
-            "name": "2022 Wildland Fire Perimeters",
+            "name": "Current Year Wildland Fire Perimeters",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
@@ -169,7 +169,7 @@
             "color": "#3CB043",
             "fillColor": "#3CB043"
         },
-        "2022 Wildland Fire Perimeters": {
+        "Current Year Wildland Fire Perimeters": {
             "color": "#EBCF26",
             "fillColor": "#EBCF26"
         },
