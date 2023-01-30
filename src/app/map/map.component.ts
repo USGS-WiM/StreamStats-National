@@ -203,8 +203,6 @@ export class MapComponent implements OnInit {
             // Check to see what Basin Characteristics are available for this point
             await this.queryBasinCharacteristics();
             // If at least one basin characteristic is available
-            // TODO: change these values from -9999.0 and -19.998 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
-            this.basinCharacteristics = this.basinCharacteristics.filter((basinCharacteristic) => basinCharacteristic.value != -9999.0 && basinCharacteristic.value != -19.998);
             if (this.basinCharacteristics.length > 0) {
               this._mapService.setBasinCharacteristics(this.basinCharacteristics);
               let basinCharacteristicArray = [];
@@ -507,7 +505,6 @@ export class MapComponent implements OnInit {
     this.createMessage("Checking available basin characteristics. Please wait.");
     let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
     this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
-    this.createMessage("Available basin characteristics were successfully checked.");
     this._loaderService.hideFullPageLoad();
   }
 
@@ -547,7 +544,6 @@ export class MapComponent implements OnInit {
 
       // Streamflow Estimates
       await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
-      this.createMessage("Basin characteristics and streamflow estimates were successfully calculated.");
     } else {
       this.createMessage("Please enter valid Burn Years.", 'error');
     }

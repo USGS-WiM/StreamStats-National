@@ -519,12 +519,20 @@ export class MapService {
             // Use this URL if TestWeb is offline:
             // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude;
             await this._http.post(url, {headers: this.authHeader}).subscribe(response => {
-                let parameterValues = response["results"];
                 var basinParameters = JSON.parse(JSON.stringify(this.configSettings.parameters));
+                let parameterValues = response["results"];
+                for (const parameter in parameterValues) {
+                    // TODO: change this value from -9999 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
+                    if (parameterValues[parameter] == '-9999') {
+                        basinParameters = basinParameters.filter((basinParameter) =>  basinParameter.fcpg_parameter != parameter);
+                    }
+                }
                 basinParameters.forEach(parameter => {
                     parameter.value = parameterValues[parameter.fcpg_parameter] * parameter.multiplier;
                 });
                 resolve(basinParameters);
+                this.createMessage("Basin characteristic were successfully calculated.");
+
             }, error => {
                 console.log(error);
                 this._loaderService.hideFullPageLoad();
@@ -541,36 +549,41 @@ export class MapService {
             let regressionRegions = postBody[0]["regressionRegions"];
             regressionRegions.forEach(regressionRegion => {
                 let parameters = regressionRegion["parameters"];
-                parameters.forEach(parameter => {
-                switch (parameter["code"]) {
-                    case "DRNAREA":
-                        parameter["value"] = (area(basinFeature) / 1000000);; 
-                        break;
-                    case "I_30_M":
-                        parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
-                        break;
-                    case "BRNAREA":
-                        parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
-                        break;
-                    default:
-                    parameter["value"] = 0.0;
-                }
-                });
-            });
+                try {
+                    parameters.forEach(parameter => {
+                        switch (parameter["code"]) {
+                            case "DRNAREA":
+                                parameter["value"] = (area(basinFeature) / 1000000);
+                                break;
+                            case "I_30_M":
+                                parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
+                                break;
+                            case "BRNAREA":
+                                parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
+                                break;
+                            default:
+                            parameter["value"] = 0.0;
+                        }
+                    });
 
-            let streamflowEstimates = [];
-            let url = this.configSettings.NSSServices + "scenarios/Estimate";
-            this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
-                let regressionRegions = response[0]["regressionRegions"];
-                regressionRegions.forEach(regressionRegion => { 
-                    let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
-                    streamflowEstimates.push(result);
-                });
-                this.setStreamflowEstimates(streamflowEstimates);
-            }, error => {
-                console.log(error);
-                this._loaderService.hideFullPageLoad();
-                this.createMessage('Error calculating streamflow estimates.', 'error')
+                    let streamflowEstimates = [];
+                    let url = this.configSettings.NSSServices + "scenarios/Estimate";
+                    this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
+                        let regressionRegions = response[0]["regressionRegions"];
+                        regressionRegions.forEach(regressionRegion => { 
+                            let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
+                            streamflowEstimates.push(result);
+                        });
+                        this.setStreamflowEstimates(streamflowEstimates);
+                        this.createMessage("Streamflow estimates were successfully calculated.");
+                    }, error => {
+                        console.log(error);
+                        this._loaderService.hideFullPageLoad();
+                        this.createMessage('Error calculating streamflow estimates.', 'error')
+                    });
+                } catch (error) {
+                    this.createMessage("Streamflow estimates cannot be computed: some basin characteristics are not available.","error");
+                }
             });
         }, error => {
             console.log(error);
