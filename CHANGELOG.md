@@ -26,7 +26,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed  
 
-- 
+- In "Delineation" workflow, only return Basin Characteristics that are available at the clicked point
+
 ### Security  
 
 - 

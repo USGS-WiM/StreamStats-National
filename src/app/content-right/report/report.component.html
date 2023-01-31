@@ -61,7 +61,7 @@
 							</tr>
 						</table>
 					</div>
-					<div *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+					<div *ngIf="output.key=='streamflowEstimates' && workflowData[i].outputs.streamflowEstimates">Streamflow Estimates:
 						<table id="reportTableSE">
 							<tr>
 								<th>Equation</th>
@@ -74,6 +74,8 @@
 								<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
 							</tr>
 						</table>
+					</div>
+					<div *ngIf="output.key=='streamflowEstimates' && !workflowData[i].outputs.streamflowEstimates">Streamflow Estimates: Not available
 					</div>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->
 					<div *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</div>
@@ -201,7 +203,7 @@
 							</table>
 						</ul>
 					</li>
-					<li *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+					<li *ngIf="output.key=='streamflowEstimates' && workflowData[i].outputs.streamflowEstimates">Streamflow Estimates:
 						<ul>
 							<table>
 								<tr>
@@ -217,6 +219,7 @@
 							</table>
 						</ul>
 					</li>
+					<li *ngIf="output.key=='streamflowEstimates' && !workflowData[i].outputs.streamflowEstimates">Streamflow Estimates: Not available</li>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->	
 					<li *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</li>					
 					<li *ngIf="output.key=='selectedPerimetersInfo'">Selected Perimeter Information:
