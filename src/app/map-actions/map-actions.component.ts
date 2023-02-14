@@ -21,6 +21,7 @@ export class MapActionsComponent implements OnInit {
 	private MapService: MapService;
 	private configSettings: Config;
 	public baselayers = [] as any;
+	private currentBaseLayer: any;
 	public workflowLayers;
 	public overlayLayers;
 	public currentZoom: number = 4;
@@ -53,7 +54,10 @@ export class MapActionsComponent implements OnInit {
 		this._workflowService.selectedWorkflow.subscribe(res => {
 			this.selectedWorkflow = res;
 		})
-
+		// Get current basemap
+		this.MapService.baseLayer.subscribe((currentBaseLayer: any) => {
+			this.currentBaseLayer = currentBaseLayer;
+		});
 	}
 
 	public SetBaselayer(LayerName: string) {

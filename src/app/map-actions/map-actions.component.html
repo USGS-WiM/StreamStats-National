@@ -32,7 +32,7 @@
 				<span><div>
 					{{item[0]}}
 					<!-- TODO - Write conditional if base layer is active -->
-					<i class="fas fa-check-circle" *ngIf="'<<BASELAYER>>' == item[0]" aria-label="Active Layer"></i>
+					<i class="fas fa-check-circle" *ngIf="currentBaseLayer == item[0]" aria-label="Active Layer"></i>
 				</div></span>
 			</label>
 		</div>
