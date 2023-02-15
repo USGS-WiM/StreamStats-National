@@ -252,6 +252,7 @@ export class MapService {
             maxZoom: ml["maxZoom"]
         });
     }
+    private _baseLayer: Subject<any> = new Subject<any>();
     public SetBaselayer(layername: string) {
         // Set previous basemap visibility to false and remove from map
         if (this.chosenBaseLayerName != layername) {
@@ -262,9 +263,13 @@ export class MapService {
         if (this.baseMaps[layername]) {
             this.baseMaps[layername].visible = true;
             this.chosenBaseLayerName = layername;
+            this._baseLayer.next(this.chosenBaseLayerName);
             this.map.addLayer(this.baseMaps[layername]);
         }
     }
+    public get baseLayer(): any {
+        return this._baseLayer.asObservable();
+    }    
     private _overlayLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
     public setOverlayLayers(ml: Array<any>) {
         this.overlaysSubject.push(ml);

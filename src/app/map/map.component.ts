@@ -88,7 +88,7 @@ export class MapComponent implements OnInit {
     // Get available workflow layers / Get active workflow layers
     this.workflowLayers = this._mapService.workflowLayers;
     this._mapService.activeWorkflowLayers.subscribe(activeLayers => {
-      this.activeWorkflowLayers = activeLayers;
+	this.activeWorkflowLayers = activeLayers;
     });
 
     // Get streamgages toggle status

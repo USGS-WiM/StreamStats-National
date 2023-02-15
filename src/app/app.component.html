@@ -29,7 +29,7 @@
 				<i class="fas fa-bars" alt="Open Sidebar"></i>
 			</button>
 			<!-- Close sidebar - when open -->
-			<button (click)="sidebarView = 'none'" *ngIf="sidebarView != 'none'">
+			<button (click)="sidebarView = 'none'; closeSidebar" *ngIf="sidebarView != 'none'">
 				<i class="fas fa-times" alt="Close Sidebar"></i>
 			</button>
 		</div>
@@ -41,7 +41,7 @@
 		<app-content-right></app-content-right>
 	</div>
 
-  </div>
+</div>
 
 </div>
 
@@ -53,6 +53,14 @@
 <!-- About & Help Modal -->
 <div class="usa-modal usa-modal--lg" id="helpModal" aria-labelledby="helpModalHeading" aria-describedby="helpModalDescription">
 	<div class="usa-modal__content">
+
+		<!-- Floating close button -->
+		<div class="modal-x" data-close-modal>
+			<i class="fal fa-times"></i>
+		</div>
+
+
+
 		<div class="usa-modal__main">
 			<h2 class="usa-modal__heading" id="helpModalHeading">
 				About & Help
@@ -121,7 +129,7 @@
 				<ul class="usa-button-group">
 					<li class="usa-button-group__item">
 						<button type="button" class="usa-button usa-button--outline" data-close-modal>
-							Close
+							Close Popup
 						</button>
 					</li>
 				</ul>
