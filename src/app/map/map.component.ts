@@ -588,11 +588,11 @@ export class MapComponent implements OnInit {
             );
          } else {
             this.count ++;
-            this.checkCount(this.count, 6);
+            this.checkCount(this.count, 7);
           }
         } else {
           this.count ++;
-          this.checkCount(this.count, 6);
+          this.checkCount(this.count, 7);
         }
       }
     });
@@ -621,7 +621,7 @@ export class MapComponent implements OnInit {
       }
     } 
     this.count ++;
-    this.checkCount(this.count, 6);
+    this.checkCount(this.count, 7);
     if (this.firePerimeterLayer) {
       this._mapService.map.fitBounds(this.firePerimeterLayer.getBounds(), {padding: [75,75]});
     }
