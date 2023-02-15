@@ -541,7 +541,7 @@ export class MapComponent implements OnInit {
 
       // Basin characteristics
       let basinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
-      this._mapService.setBasinCharacteristics(basinCharacteristics);
+      await this._mapService.setBasinCharacteristics(basinCharacteristics);
 
       // Streamflow Estimates
       await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
