@@ -181,7 +181,7 @@
 							<tr *ngFor="let basin_characteristic of output.value">
 								<td>{{basin_characteristic.fcpg_parameter}}</td>
 								<td><span>{{basin_characteristic["description"]}}</span></td>
-								<td>{{basin_characteristic["value"]}}</td>
+								<td>{{basin_characteristic["value"] | number : '1.2'}}</td>
 								<td><span>{{basin_characteristic["units"]}}</span></td>
 								</tr>
 							</table>
