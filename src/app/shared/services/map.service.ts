@@ -451,28 +451,17 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == 'Current Year Wildland Fire Perimeters') {
+                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "WFIGS - Wildland Fire Perimeters Full History" ||workflowLayer == "Interagency Fire Perimeter History - All Years" || workflowLayer == 'Current Year Wildland Fire Perimeters') { 
                     if (workflowLayer == "2000-2018 Wildland Fire Perimeters") {
-                        // TO DO #194
-                        if (startBurnYear >= (new Date()).getFullYear()) {
-                            count++;
-                        }
                         queryString = 'fireyear >= ' + startBurnYear.toString() + ' AND fireyear <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "2019 Wildland Fire Perimeters") {
-                        if (startBurnYear >= (new Date()).getFullYear()) {
-                            count++;
-                        }
-                        queryString = 'fireyear >= ' + startBurnYear.toString() + ' AND fireyear <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "2021 Wildland Fire Perimeters") {
-                        if (endBurnYear < (new Date()).getFullYear()) {
-                            count ++;
-                        }
-                        queryString = '1=1';
+                    } else if (workflowLayer == "Interagency Fire Perimeter History - All Years") {
+                        queryString = 'FIRE_YEAR_INT >= ' + startBurnYear.toString() + ' AND FIRE_YEAR_INT <= ' + endBurnYear.toString();
+                    } else if (workflowLayer == "WFIGS - Wildland Fire Perimeters Full History") {
+                        queryString = "irwin_FireDiscoveryDateTime >= DATE '" + startBurnYear.toString() + "-01-01' AND irwin_FireDiscoveryDateTime <= DATE '" + endBurnYear.toString() + "-12-31'";
                     } else if (workflowLayer == "Current Year Wildland Fire Perimeters") {
-                        if (endBurnYear <= (new Date()).getFullYear()) {
-                            count ++;
-                        }
-                        queryString = '1=1';
+                        queryString = "poly_CreateDate >= DATE '" + startBurnYear.toString() + "-01-01' AND poly_CreateDate <= DATE '" + endBurnYear.toString() + "-12-31'";
+                    } else if (workflowLayer == "2019 Wildland Fire Perimeters") {
+                        queryString = "datecurrent >= DATE '" + startBurnYear.toString() + "-01-01' AND datecurrent <= DATE '" + endBurnYear.toString() + "-12-31'";
                     }
                     this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
                     .run((error: any, results: any) =>  {
@@ -494,7 +483,7 @@ export class MapService {
                             }
                         }
                         count ++;
-                        if (count === 2) {
+                        if (count === 5) { // If all fire 5 perimeter layers have been queried 
                             if (fireUnion !== undefined) {
                                 try {
                                     const intersectPolygons = intersect(fireUnion, basin);

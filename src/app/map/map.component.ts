@@ -319,10 +319,11 @@ export class MapComponent implements OnInit {
                     if (o.text === "Query by Basin") {
                       this.addLayers('NHD Flowlines', true);
                     }
-                    this.addLayers('2000-2018 Wildland Fire Perimeters', true);
-                    this.addLayers('2019 Wildland Fire Perimeters', true);
-                    this.addLayers('2021 Wildland Fire Perimeters', true);
                     this.addLayers('Current Year Wildland Fire Perimeters', true);
+                    this.addLayers('WFIGS - Wildland Fire Perimeters Full History', true);
+                    this.addLayers('Interagency Fire Perimeter History - All Years', true);
+                    this.addLayers('2019 Wildland Fire Perimeters', true);
+                    this.addLayers('2000-2018 Wildland Fire Perimeters', true);
                     this.addLayers('MTBS Fire Boundaries', true);
                     this.addLayers('Burn Severity', false);
                   }
@@ -579,7 +580,7 @@ export class MapComponent implements OnInit {
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (this.activeWorkflowLayers.find(layer => layer.name === layerName)) {
         if (this.activeWorkflowLayers.find(layer => layer.name === layerName).visible == true) {
-          if (layerName === 'Current Year Wildland Fire Perimeters' || layerName === '2021 Wildland Fire Perimeters' || layerName === '2019 Wildland Fire Perimeters' || layerName === '2000-2018 Wildland Fire Perimeters' || layerName === 'MTBS Fire Boundaries') {
+          if (layerName === 'Current Year Wildland Fire Perimeters' || layerName === 'WFIGS - Wildland Fire Perimeters Full History' || layerName === 'Interagency Fire Perimeter History - All Years' || layerName === '2019 Wildland Fire Perimeters' ||layerName === '2000-2018 Wildland Fire Perimeters' || layerName === 'MTBS Fire Boundaries') {
             this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
               .run((error: any, results: any) => {
                 this.findFireFeatures(error, results, layerName);
