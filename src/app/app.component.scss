@@ -17,11 +17,12 @@
 #splitLayoutLeft{
 	flex-grow: 3;
 	position: relative;
+	transition: 0.15s;
 
 	#viewControlButtons{
 		position: absolute;
 		box-sizing: border-box;
-		padding-right: 10px;
+		padding-right: 0;
 		top: 0;
 		right: 0;
 		z-index: 50;
@@ -31,13 +32,13 @@
 		margin-bottom: 1px;
 
 		button{
-			background-color: transparent;
+			background-color: var(--grey);
 			border: none;
 			height: 100%;
 			font-size: 1.3em;
-			padding: 0 8px;
-			color: var(--text);
-			opacity: 0.8;
+			padding: 0 15px;
+			color: var(--textFade);
+			opacity: 1;
 
 			&.active{
 				color: var(--primary);
@@ -46,8 +47,12 @@
 			&:hover,
 			&:focus{
 				opacity: 1;
-				transform: scale(1.1);
+				color: var(--text);
 				cursor: pointer;
+			}
+
+			&:first-child{
+				border-left: 1px solid var(--borderLight);
 			}
 		}
 
@@ -68,7 +73,7 @@
 		right: 0;
 		z-index: 5000;
 		height: 100%;
-		background-color: rgba(255,255,255,0.75);
+		background-color: var(--background);
 		width: 95vw;
 		max-width: 440px;
 		min-width: 320px;
@@ -89,7 +94,7 @@
 	}
 	&.none{
 		#splitLayoutRight{
-			display: none;
+			width: 0;
 		}
 	}
 	&.visible{
