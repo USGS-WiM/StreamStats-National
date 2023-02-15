@@ -559,25 +559,24 @@ export class MapService {
                             parameter["value"] = 0.0;
                         }
                     });
-
-                    let streamflowEstimates = [];
-                    let url = this.configSettings.NSSServices + "scenarios/Estimate";
-                    this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
-                        let regressionRegions = response[0]["regressionRegions"];
-                        regressionRegions.forEach(regressionRegion => { 
-                            let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
-                            streamflowEstimates.push(result);
-                        });
-                        this.setStreamflowEstimates(streamflowEstimates);
-                        this.createMessage("Streamflow estimates were successfully calculated.");
-                    }, error => {
-                        console.log(error);
-                        this._loaderService.hideFullPageLoad();
-                        this.createMessage('Error calculating streamflow estimates.', 'error')
-                    });
                 } catch (error) {
                     this.createMessage("Streamflow estimates cannot be computed: some basin characteristics are not available.","error");
                 }
+            });
+            let streamflowEstimates = [];
+            let url = this.configSettings.NSSServices + "scenarios/Estimate";
+            this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
+                let regressionRegions = response[0]["regressionRegions"];
+                regressionRegions.forEach(regressionRegion => { 
+                    let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
+                    streamflowEstimates.push(result);
+                });
+                this.setStreamflowEstimates(streamflowEstimates);
+                this.createMessage("Streamflow estimates were successfully calculated.");
+            }, error => {
+                console.log(error);
+                this._loaderService.hideFullPageLoad();
+                this.createMessage('Error calculating streamflow estimates.', 'error')
             });
         }, error => {
             console.log(error);
