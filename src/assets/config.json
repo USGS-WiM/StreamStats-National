@@ -41,8 +41,17 @@
             "visible": true
         },
         {
-            "name": "2021 Wildland Fire Perimeters",
+            "name": "WFIGS - Wildland Fire Perimeters Full History",
             "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Fire_History_Perimeters_Public/FeatureServer/0",
+            "type": "agsFeature",
+            "layerOptions": {
+                "zIndex": 9999
+            },
+            "visible": true
+        },
+        {
+            "name": "Interagency Fire Perimeter History - All Years",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/InterAgencyFirePerimeterHistory_All_Years_View/FeatureServer/0/",
             "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999
@@ -165,25 +174,29 @@
         }
     ],
     "symbols": {
-        "MTBS Fire Boundaries": {
-            "color": "#3CB043",
-            "fillColor": "#3CB043"
-        },
         "Current Year Wildland Fire Perimeters": {
-            "color": "#EBCF26",
-            "fillColor": "#EBCF26"
+            "color": "#e41a1c",
+            "fillColor": "#e41a1c"
         },
-        "2021 Wildland Fire Perimeters": {
-            "color": "#ed8f24",
-            "fillColor": "#ed8f24"
+        "WFIGS - Wildland Fire Perimeters Full History": {
+            "color": "#377eb8",
+            "fillColor": "#377eb8"
+        },
+        "Interagency Fire Perimeter History - All Years": {
+            "color": "#4daf4a",
+            "fillColor": "#4daf4a"
         },
         "2019 Wildland Fire Perimeters": {
-            "color": "#ed8f24",
-            "fillColor": "#ed8f24"
+            "color": "#F6BE00",
+            "fillColor": "#F6BE00"
         },
         "2000-2018 Wildland Fire Perimeters": {
-            "color": "#ed8f24",
-            "fillColor": "#ed8f24"
+            "color": "#984ea3",
+            "fillColor": "#984ea3"
+        },
+        "MTBS Fire Boundaries": {
+            "color": "#ff7f00",
+            "fillColor": "#ff7f00"
         }
     },
     "parameters": [
