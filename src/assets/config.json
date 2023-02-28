@@ -71,7 +71,9 @@
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "Historic Perimeters Combined 2000-2018 GeoMAC",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::historic-perimeters-combined-2000-2018-geomac/about"
         },
         {
             "name": "MTBS Fire Boundaries",
