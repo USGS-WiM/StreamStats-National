@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed  
 
 - The Report tab now automatically opens after completing a workflow
+- Fire map services due to NIFC updates
 
 ### Deprecated 
 

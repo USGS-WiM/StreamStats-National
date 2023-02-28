@@ -320,7 +320,7 @@ export class MapComponent implements OnInit {
                       this.addLayers('NHD Flowlines', true);
                     }
                     this.addLayers('Current Year Wildland Fire Perimeters', true);
-                    this.addLayers('WFIGS - Wildland Fire Perimeters Full History', true);
+                    this.addLayers('2021-Present Wildland Fire Perimeters', true);
                     this.addLayers('Interagency Fire Perimeter History - All Years', true);
                     this.addLayers('2019 Wildland Fire Perimeters', true);
                     this.addLayers('2000-2018 Wildland Fire Perimeters', true);
@@ -580,7 +580,7 @@ export class MapComponent implements OnInit {
     Object.keys(this.workflowLayers).forEach(layerName => {
       if (this.activeWorkflowLayers.find(layer => layer.name === layerName)) {
         if (this.activeWorkflowLayers.find(layer => layer.name === layerName).visible == true) {
-          if (layerName === 'Current Year Wildland Fire Perimeters' || layerName === 'WFIGS - Wildland Fire Perimeters Full History' || layerName === 'Interagency Fire Perimeter History - All Years' || layerName === '2019 Wildland Fire Perimeters' ||layerName === '2000-2018 Wildland Fire Perimeters' || layerName === 'MTBS Fire Boundaries') {
+          if (layerName === 'Current Year Wildland Fire Perimeters' || layerName === '2021-Present Wildland Fire Perimeters' || layerName === 'Interagency Fire Perimeter History - All Years' || layerName === '2019 Wildland Fire Perimeters' ||layerName === '2000-2018 Wildland Fire Perimeters' || layerName === 'MTBS Fire Boundaries') {
             this.workflowLayers[layerName].query().nearby(this.clickPoint, 4).returnGeometry(true)
               .run((error: any, results: any) => {
                 this.findFireFeatures(error, results, layerName);
@@ -646,14 +646,14 @@ export class MapComponent implements OnInit {
       'STARTMONTH':"Start Month",
       'STARTDAY':"Start Day",
       'FIRE_TYPE':"Fire Type",					  
-      'POLY_INCIDENTNAME':"Incident Name",
+      'ATTR_INCIDENTNAME':"Incident Name",
       'POLY_GISACRES':"Acres",
-      'POLY_DATECURRENT':"Modified Date",
-      'IRWIN_FIRECAUSE':"Fire Cause",
-      'IRWIN_FIRECAUSEGENERAL':"Fire Cause-General",
-      'IRWIN_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
-      'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
-      'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
+      'POLY_CREATEDATE':"Create Date",
+      'ATTR_FIRECAUSE':"Fire Cause",
+      'ATTR_FIRECAUSEGENERAL':"Fire Cause-General",
+      'ATTR_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
+      'ATTR_FIREOUTDATETIME':"Fire Out Date Time",
+      'ATTR_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
     };
 
     popupcontent = '<div class="popup-header"><b>' + layerName + '</b></div><hr>';

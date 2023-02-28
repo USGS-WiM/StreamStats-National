@@ -456,13 +456,13 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "WFIGS - Wildland Fire Perimeters Full History" ||workflowLayer == "Interagency Fire Perimeter History - All Years" || workflowLayer == 'Current Year Wildland Fire Perimeters') { 
+                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021-Present Wildland Fire Perimeters" ||workflowLayer == "Interagency Fire Perimeter History - All Years" || workflowLayer == 'Current Year Wildland Fire Perimeters') { 
                     if (workflowLayer == "2000-2018 Wildland Fire Perimeters") {
                         queryString = 'fireyear >= ' + startBurnYear.toString() + ' AND fireyear <= ' + endBurnYear.toString();
                     } else if (workflowLayer == "Interagency Fire Perimeter History - All Years") {
                         queryString = 'FIRE_YEAR_INT >= ' + startBurnYear.toString() + ' AND FIRE_YEAR_INT <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "WFIGS - Wildland Fire Perimeters Full History") {
-                        queryString = "irwin_FireDiscoveryDateTime >= DATE '" + startBurnYear.toString() + "-01-01' AND irwin_FireDiscoveryDateTime <= DATE '" + endBurnYear.toString() + "-12-31'";
+                    } else if (workflowLayer == "2021-Present Wildland Fire Perimeters") {
+                        queryString = "attr_FireDiscoveryDateTime >= DATE '" + startBurnYear.toString() + "-01-01' AND attr_FireDiscoveryDateTime <= DATE '" + endBurnYear.toString() + "-12-31'";
                     } else if (workflowLayer == "Current Year Wildland Fire Perimeters") {
                         queryString = "poly_CreateDate >= DATE '" + startBurnYear.toString() + "-01-01' AND poly_CreateDate <= DATE '" + endBurnYear.toString() + "-12-31'";
                     } else if (workflowLayer == "2019 Wildland Fire Perimeters") {

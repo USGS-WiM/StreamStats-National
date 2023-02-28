@@ -33,21 +33,25 @@
         },
         {
             "name": "Current Year Wildland Fire Perimeters",
-            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "WFIGS 2023 Interagency Fire Perimeters to Date",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-2023-interagency-fire-perimeters-to-date/about"
         },
         {
-            "name": "WFIGS - Wildland Fire Perimeters Full History",
-            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Fire_History_Perimeters_Public/FeatureServer/0",
+            "name": "2021-Present Wildland Fire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "WFIGS Interagency Fire Perimeters",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-interagency-fire-perimeters/about"
         },
         {
             "name": "Interagency Fire Perimeter History - All Years",
@@ -65,7 +69,9 @@
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "Historic Perimeters 2019",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::historic-perimeters-2019/about"
         },
         {
             "name": "2000-2018 Wildland Fire Perimeters",
@@ -74,7 +80,9 @@
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "Historic Perimeters Combined 2000-2018 GeoMAC",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::historic-perimeters-combined-2000-2018-geomac/about"
         },
         {
             "name": "MTBS Fire Boundaries",
@@ -178,7 +186,7 @@
             "color": "#e41a1c",
             "fillColor": "#e41a1c"
         },
-        "WFIGS - Wildland Fire Perimeters Full History": {
+        "2021-Present Wildland Fire Perimeters": {
             "color": "#377eb8",
             "fillColor": "#377eb8"
         },
