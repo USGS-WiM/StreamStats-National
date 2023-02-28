@@ -33,12 +33,14 @@
         },
         {
             "name": "Current Year Wildland Fire Perimeters",
-            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/CY_WildlandFire_Perimeters_ToDate/FeatureServer/0",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "WFIGS 2023 Interagency Fire Perimeters to Date",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-2023-interagency-fire-perimeters-to-date/about"
         },
         {
             "name": "2021 Wildland Fire Perimeters",

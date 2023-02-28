@@ -645,14 +645,14 @@ export class MapComponent implements OnInit {
       'STARTMONTH':"Start Month",
       'STARTDAY':"Start Day",
       'FIRE_TYPE':"Fire Type",					  
-      'POLY_INCIDENTNAME':"Incident Name",
-      'POLY_GISACRES':"Acres",
-      'POLY_DATECURRENT':"Modified Date",
-      'IRWIN_FIRECAUSE':"Fire Cause",
-      'IRWIN_FIRECAUSEGENERAL':"Fire Cause-General",
-      'IRWIN_FIREDISCOVERYDATETIME':"Fire Discovery Date Time",
-      'IRWIN_FIREOUTDATETIME':"Fire Out Date Time",
-      'IRWIN_UNIQUEFIREIDENTIFIER':"Unique Fire Identifier"
+      'attr_IncidentName':"Incident Name",
+      'poly_GISAcres':"Acres",
+      'poly_CreateDate':"Create Date",
+      'attr_FireCause':"Fire Cause",
+      'attr_FireCauseGeneral':"Fire Cause-General",
+      'attr_FireDiscoveryDateTime':"Fire Discovery Date Time",
+      'attr_FireOutDateTime':"Fire Out Date Time",
+      'attr_UniqueFireIdentifier':"Unique Fire Identifier"
     };
 
     popupcontent = '<div class="popup-header"><b>' + layerName + '</b></div><hr>';
