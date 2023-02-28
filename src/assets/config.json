@@ -43,13 +43,15 @@
             "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-2023-interagency-fire-perimeters-to-date/about"
         },
         {
-            "name": "2021 Wildland Fire Perimeters",
-            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Fire_History_Perimeters_Public/FeatureServer/0",
+            "name": "2021-Present Wildland Fire Perimeters",
+            "url": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters/FeatureServer/0",
             "type": "agsFeature",
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "WFIGS Interagency Fire Perimeters",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-interagency-fire-perimeters/about"
         },
         {
             "name": "2019 Wildland Fire Perimeters",
