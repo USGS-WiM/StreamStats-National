@@ -60,7 +60,9 @@
             "layerOptions": {
                 "zIndex": 9999
             },
-            "visible": true
+            "visible": true,
+            "layerNameNIFC": "Historic Perimeters 2019",
+            "urlNIFC": "https://data-nifc.opendata.arcgis.com/datasets/nifc::historic-perimeters-2019/about"
         },
         {
             "name": "2000-2018 Wildland Fire Perimeters",
