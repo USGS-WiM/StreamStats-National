@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added 
 
-- 
+- "WFIGS - Wildland Fire Perimeters Full History" layer to fire hydrology workflows
+- "Interagency Fire Perimeter History - All Years" layer to fire hydrology workflows
 
 ### Changed  
 
+- The Report tab now automatically opens after completing a workflow
 - Fire map services due to NIFC updates
 
 ### Deprecated 
@@ -22,12 +24,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed 
 
-- 
+- "2021 Fire Perimeters" layer from fire hydrology workflows
 
 ### Fixed  
 
 - In "Delineation" workflow, only return Basin Characteristics that are available at the clicked point
 - In "Query by Fire Perimeter", fixed bug causes it to not select a perimeter
+- Query strings used to query fire perimeter map layer geometry in queryBurnedArea function
 
 ### Security  
 
