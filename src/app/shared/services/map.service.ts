@@ -505,23 +505,21 @@ export class MapService {
         });
     }
 
-    // TODO: add argument to only compute selected basin characteristics
-    // https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/1
     public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
         return new Promise<any []>(async resolve => { 
             let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;
-            // Use this URL if TestWeb is offline:
+            // For testing, use this URL if TestWeb is offline:
             // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude;
             await this._http.post(url, {headers: this.authHeader}).subscribe(response => {
                 var basinParameters = JSON.parse(JSON.stringify(this.configSettings.parameters));
                 let parameterValues = response["results"];
                 for (const parameter in parameterValues) {
-                    // TODO: change this value from -9999 once this issue is resolved: https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/4
-                    if (parameterValues[parameter] == '-9999') {
+                    if (parameterValues[parameter][0] == null) {
                         basinParameters = basinParameters.filter((basinParameter) =>  basinParameter.fcpg_parameter != parameter);
                     }
                 }
                 basinParameters.forEach(parameter => {
+                    // TODO: change this so the multiplier is received from the database rather than loaded from the config
                     parameter.value = parameterValues[parameter.fcpg_parameter] * parameter.multiplier;
                 });
                 resolve(basinParameters);
