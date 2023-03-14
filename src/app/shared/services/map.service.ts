@@ -398,9 +398,8 @@ export class MapService {
             this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
             .run((error: any, results: any) => {
                 if (error) {
-                    console.log("error");
                     this._loaderService.hideFullPageLoad();
-                    this.createMessage('Error querying geology.', 'error')
+                    this.createMessage('The geology map service is currently unavailable. Geology results could not be computed.', 'error')
                 }
                 let geology_dictionary = {};
                 if (results && results.features.length > 0) {
