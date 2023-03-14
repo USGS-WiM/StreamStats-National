@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - The Report tab now automatically opens after completing a workflow
 - Fire map services due to NIFC updates
+- Unavailable grid query service values are evaluated as null rather than -9999
 
 ### Deprecated 
 
