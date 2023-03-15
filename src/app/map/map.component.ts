@@ -554,7 +554,8 @@ export class MapComponent implements OnInit {
       await this._mapService.setBasinCharacteristics(basinCharacteristics);
 
       // Streamflow Estimates
-      await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
+      let streamflowEstimates = await this._mapService.calculateFireStreamflowEstimates(basinFeature, basinCharacteristics);
+      this._mapService.setStreamflowEstimates(streamflowEstimates);
     } else {
       this.createMessage("Please enter valid Burn Years.", 'error');
     }

@@ -398,7 +398,6 @@ export class MapService {
             this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
             .run((error: any, results: any) => {
                 if (error) {
-                    this._loaderService.hideFullPageLoad();
                     resolve(null)
                     this.createMessage('The geology map service is currently unavailable. Geology results could not be computed.', 'error')
                 }
@@ -534,52 +533,59 @@ export class MapService {
     }
 
     public async calculateFireStreamflowEstimates(basinFeature, basinCharacteristics) {
-        let url = this.configSettings.NSSServices + "scenarios?regions=74&statisticgroups=39";
-        let postBody;
-        await this._http.get(url, {headers: this.authHeader}).subscribe(response => {
-            postBody = response;
-            let regressionRegions = postBody[0]["regressionRegions"];
-            regressionRegions.forEach(regressionRegion => {
-                let parameters = regressionRegion["parameters"];
-                try {
-                    parameters.forEach(parameter => {
-                        switch (parameter["code"]) {
-                            case "DRNAREA":
-                                parameter["value"] = (area(basinFeature) / 1000000);
-                                break;
-                            case "I_30_M":
-                                parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
-                                break;
-                            case "BRNAREA":
-                                parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
-                                break;
-                            default:
-                            parameter["value"] = 0.0;
-                        }
-                    });
-                } catch (error) {
-                    this.createMessage("Streamflow estimates cannot be computed: some basin characteristics are not available.","error");
-                }
-            });
-            let streamflowEstimates = [];
-            let url = this.configSettings.NSSServices + "scenarios/Estimate";
-            this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
-                let regressionRegions = response[0]["regressionRegions"];
-                regressionRegions.forEach(regressionRegion => { 
-                    let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
-                    streamflowEstimates.push(result);
+        return new Promise<any []>(async resolve => { 
+            let url = this.configSettings.NSSServices + "scenarios?regions=74&statisticgroups=39";
+            let postBody;
+            await this._http.get(url, {headers: this.authHeader}).subscribe(response => {
+                postBody = response;
+                let regressionRegions = postBody[0]["regressionRegions"];
+                let streamflowEstimatesPossible = true;
+                regressionRegions.forEach(regressionRegion => {
+                    let parameters = regressionRegion["parameters"];
+                    try {
+                        parameters.forEach(parameter => {
+                            switch (parameter["code"]) {
+                                case "DRNAREA":
+                                    parameter["value"] = (area(basinFeature) / 1000000);
+                                    break;
+                                case "I_30_M":
+                                    parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
+                                    break;
+                                case "BRNAREA":
+                                    parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
+                                    break;
+                                default:
+                                parameter["value"] = 0.0;
+                            }
+                        });
+                    } catch (error) {
+                        resolve(null)
+                        streamflowEstimatesPossible = false;
+                        this.createMessage("Streamflow estimates cannot be computed: some basin characteristics are not available.","error");
+                    }
                 });
-                this.setStreamflowEstimates(streamflowEstimates);
-                this.createMessage("Streamflow estimates were successfully calculated.");
+                if (streamflowEstimatesPossible) {
+                    let streamflowEstimates = [];
+                    let url = this.configSettings.NSSServices + "scenarios/Estimate";
+                    this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
+                        let regressionRegions = response[0]["regressionRegions"];
+                        regressionRegions.forEach(regressionRegion => { 
+                            let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
+                            streamflowEstimates.push(result);
+                        });
+                        resolve(streamflowEstimates);
+                        this.createMessage("Streamflow estimates were successfully calculated.");
+                    }, error => {
+                        console.log(error);
+                        resolve(null)
+                        this.createMessage('Error calculating streamflow estimates.', 'error')
+                    });
+                }
             }, error => {
                 console.log(error);
-                this._loaderService.hideFullPageLoad();
-                this.createMessage('Error calculating streamflow estimates.', 'error')
+                resolve(null);
+                this.createMessage('Error calculating streamflow estimates: service unavailable.', 'error')
             });
-        }, error => {
-            console.log(error);
-            this._loaderService.hideFullPageLoad();
-            this.createMessage('Error calculating streamflow estimates.', 'error')
         });
     }
 
