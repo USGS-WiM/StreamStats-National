@@ -380,7 +380,7 @@ export class MapService {
         .subscribe(resp => {
             this._delineationSubject.next(resp.body);
         }, error => {
-            this.createMessage("Error delineating basin.", 'error');
+            this.createMessage("Error: Basin could not be delineated.", 'error');
             this._loaderService.hideFullPageLoad();
         })
     };
@@ -399,6 +399,7 @@ export class MapService {
             .run((error: any, results: any) => {
                 if (error) {
                     this._loaderService.hideFullPageLoad();
+                    resolve(null)
                     this.createMessage('The geology map service is currently unavailable. Geology results could not be computed.', 'error')
                 }
                 let geology_dictionary = {};
