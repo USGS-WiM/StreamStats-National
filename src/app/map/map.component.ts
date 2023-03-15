@@ -514,7 +514,6 @@ export class MapComponent implements OnInit {
     this._loaderService.showFullPageLoad();
     this.createMessage("Checking available basin characteristics. Please wait.");
     let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
-    console.log(computedBasinCharacteristics);
     this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
     this._loaderService.hideFullPageLoad();
   }
