@@ -665,7 +665,7 @@ export class MapService {
         return this._http.post<any>(this.configSettings.nldiPolygonQuery, data, httpOptions)
         .pipe(catchError((err: any) => {
             this._loaderService.hideFullPageLoad();
-            this.createMessage("Error tracing fire perimeters.", 'error');
+            this.createMessage("Error: Fire perimeter could not be traced.", 'error');
             return throwError(err);  
         }))
     }
