@@ -202,21 +202,30 @@ export class MapComponent implements OnInit {
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[1].completed && !this.workflowData.steps[2].completed) {
             // Check to see what Basin Characteristics are available for this point
             await this.queryBasinCharacteristics();
-            // If at least one basin characteristic is available
-            if (this.basinCharacteristics.length > 0) {
-              this._mapService.setBasinCharacteristics(this.basinCharacteristics);
-              let basinCharacteristicArray = [];
-              this.basinCharacteristics.forEach(basinCharacteristic=> {
-                basinCharacteristicArray.push(this._fb.group({
-                  text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
-                  selected: false
-                }));
-              });
-              this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
-              this._workflowService.setWorkflowForm(this.workflowForm);
+            let workflowFormValue = this.workflowForm.getRawValue();
+            // If the service was available
+            if (this.basinCharacteristics) {
+              // If at least one basin characteristic is available
+              if (this.basinCharacteristics.length > 0) {
+                this._mapService.setBasinCharacteristics(this.basinCharacteristics);
+                let basinCharacteristicArray = [];
+                this.basinCharacteristics.forEach(basinCharacteristic=> {
+                  basinCharacteristicArray.push(this._fb.group({
+                    text: basinCharacteristic.fcpg_parameter + ": " + basinCharacteristic.description,
+                    selected: false
+                  }));
+                });
+                this.workflowForm.controls.steps.controls[2].controls.options.controls = basinCharacteristicArray;
+                this._workflowService.setWorkflowForm(this.workflowForm);
+              } else {
+                workflowFormValue.steps[2].description = "No basin characteristics available at the clicked point.";
+                this.workflowForm.patchValue(workflowFormValue);
+                this._mapService.setBasinCharacteristics(null);
+              }
             } else {
-              this.selectedWorkflow.steps[2].description = "No basin characteristics available at the clicked point."
-              this._mapService.setBasinCharacteristics(null);
+              // If the service was unavailable
+              workflowFormValue.steps[2].description = "Error: Basin characteristics are currently unavailable.";
+              this.workflowForm.patchValue(workflowFormValue);
             }
           }
           if (this.workflowData.title == "Delineation" && this.workflowData.steps[2].completed) {
@@ -505,6 +514,7 @@ export class MapComponent implements OnInit {
     this._loaderService.showFullPageLoad();
     this.createMessage("Checking available basin characteristics. Please wait.");
     let computedBasinCharacteristics = await this._mapService.queryPrecomputedBasinCharacteristics(this.clickPoint.lat, this.clickPoint.lng);
+    console.log(computedBasinCharacteristics);
     this._mapService.setBasinCharacteristics(computedBasinCharacteristics);
     this._loaderService.hideFullPageLoad();
   }

@@ -527,9 +527,9 @@ export class MapService {
                 this.createMessage("Basin characteristic were successfully calculated.");
 
             }, error => {
-                console.log(error);
                 this._loaderService.hideFullPageLoad();
-                this.createMessage("Error getting precomputed basin characteristic values.","error");
+                resolve(null)
+                this.createMessage("Basin characteristics are currently unavailable.","error");
             })
         });
     }
