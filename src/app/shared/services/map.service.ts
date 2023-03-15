@@ -578,7 +578,7 @@ export class MapService {
                     }, error => {
                         console.log(error);
                         resolve(null)
-                        this.createMessage('Error calculating streamflow estimates.', 'error')
+                        this.createMessage('Error: streamflow estimates could not be calculated.', 'error')
                     });
                 }
             }, error => {
