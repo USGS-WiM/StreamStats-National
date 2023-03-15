@@ -491,7 +491,7 @@ export class MapComponent implements OnInit {
         this.splitCatchmentLayer = L.geoJSON(this.basin.features[1]);
         this.outputLayers.addLayer(this.splitCatchmentLayer);
         if (!this.splitCatchmentLayer.getBounds().isValid()) {
-          this.createMessage("Error. Basin cannot be delineated.");
+          this.createMessage("Error: Basin could not be delineated.");
         } else {
           this._mapService.map.fitBounds(this.splitCatchmentLayer.getBounds(), { padding: [75,75] });
         }
