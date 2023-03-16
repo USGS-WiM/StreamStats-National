@@ -252,6 +252,7 @@ export class MapService {
             maxZoom: ml["maxZoom"]
         });
     }
+    private _baseLayer: Subject<any> = new Subject<any>();
     public SetBaselayer(layername: string) {
         // Set previous basemap visibility to false and remove from map
         if (this.chosenBaseLayerName != layername) {
@@ -262,9 +263,13 @@ export class MapService {
         if (this.baseMaps[layername]) {
             this.baseMaps[layername].visible = true;
             this.chosenBaseLayerName = layername;
+            this._baseLayer.next(this.chosenBaseLayerName);
             this.map.addLayer(this.baseMaps[layername]);
         }
     }
+    public get baseLayer(): any {
+        return this._baseLayer.asObservable();
+    }    
     private _overlayLayers: BehaviorSubject<Array<any>> = new BehaviorSubject<Array<any>>([]);
     public setOverlayLayers(ml: Array<any>) {
         this.overlaysSubject.push(ml);
@@ -375,7 +380,7 @@ export class MapService {
         .subscribe(resp => {
             this._delineationSubject.next(resp.body);
         }, error => {
-            this.createMessage("Error delineating basin.", 'error');
+            this.createMessage("Error: Basin could not be delineated.", 'error');
             this._loaderService.hideFullPageLoad();
         })
     };
@@ -393,9 +398,8 @@ export class MapService {
             this.workflowLayers["GeologyFeatures"].query().intersects(basin).where(queryString).returnGeometry(true)
             .run((error: any, results: any) => {
                 if (error) {
-                    console.log("error");
-                    this._loaderService.hideFullPageLoad();
-                    this.createMessage('Error querying geology.', 'error')
+                    resolve(null)
+                    this.createMessage('The geology map service is currently unavailable. Geology results could not be computed.', 'error')
                 }
                 let geology_dictionary = {};
                 if (results && results.features.length > 0) {
@@ -451,28 +455,17 @@ export class MapService {
             
             Object.keys(this.workflowLayers).forEach(workflowLayer => {
                 let queryString;
-                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021 Wildland Fire Perimeters" || workflowLayer == 'Current Year Wildland Fire Perimeters') {
+                if (workflowLayer == "2000-2018 Wildland Fire Perimeters" || workflowLayer == "2019 Wildland Fire Perimeters" || workflowLayer == "2021-Present Wildland Fire Perimeters" ||workflowLayer == "Interagency Fire Perimeter History - All Years" || workflowLayer == 'Current Year Wildland Fire Perimeters') { 
                     if (workflowLayer == "2000-2018 Wildland Fire Perimeters") {
-                        // TO DO #194
-                        if (startBurnYear >= (new Date()).getFullYear()) {
-                            count++;
-                        }
                         queryString = 'fireyear >= ' + startBurnYear.toString() + ' AND fireyear <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "2019 Wildland Fire Perimeters") {
-                        if (startBurnYear >= (new Date()).getFullYear()) {
-                            count++;
-                        }
-                        queryString = 'fireyear >= ' + startBurnYear.toString() + ' AND fireyear <= ' + endBurnYear.toString();
-                    } else if (workflowLayer == "2021 Wildland Fire Perimeters") {
-                        if (endBurnYear < (new Date()).getFullYear()) {
-                            count ++;
-                        }
-                        queryString = '1=1';
+                    } else if (workflowLayer == "Interagency Fire Perimeter History - All Years") {
+                        queryString = 'FIRE_YEAR_INT >= ' + startBurnYear.toString() + ' AND FIRE_YEAR_INT <= ' + endBurnYear.toString();
+                    } else if (workflowLayer == "2021-Present Wildland Fire Perimeters") {
+                        queryString = "attr_FireDiscoveryDateTime >= DATE '" + startBurnYear.toString() + "-01-01' AND attr_FireDiscoveryDateTime <= DATE '" + endBurnYear.toString() + "-12-31'";
                     } else if (workflowLayer == "Current Year Wildland Fire Perimeters") {
-                        if (endBurnYear <= (new Date()).getFullYear()) {
-                            count ++;
-                        }
-                        queryString = '1=1';
+                        queryString = "poly_CreateDate >= DATE '" + startBurnYear.toString() + "-01-01' AND poly_CreateDate <= DATE '" + endBurnYear.toString() + "-12-31'";
+                    } else if (workflowLayer == "2019 Wildland Fire Perimeters") {
+                        queryString = "datecurrent >= DATE '" + startBurnYear.toString() + "-01-01' AND datecurrent <= DATE '" + endBurnYear.toString() + "-12-31'";
                     }
                     this.workflowLayers[workflowLayer].query().intersects(basin).where(queryString).returnGeometry(true)
                     .run((error: any, results: any) =>  {
@@ -494,7 +487,7 @@ export class MapService {
                             }
                         }
                         count ++;
-                        if (count === 2) {
+                        if (count === 5) { // If all fire 5 perimeter layers have been queried 
                             if (fireUnion !== undefined) {
                                 try {
                                     const intersectPolygons = intersect(fireUnion, basin);
@@ -511,71 +504,88 @@ export class MapService {
         });
     }
 
-    // TODO: add argument to only compute selected basin characteristics
-    // https://code.usgs.gov/StreamStats/web-services-and-apis/cogQuery/lambdas/cq-lambda/-/issues/1
     public async queryPrecomputedBasinCharacteristics(latitude, longitude) {
         return new Promise<any []>(async resolve => { 
             let url = this.configSettings.GridQueryService + "latitude=" + latitude + "&longitude=" + longitude;
-            // Use this URL if TestWeb is offline:
+            // For testing, use this URL if TestWeb is offline:
             // let url = "https://hgst52v4o1.execute-api.us-east-2.amazonaws.com/cogQuery/cogQuery?latitude=" + latitude + "&longitude=" + longitude;
             await this._http.post(url, {headers: this.authHeader}).subscribe(response => {
-                let parameterValues = response["results"];
                 var basinParameters = JSON.parse(JSON.stringify(this.configSettings.parameters));
+                let parameterValues = response["results"];
+                for (const parameter in parameterValues) {
+                    if (parameterValues[parameter][0] == null) {
+                        basinParameters = basinParameters.filter((basinParameter) =>  basinParameter.fcpg_parameter != parameter);
+                    }
+                }
                 basinParameters.forEach(parameter => {
+                    // TODO: change this so the multiplier is received from the database rather than loaded from the config
                     parameter.value = parameterValues[parameter.fcpg_parameter] * parameter.multiplier;
                 });
                 resolve(basinParameters);
+                this.createMessage("Basin characteristic were successfully calculated.");
+
             }, error => {
-                console.log(error);
                 this._loaderService.hideFullPageLoad();
-                this.createMessage("Error getting precomputed basin characteristic values.","error");
+                resolve(null)
+                this.createMessage("Basin characteristics are currently unavailable.","error");
             })
         });
     }
 
     public async calculateFireStreamflowEstimates(basinFeature, basinCharacteristics) {
-        let url = this.configSettings.NSSServices + "scenarios?regions=74&statisticgroups=39";
-        let postBody;
-        await this._http.get(url, {headers: this.authHeader}).subscribe(response => {
-            postBody = response;
-            let regressionRegions = postBody[0]["regressionRegions"];
-            regressionRegions.forEach(regressionRegion => {
-                let parameters = regressionRegion["parameters"];
-                parameters.forEach(parameter => {
-                switch (parameter["code"]) {
-                    case "DRNAREA":
-                        parameter["value"] = (area(basinFeature) / 1000000);; 
-                        break;
-                    case "I_30_M":
-                        parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
-                        break;
-                    case "BRNAREA":
-                        parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
-                        break;
-                    default:
-                    parameter["value"] = 0.0;
+        return new Promise<any []>(async resolve => { 
+            let url = this.configSettings.NSSServices + "scenarios?regions=74&statisticgroups=39";
+            let postBody;
+            await this._http.get(url, {headers: this.authHeader}).subscribe(response => {
+                postBody = response;
+                let regressionRegions = postBody[0]["regressionRegions"];
+                let streamflowEstimatesPossible = true;
+                regressionRegions.forEach(regressionRegion => {
+                    let parameters = regressionRegion["parameters"];
+                    try {
+                        parameters.forEach(parameter => {
+                            switch (parameter["code"]) {
+                                case "DRNAREA":
+                                    parameter["value"] = (area(basinFeature) / 1000000);
+                                    break;
+                                case "I_30_M":
+                                    parameter["value"] = basinCharacteristics.filter(parameter => parameter.fcpg_parameter == "i2y30")[0]["value"];
+                                    break;
+                                case "BRNAREA":
+                                    parameter["value"] = 0.0; // This needs to come from this.burnedArea but doesn't matter right now because it is only used for Level 2 or 3 equations.
+                                    break;
+                                default:
+                                parameter["value"] = 0.0;
+                            }
+                        });
+                    } catch (error) {
+                        resolve(null)
+                        streamflowEstimatesPossible = false;
+                        this.createMessage("Streamflow estimates cannot be computed: some basin characteristics are not available.","error");
+                    }
+                });
+                if (streamflowEstimatesPossible) {
+                    let streamflowEstimates = [];
+                    let url = this.configSettings.NSSServices + "scenarios/Estimate";
+                    this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
+                        let regressionRegions = response[0]["regressionRegions"];
+                        regressionRegions.forEach(regressionRegion => { 
+                            let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
+                            streamflowEstimates.push(result);
+                        });
+                        resolve(streamflowEstimates);
+                        this.createMessage("Streamflow estimates were successfully calculated.");
+                    }, error => {
+                        console.log(error);
+                        resolve(null)
+                        this.createMessage('Error: streamflow estimates could not be calculated.', 'error')
+                    });
                 }
-                });
-            });
-
-            let streamflowEstimates = [];
-            let url = this.configSettings.NSSServices + "scenarios/Estimate";
-            this._http.post(url, postBody, {headers: this.authHeader}).subscribe(response => {
-                let regressionRegions = response[0]["regressionRegions"];
-                regressionRegions.forEach(regressionRegion => { 
-                    let result = regressionRegion["results"][0]; // Confine to the first result since we are only looking at level 1 equations.
-                    streamflowEstimates.push(result);
-                });
-                this.setStreamflowEstimates(streamflowEstimates);
             }, error => {
                 console.log(error);
-                this._loaderService.hideFullPageLoad();
-                this.createMessage('Error calculating streamflow estimates.', 'error')
+                resolve(null);
+                this.createMessage('Error calculating streamflow estimates: service unavailable.', 'error')
             });
-        }, error => {
-            console.log(error);
-            this._loaderService.hideFullPageLoad();
-            this.createMessage('Error calculating streamflow estimates.', 'error')
         });
     }
 
@@ -655,7 +665,7 @@ export class MapService {
         return this._http.post<any>(this.configSettings.nldiPolygonQuery, data, httpOptions)
         .pipe(catchError((err: any) => {
             this._loaderService.hideFullPageLoad();
-            this.createMessage("Error tracing fire perimeters.", 'error');
+            this.createMessage("Error: Fire perimeter could not be traced.", 'error');
             return throwError(err);  
         }))
     }

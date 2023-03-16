@@ -38,7 +38,7 @@
             },
             {
                 "label": "Select Basin Characteristics",
-                "description": "",
+                "description": "Select basin characteristics to appear in the report.",
                 "name": "selectBasinCharacteristics",
                 "type": "checkbox",
                 "cursor": "auto",
