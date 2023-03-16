@@ -23,6 +23,9 @@ export class ContentRightComponent implements OnInit {
         }
 
         this._workflowService.formData.subscribe(data => {
+            if (this.formData && data == null) {
+                this.tab = 2; // Switch to Report tab after a workflow has completed
+            }
             this.formData = data;
         })
 
@@ -35,6 +38,7 @@ export class ContentRightComponent implements OnInit {
     public removeWorkFlow() {
         this._workflowService.setSelectedWorkflow(null);
         this._workflowService.setFormData(null);
+        this.tab = 1; // Keep the tab on "Build Report" when exiting a workflow
     }
 
 }

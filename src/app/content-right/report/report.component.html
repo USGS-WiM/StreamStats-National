@@ -47,7 +47,7 @@
 							</tr>
 						</table>
 					</div>
-					<div *ngIf="output.key=='geologyInfo'">Surficial Geology:
+					<div *ngIf="output.key=='geologyInfo' && workflowData[i].outputs.geologyInfo">Surficial Geology:
 						<table id="reportTableSG">
 							<tr>
 								<th><span>Geologic Unit</span></th>
@@ -61,7 +61,9 @@
 							</tr>
 						</table>
 					</div>
-					<div *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+					<div *ngIf="output.key=='geologyInfo' && !workflowData[i].outputs.geologyInfo">Surficial Geology: Not available
+					</div>
+					<div *ngIf="output.key=='streamflowEstimates' && workflowData[i].outputs.streamflowEstimates">Streamflow Estimates:
 						<table id="reportTableSE">
 							<tr>
 								<th>Equation</th>
@@ -74,6 +76,8 @@
 								<td>{{streamflowEstimate["unit"]["abbr"]}}</td>
 							</tr>
 						</table>
+					</div>
+					<div *ngIf="output.key=='streamflowEstimates' && !workflowData[i].outputs.streamflowEstimates">Streamflow Estimates: Not available
 					</div>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->
 					<div *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</div>
@@ -179,13 +183,13 @@
 							<tr *ngFor="let basin_characteristic of output.value">
 								<td>{{basin_characteristic.fcpg_parameter}}</td>
 								<td><span>{{basin_characteristic["description"]}}</span></td>
-								<td>{{basin_characteristic["value"]}}</td>
+								<td>{{basin_characteristic["value"] | number : '1.2'}}</td>
 								<td><span>{{basin_characteristic["units"]}}</span></td>
 								</tr>
 							</table>
 						</ul>
 					</li>
-					<li *ngIf="output.key=='geologyInfo'">Surficial Geology:
+					<li *ngIf="output.key=='geologyInfo' && workflowData[i].outputs.geologyInfo">Surficial Geology:
 						<ul>
 							<table>
 								<tr>
@@ -201,7 +205,8 @@
 							</table>
 						</ul>
 					</li>
-					<li *ngIf="output.key=='streamflowEstimates'">Streamflow Estimates:
+					<li *ngIf="output.key=='geologyInfo' && !workflowData[i].outputs.geologyInfo">Surficial Geology: Not available</li>
+					<li *ngIf="output.key=='streamflowEstimates' && workflowData[i].outputs.streamflowEstimates">Streamflow Estimates:
 						<ul>
 							<table>
 								<tr>
@@ -217,6 +222,7 @@
 							</table>
 						</ul>
 					</li>
+					<li *ngIf="output.key=='streamflowEstimates' && !workflowData[i].outputs.streamflowEstimates">Streamflow Estimates: Not available</li>
 					<!-- Fire Hydrology: Query by Fire Perimeters-->	
 					<li *ngIf="output.key=='downstreamDist'">Downstream Trace Distance (kilometers): {{output.value}}</li>					
 					<li *ngIf="output.key=='selectedPerimetersInfo'">Selected Perimeter Information:

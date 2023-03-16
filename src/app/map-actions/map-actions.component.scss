@@ -32,6 +32,10 @@
 				margin-right: 3px;
 			}
 
+			b{
+				font-weight: 500;
+			}
+
 			&:hover{
 				text-decoration: underline;
 				cursor: pointer;
@@ -42,6 +46,17 @@
 				color: var(--white);
 			}
 
+		}
+
+		// Mobile changes
+		@media(max-width : 1000px) {
+			gap: 0;
+
+			button{
+				b{
+					display: none;
+				}
+			}
 		}
 	}
 }
